@@ -4,7 +4,8 @@ const sequelize = require("../config/database");
 const Vehiculo = sequelize.define("vehiculos", {
   id: {
     type: DataTypes.INTEGER,
-    primaryKey: true
+    primaryKey: true,
+    autoIncrement: true
   },
   tipo: DataTypes.STRING,
   id_centro_de_formacion: DataTypes.INTEGER,

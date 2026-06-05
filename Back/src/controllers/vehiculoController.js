@@ -1,59 +1,22 @@
 const Vehiculo = require("../models/Vehiculo");
 
-// Crear vehículo
+// Crear
 const createVehiculo = async (req, res) => {
   try {
-    const {
-      tipo,
-      id_centro_de_formacion,
-      marca,
-      color,
-      serial,
-      placa,
-      cilindraje,
-      modelo,
-      foto_principal,
-      foto_secundaria,
-    } = req.body;
+    console.log("📥 BODY RECIBIDO:", req.body);
 
-    if (!tipo || !marca || !placa) {
-      return res.status(400).json({
-        message: "Tipo, marca y placa son obligatorios",
-      });
-    }
-
-    const existente = await Vehiculo.findOne({
-      where: { placa },
-    });
-
-    if (existente) {
-      return res.status(409).json({
-        message: "Ya existe un vehículo con esa placa",
-      });
-    }
-
-    const nuevo = await Vehiculo.create({
-      tipo,
-      id_centro_de_formacion,
-      marca,
-      color,
-      serial,
-      placa,
-      cilindraje,
-      modelo,
-      foto_principal,
-      foto_secundaria,
-    });
+    const nuevo = await Vehiculo.create(req.body);
 
     return res.status(201).json({
       message: "Vehículo creado correctamente",
       data: nuevo,
     });
   } catch (error) {
-    console.log(error);
+    console.log("🔥 ERROR REAL CREATE:", error);
 
     return res.status(500).json({
-      message: "Error en el servidor",
+      message: "Error creando vehículo",
+      error: error.message,
     });
   }
 };
@@ -63,14 +26,80 @@ const getVehiculos = async (req, res) => {
   try {
     const data = await Vehiculo.findAll();
 
-    return res.status(200).json({
-      data,
-    });
+    return res.json({ data });
   } catch (error) {
-    console.log(error);
+    console.log("🔥 ERROR REAL GET ALL:", error);
 
     return res.status(500).json({
-      message: "Error al obtener vehículos",
+      message: "Error obteniendo vehículos",
+      error: error.message,
+    });
+  }
+};
+
+// Obtener por ID
+const getVehiculoById = async (req, res) => {
+  try {
+    const vehiculo = await Vehiculo.findByPk(req.params.id);
+
+    if (!vehiculo) {
+      return res.status(404).json({ message: "No encontrado" });
+    }
+
+    return res.json({ data: vehiculo });
+  } catch (error) {
+    console.log("🔥 ERROR REAL GET BY ID:", error);
+
+    return res.status(500).json({
+      message: "Error buscando vehículo",
+      error: error.message,
+    });
+  }
+};
+
+// Actualizar
+const updateVehiculo = async (req, res) => {
+  try {
+    const vehiculo = await Vehiculo.findByPk(req.params.id);
+
+    if (!vehiculo) {
+      return res.status(404).json({ message: "No encontrado" });
+    }
+
+    await vehiculo.update(req.body);
+
+    return res.json({
+      message: "Actualizado correctamente",
+      data: vehiculo,
+    });
+  } catch (error) {
+    console.log("🔥 ERROR REAL UPDATE:", error);
+
+    return res.status(500).json({
+      message: "Error actualizando vehículo",
+      error: error.message,
+    });
+  }
+};
+
+// Eliminar
+const deleteVehiculo = async (req, res) => {
+  try {
+    const vehiculo = await Vehiculo.findByPk(req.params.id);
+
+    if (!vehiculo) {
+      return res.status(404).json({ message: "No encontrado" });
+    }
+
+    await vehiculo.destroy();
+
+    return res.json({ message: "Eliminado correctamente" });
+  } catch (error) {
+    console.log("🔥 ERROR REAL DELETE:", error);
+
+    return res.status(500).json({
+      message: "Error eliminando vehículo",
+      error: error.message,
     });
   }
 };
@@ -78,4 +107,7 @@ const getVehiculos = async (req, res) => {
 module.exports = {
   createVehiculo,
   getVehiculos,
+  getVehiculoById,
+  updateVehiculo,
+  deleteVehiculo,
 };

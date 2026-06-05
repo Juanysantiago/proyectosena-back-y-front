@@ -1,14 +1,31 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
-const ConfigGr = sequelize.define("config_gr", {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true
+const ConfigGr = sequelize.define(
+  "ConfigGr",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
+    },
+    art_direccion_gr: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    fecha_conexion: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
+    id_calcular: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    }
   },
-  art_direccion_gr: DataTypes.STRING,
-  fecha_conexion: DataTypes.DATEONLY,
-  id_calcular: DataTypes.INTEGER
-});
+  {
+    tableName: "config_gr", // 👈 IMPORTANTE (nombre real de la tabla)
+    timestamps: true
+  }
+);
 
 module.exports = ConfigGr;

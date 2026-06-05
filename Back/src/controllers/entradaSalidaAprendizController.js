@@ -1,42 +1,36 @@
 const EntradaSalidaAprendiz = require("../models/EntradaSalidaAprendiz");
 
-// Crear registro entrada/salida
+// CREAR ENTRADA
 const createRegistro = async (req, res) => {
   try {
-    const {
-      hora_entrada,
-      hora_salida,
-      id_aprendiz,
-      id_codigo_gr,
-    } = req.body;
+    const { id_aprendiz, id_codigo_gr } = req.body;
 
-    if (!hora_entrada || !id_aprendiz || !id_codigo_gr) {
+    if (!id_aprendiz || !id_codigo_gr) {
       return res.status(400).json({
-        message: "hora_entrada, id_aprendiz e id_codigo_gr son obligatorios",
+        message: "id_aprendiz e id_codigo_gr son obligatorios",
       });
     }
 
     const nuevo = await EntradaSalidaAprendiz.create({
-      hora_entrada,
-      hora_salida,
+      hora_entrada: new Date(),
+      hora_salida: null,
       id_aprendiz,
       id_codigo_gr,
     });
 
     return res.status(201).json({
-      message: "Registro creado correctamente",
+      message: "Entrada registrada",
       data: nuevo,
     });
   } catch (error) {
-    console.log(error);
-
     return res.status(500).json({
-      message: "Error en el servidor",
+      message: "Error creando registro",
+      error,
     });
   }
 };
 
-// Obtener todos los registros
+// LISTAR
 const getRegistros = async (req, res) => {
   try {
     const data = await EntradaSalidaAprendiz.findAll();
@@ -45,10 +39,54 @@ const getRegistros = async (req, res) => {
       data,
     });
   } catch (error) {
-    console.log(error);
-
     return res.status(500).json({
-      message: "Error al obtener registros",
+      message: "Error obteniendo registros",
+      error,
+    });
+  }
+};
+
+// ACTUALIZAR (SALIDA O EDICIÓN)
+const updateRegistro = async (req, res) => {
+  try {
+    const item = await EntradaSalidaAprendiz.findByPk(req.params.id);
+
+    if (!item) {
+      return res.status(404).json({ message: "No encontrado" });
+    }
+
+    await item.update(req.body);
+
+    return res.json({
+      message: "Actualizado correctamente",
+      data: item,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error actualizando",
+      error,
+    });
+  }
+};
+
+// ELIMINAR
+const deleteRegistro = async (req, res) => {
+  try {
+    const item = await EntradaSalidaAprendiz.findByPk(req.params.id);
+
+    if (!item) {
+      return res.status(404).json({ message: "No encontrado" });
+    }
+
+    await item.destroy();
+
+    return res.json({
+      message: "Eliminado correctamente",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error eliminando",
+      error,
     });
   }
 };
@@ -56,4 +94,6 @@ const getRegistros = async (req, res) => {
 module.exports = {
   createRegistro,
   getRegistros,
+  updateRegistro,
+  deleteRegistro,
 };

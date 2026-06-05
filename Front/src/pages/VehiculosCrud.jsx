@@ -7,8 +7,6 @@ export default function VehiculosCrud() {
   const [error, setError] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
-  const [searchId, setSearchId] = useState("");
-  const [searchResult, setSearchResult] = useState(null);
 
   const [formData, setFormData] = useState({
     tipo: "bicicleta",
@@ -23,20 +21,17 @@ export default function VehiculosCrud() {
     foto_secundaria: ""
   });
 
-  // ✅ FIX PRINCIPAL AQUÍ
+  // LISTAR
   const loadVehiculos = async () => {
     setLoading(true);
     setError("");
 
     try {
       const res = await vehiculosApi.list();
-
-      const data = res.data?.data || res.data || [];
-
+      const data = res.data?.data || [];
       setItems(Array.isArray(data) ? data : []);
     } catch (err) {
       setError("Error cargando vehículos");
-      setItems([]);
     } finally {
       setLoading(false);
     }
@@ -47,7 +42,10 @@ export default function VehiculosCrud() {
   }, []);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
   const openCreateForm = () => {
@@ -73,21 +71,43 @@ export default function VehiculosCrud() {
     setShowForm(true);
   };
 
+  // 🔥 VALIDACIÓN + LIMPIEZA
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
     try {
+      // VALIDACIÓN
+      if (!formData.marca || !formData.placa) {
+        setError("Marca y placa son obligatorios");
+        setLoading(false);
+        return;
+      }
+
+      // LIMPIAR VACÍOS
+      const cleanData = {
+        ...formData,
+        id_centro_de_formacion: formData.id_centro_de_formacion || null,
+        color: formData.color || null,
+        serial: formData.serial || null,
+        placa: formData.placa || null,
+        cilindraje: formData.cilindraje || null,
+        modelo: formData.modelo || null,
+        foto_principal: formData.foto_principal || null,
+        foto_secundaria: formData.foto_secundaria || null,
+      };
+
       if (editingItem) {
-        await vehiculosApi.update(editingItem.id, formData);
+        await vehiculosApi.update(editingItem.id, cleanData);
       } else {
-        await vehiculosApi.create(formData);
+        await vehiculosApi.create(cleanData);
       }
 
       setShowForm(false);
       setEditingItem(null);
       await loadVehiculos();
+
     } catch (err) {
       setError("Error guardando vehículo");
     } finally {
@@ -103,15 +123,6 @@ export default function VehiculosCrud() {
       await loadVehiculos();
     } catch {
       setError("Error eliminando vehículo");
-    }
-  };
-
-  const searchById = async () => {
-    try {
-      const res = await vehiculosApi.getById(searchId);
-      setSearchResult(res.data);
-    } catch {
-      setError("No encontrado");
     }
   };
 
@@ -135,32 +146,44 @@ export default function VehiculosCrud() {
         </thead>
 
         <tbody>
-          {/* 🔥 FIX DEFINITIVO */}
-          {Array.isArray(items) &&
-            items.map((item) => (
-              <tr key={item.id}>
-                <td>{item.id}</td>
-                <td>{item.marca}</td>
-                <td>{item.tipo}</td>
-                <td>
-                  <button onClick={() => openEditForm(item)}>Editar</button>
-                  <button onClick={() => handleDelete(item)}>Eliminar</button>
-                </td>
-              </tr>
-            ))}
+          {items.map((item) => (
+            <tr key={item.id}>
+              <td>{item.id}</td>
+              <td>{item.marca}</td>
+              <td>{item.tipo}</td>
+              <td>
+                <button onClick={() => openEditForm(item)}>Editar</button>
+                <button onClick={() => handleDelete(item)}>Eliminar</button>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
 
-      {/* FORM SIMPLE */}
+      {/* FORM */}
       {showForm && (
-        <div>
+        <div style={{ marginTop: 20 }}>
           <h3>{editingItem ? "Editar" : "Crear"}</h3>
 
           <form onSubmit={handleSubmit}>
             <input
+              name="tipo"
+              placeholder="Tipo"
+              value={formData.tipo}
+              onChange={handleChange}
+            />
+
+            <input
               name="marca"
-              placeholder="Marca"
+              placeholder="Marca *"
               value={formData.marca}
+              onChange={handleChange}
+            />
+
+            <input
+              name="placa"
+              placeholder="Placa *"
+              value={formData.placa}
               onChange={handleChange}
             />
 

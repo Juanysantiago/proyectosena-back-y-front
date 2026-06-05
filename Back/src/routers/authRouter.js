@@ -1,9 +1,20 @@
 const express = require("express");
-const { register } = require("../controllers/authController");
+
+const {
+  register,
+  getUsers,
+  getUserById,
+  updateUser,
+  deleteUser
+} = require("../controllers/authController");
 
 const router = express.Router();
 
-// POST /auth/register
 router.post("/register", register);
+
+router.get("/users", getUsers);
+router.get("/users/:id", getUserById);
+router.put("/users/:id", updateUser);
+router.delete("/users/:id", deleteUser);
 
 module.exports = router;

@@ -1,57 +1,83 @@
 const ConfigGr = require("../models/ConfigGr");
 
-// Crear configuración GR
-const createConfigGr = async (req, res) => {
+// LISTAR
+const getConfigGr = async (req, res) => {
   try {
-    const {
-      art_direccion_gr,
-      fecha_conexion,
-      id_calcular,
-    } = req.body;
-
-    if (!art_direccion_gr || !fecha_conexion || !id_calcular) {
-      return res.status(400).json({
-        message: "Todos los campos son obligatorios",
-      });
-    }
-
-    const nueva = await ConfigGr.create({
-      art_direccion_gr,
-      fecha_conexion,
-      id_calcular,
-    });
-
-    return res.status(201).json({
-      message: "Configuración creada correctamente",
-      data: nueva,
-    });
+    const data = await ConfigGr.findAll();
+    return res.json({ data });
   } catch (error) {
-    console.log(error);
-
     return res.status(500).json({
-      message: "Error en el servidor",
+      message: "Error obteniendo configuraciones",
+      error: error.message
     });
   }
 };
 
-// Obtener todas
-const getConfigGr = async (req, res) => {
+// CREAR
+const createConfigGr = async (req, res) => {
   try {
-    const data = await ConfigGr.findAll();
+    const nuevo = await ConfigGr.create(req.body);
 
-    return res.status(200).json({
-      data,
+    return res.status(201).json({
+      message: "Creado correctamente",
+      data: nuevo
     });
   } catch (error) {
-    console.log(error);
-
     return res.status(500).json({
-      message: "Error al obtener configuraciones",
+      message: "Error creando configuración",
+      error: error.message
+    });
+  }
+};
+
+// ACTUALIZAR
+const updateConfigGr = async (req, res) => {
+  try {
+    const item = await ConfigGr.findByPk(req.params.id);
+
+    if (!item) {
+      return res.status(404).json({ message: "No encontrado" });
+    }
+
+    await item.update(req.body);
+
+    return res.json({
+      message: "Actualizado",
+      data: item
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error actualizando",
+      error: error.message
+    });
+  }
+};
+
+// ELIMINAR
+const deleteConfigGr = async (req, res) => {
+  try {
+    const item = await ConfigGr.findByPk(req.params.id);
+
+    if (!item) {
+      return res.status(404).json({ message: "No encontrado" });
+    }
+
+    await item.destroy();
+
+    return res.json({
+      message: "Eliminado"
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error eliminando",
+      error: error.message
     });
   }
 };
 
 module.exports = {
-  createConfigGr,
   getConfigGr,
+  createConfigGr,
+  updateConfigGr,
+  deleteConfigGr
 };

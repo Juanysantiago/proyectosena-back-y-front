@@ -3,7 +3,7 @@ const sequelize = require("./config/database");
 
 const app = express();
 
-/* CORS FIX */
+/* CORS */
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
@@ -15,16 +15,13 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
-/* RUTAS */
+/* RUTAS (CORRECTO) */
 app.use("/auth", require("./routers/authRouter"));
 app.use("/api", require("./routers/tipoDocumentoRouter"));
 app.use("/api", require("./routers/jornadaRouter"));
 app.use("/api", require("./routers/entradaSalidaAprendizRouter"));
 app.use("/api", require("./routers/configGrRouter"));
-
-/* 🔥 VEHICULOS BIEN IMPORTADO */
-const vehiculoRouter = require("./routers/vehiculoRouter");
-app.use("/api/vehiculos", vehiculoRouter);
+app.use("/api/vehiculos", require("./routers/vehiculoRouter"));
 
 sequelize
   .authenticate()

@@ -1,15 +1,17 @@
 const express = require("express");
-const {
-  createConfigGr,
-  getConfigGr,
-} = require("../controllers/configGrController");
-
 const router = express.Router();
 
-// crear config
-router.post("/config-gr", createConfigGr);
+const {
+  getConfigGr,
+  createConfigGr,
+  updateConfigGr,
+  deleteConfigGr
+} = require("../controllers/configGrController");
 
-// listar config
+// IMPORTANTE: aquí va SOLO el recurso
 router.get("/config-gr", getConfigGr);
+router.post("/config-gr", createConfigGr);
+router.put("/config-gr/:id", updateConfigGr);
+router.delete("/config-gr/:id", deleteConfigGr);
 
 module.exports = router;
