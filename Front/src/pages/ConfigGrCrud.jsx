@@ -102,87 +102,167 @@ export default function ConfigGrCrud() {
     }
   };
 
-  return (
-    <div style={{ maxWidth: 1000, margin: "40px auto" }}>
-      <h2>Configuración GR</h2>
+ return (
+  <div className="container">
+    <div className="card">
+      <h1 className="title">⚙️ Configuración GR</h1>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && (
+        <div
+          style={{
+            background: "#ffe5e5",
+            color: "#c62828",
+            padding: "10px",
+            borderRadius: "8px",
+            marginBottom: "15px",
+          }}
+        >
+          {error}
+        </div>
+      )}
 
-      <button onClick={openCreateForm}>Nuevo</button>
+      <button
+        className="btn-primary"
+        onClick={openCreateForm}
+        style={{ marginBottom: "20px" }}
+      >
+        ➕ Nuevo Registro
+      </button>
 
       {loading && <p>Cargando...</p>}
 
-      <table border="1" width="100%" style={{ marginTop: 20 }}>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Dirección GR</th>
-            <th>Fecha</th>
-            <th>Calcular</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {items.map((item) => (
-            <tr key={item.id}>
-              <td>{item.id}</td>
-              <td>{item.art_direccion_gr}</td>
-              <td>{item.fecha_conexion || "-"}</td>
-              <td>{item.id_calcular || "-"}</td>
-              <td>
-                <button onClick={() => openEditForm(item)}>Editar</button>
-                <button onClick={() => handleDelete(item)}>Eliminar</button>
-              </td>
-            </tr>
-          ))}
-
-          {items.length === 0 && !loading && (
+      <div className="card">
+        <table>
+          <thead>
             <tr>
-              <td colSpan="5" style={{ textAlign: "center" }}>
-                No hay datos
-              </td>
+              <th>ID</th>
+              <th>Dirección GR</th>
+              <th>Fecha</th>
+              <th>Calcular</th>
+              <th>Acciones</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {items.map((item) => (
+              <tr key={item.id}>
+                <td>{item.id}</td>
+                <td>{item.art_direccion_gr}</td>
+                <td>{item.fecha_conexion || "-"}</td>
+                <td>{item.id_calcular || "-"}</td>
+                <td>
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "8px",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <button
+                      className="btn-warning"
+                      onClick={() => openEditForm(item)}
+                    >
+                      ✏️ Editar
+                    </button>
+
+                    <button
+                      className="btn-danger"
+                      onClick={() => handleDelete(item)}
+                    >
+                      🗑️ Eliminar
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+
+            {items.length === 0 && !loading && (
+              <tr>
+                <td colSpan="5" style={{ textAlign: "center" }}>
+                  No hay datos
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
 
       {showForm && (
-        <div style={{ marginTop: 20 }}>
-          <h3>{editingItem ? "Editar" : "Crear"}</h3>
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2
+              style={{
+                marginBottom: "20px",
+                color: "#16bb00",
+                textAlign: "center",
+              }}
+            >
+              {editingItem ? "✏️ Editar Configuración" : "➕ Crear Configuración"}
+            </h2>
 
-          <form onSubmit={handleSubmit}>
-            <input
-              name="art_direccion_gr"
-              placeholder="Dirección"
-              value={formData.art_direccion_gr}
-              onChange={handleChange}
-            />
+            <form
+              onSubmit={handleSubmit}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "15px",
+              }}
+            >
+              <div>
+                <label>Dirección GR</label>
+                <input
+                  name="art_direccion_gr"
+                  placeholder="Ingrese dirección"
+                  value={formData.art_direccion_gr}
+                  onChange={handleChange}
+                />
+              </div>
 
-            <input
-              type="date"
-              name="fecha_conexion"
-              value={formData.fecha_conexion}
-              onChange={handleChange}
-            />
+              <div>
+                <label>Fecha de Conexión</label>
+                <input
+                  type="date"
+                  name="fecha_conexion"
+                  value={formData.fecha_conexion}
+                  onChange={handleChange}
+                />
+              </div>
 
-            <input
-              name="id_calcular"
-              placeholder="ID calcular"
-              value={formData.id_calcular}
-              onChange={handleChange}
-            />
+              <div>
+                <label>ID Calcular</label>
+                <input
+                  name="id_calcular"
+                  placeholder="Ingrese ID"
+                  value={formData.id_calcular}
+                  onChange={handleChange}
+                />
+              </div>
 
-            <button type="submit">
-              {editingItem ? "Actualizar" : "Crear"}
-            </button>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: "10px",
+                  marginTop: "15px",
+                }}
+              >
+                <button className="btn-primary" type="submit">
+                  {editingItem ? "💾 Actualizar" : "✅ Crear"}
+                </button>
 
-            <button type="button" onClick={() => setShowForm(false)}>
-              Cancelar
-            </button>
-          </form>
+                <button
+                  className="btn-secondary"
+                  type="button"
+                  onClick={() => setShowForm(false)}
+                >
+                  ❌ Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>
-  );
+  </div>
+);
 }

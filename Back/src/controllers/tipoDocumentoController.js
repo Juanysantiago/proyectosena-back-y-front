@@ -44,9 +44,7 @@ const getTipoDocumentos = async (req, res) => {
   try {
     const data = await TipoDocumento.findAll();
 
-    return res.status(200).json({
-      data,
-    });
+    return res.status(200).json(data);
   } catch (error) {
     console.log(error);
 
@@ -67,9 +65,7 @@ const getTipoDocumentoById = async (req, res) => {
       });
     }
 
-    return res.status(200).json({
-      data: tipoDocumento,
-    });
+    return res.status(200).json(tipoDocumento);
   } catch (error) {
     console.log(error);
 
