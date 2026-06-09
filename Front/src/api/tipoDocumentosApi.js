@@ -1,9 +1,15 @@
-import { axiosClient } from "./axiosClient";
+import axios from "axios";
+
+const API = "http://localhost:3000/api/tipo-documento";
 
 export const tipoDocumentosApi = {
-  list: () => axiosClient.get("/api/tipo-documento"),
-  getById: (id) => axiosClient.get(`/api/tipo-documento/${id}`),
-  create: (data) => axiosClient.post("/api/tipo-documento", data),
-  update: (id, data) => axiosClient.put(`/api/tipo-documento/${id}`, data),
-  remove: (id) => axiosClient.delete(`/api/tipo-documento/${id}`),
+  list: () => axios.get(API),
+
+  getById: (id) => axios.get(`${API}/${id}`),
+
+  create: (data) => axios.post(API, data),
+
+  update: (id, data) => axios.put(`${API}/${id}`, data),
+
+  remove: (id) => axios.delete(`${API}/${id}`),
 };

@@ -1,6 +1,6 @@
 const TipoDocumento = require("../models/TipoDocumento");
 
-// Crear tipo de documento
+// Crear
 const createTipoDocumento = async (req, res) => {
   try {
     const { sigla, nombre_documento } = req.body;
@@ -56,7 +56,84 @@ const getTipoDocumentos = async (req, res) => {
   }
 };
 
+// Obtener por ID
+const getTipoDocumentoById = async (req, res) => {
+  try {
+    const tipoDocumento = await TipoDocumento.findByPk(req.params.id);
+
+    if (!tipoDocumento) {
+      return res.status(404).json({
+        message: "Tipo de documento no encontrado",
+      });
+    }
+
+    return res.status(200).json({
+      data: tipoDocumento,
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      message: "Error obteniendo tipo de documento",
+    });
+  }
+};
+
+// Actualizar
+const updateTipoDocumento = async (req, res) => {
+  try {
+    const tipoDocumento = await TipoDocumento.findByPk(req.params.id);
+
+    if (!tipoDocumento) {
+      return res.status(404).json({
+        message: "Tipo de documento no encontrado",
+      });
+    }
+
+    await tipoDocumento.update(req.body);
+
+    return res.status(200).json({
+      message: "Tipo de documento actualizado",
+      data: tipoDocumento,
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      message: "Error actualizando tipo de documento",
+    });
+  }
+};
+
+// Eliminar
+const deleteTipoDocumento = async (req, res) => {
+  try {
+    const tipoDocumento = await TipoDocumento.findByPk(req.params.id);
+
+    if (!tipoDocumento) {
+      return res.status(404).json({
+        message: "Tipo de documento no encontrado",
+      });
+    }
+
+    await tipoDocumento.destroy();
+
+    return res.status(200).json({
+      message: "Tipo de documento eliminado correctamente",
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      message: "Error eliminando tipo de documento",
+    });
+  }
+};
+
 module.exports = {
   createTipoDocumento,
   getTipoDocumentos,
+  getTipoDocumentoById,
+  updateTipoDocumento,
+  deleteTipoDocumento,
 };

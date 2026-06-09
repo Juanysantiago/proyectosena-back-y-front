@@ -1,11 +1,17 @@
-// /src/api/vehiculosApi.js
 import { axiosClient } from "./axiosClient";
 
 export const vehiculosApi = {
-  // Obtener todos los vehículos (versión simplificada)
   list: () => axiosClient.get("/api/vehiculos"),
-getById: (id) => axiosClient.get(`/api/vehiculos/${id}`),
-create: (data) => axiosClient.post("/api/vehiculos", data),
-update: (id, data) => axiosClient.put(`/api/vehiculos/${id}`, data),
-remove: (id) => axiosClient.delete(`/api/vehiculos/${id}`),
+
+  getById: (id) =>
+    axiosClient.get(`/api/vehiculos/${id}`),
+
+  create: (data) =>
+    axiosClient.post("/api/vehiculos", data),
+
+  update: (id, data) =>
+    axiosClient.put(`/api/vehiculos/${id}`, data),
+
+  remove: (id) =>
+    axiosClient.delete(`/api/vehiculos/${id}`),
 };

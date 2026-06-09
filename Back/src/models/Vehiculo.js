@@ -1,22 +1,68 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
-const Vehiculo = sequelize.define("vehiculos", {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
+const Vehiculo = sequelize.define(
+  "vehiculos",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+
+    tipo: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+
+    id_centro_de_formacion: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+
+    marca: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+
+    color: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+
+    serial: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+
+    placa: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+
+    cilindraje: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+
+    modelo: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+
+    foto_principal: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+
+    foto_secundaria: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
   },
-  tipo: DataTypes.STRING,
-  id_centro_de_formacion: DataTypes.INTEGER,
-  marca: DataTypes.STRING,
-  color: DataTypes.STRING,
-  serial: DataTypes.STRING,
-  placa: DataTypes.STRING,
-  cilindraje: DataTypes.STRING,
-  modelo: DataTypes.STRING,
-  foto_principal: DataTypes.TEXT,
-  foto_secundaria: DataTypes.TEXT
-});
+  {
+    tableName: "vehiculos",
+  }
+);
 
 module.exports = Vehiculo;

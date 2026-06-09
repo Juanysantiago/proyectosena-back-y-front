@@ -1,35 +1,34 @@
 import { useEffect, useState } from "react";
 import { vehiculosApi } from "../api/vehiculosApi";
 
+const initialForm = {
+  tipo: "bicicleta",
+  id_centro_de_formacion: "",
+  marca: "",
+  color: "",
+  serial: "",
+  placa: "",
+  cilindraje: "",
+  modelo: "",
+  foto_principal: "",
+  foto_secundaria: "",
+};
+
 export default function VehiculosCrud() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
+  const [formData, setFormData] = useState(initialForm);
 
-  const [formData, setFormData] = useState({
-    tipo: "bicicleta",
-    id_centro_de_formacion: "",
-    marca: "",
-    color: "",
-    serial: "",
-    placa: "",
-    cilindraje: "",
-    modelo: "",
-    foto_principal: "",
-    foto_secundaria: ""
-  });
-
-  // LISTAR
   const loadVehiculos = async () => {
-    setLoading(true);
-    setError("");
-
     try {
+      setLoading(true);
+
       const res = await vehiculosApi.list();
-      const data = res.data?.data || [];
-      setItems(Array.isArray(data) ? data : []);
+
+      setItems(res.data?.data || []);
     } catch (err) {
       setError("Error cargando vehículos");
     } finally {
@@ -50,18 +49,7 @@ export default function VehiculosCrud() {
 
   const openCreateForm = () => {
     setEditingItem(null);
-    setFormData({
-      tipo: "bicicleta",
-      id_centro_de_formacion: "",
-      marca: "",
-      color: "",
-      serial: "",
-      placa: "",
-      cilindraje: "",
-      modelo: "",
-      foto_principal: "",
-      foto_secundaria: ""
-    });
+    setFormData(initialForm);
     setShowForm(true);
   };
 
@@ -71,47 +59,51 @@ export default function VehiculosCrud() {
     setShowForm(true);
   };
 
-  // 🔥 VALIDACIÓN + LIMPIEZA
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
 
     try {
-      // VALIDACIÓN
-      if (!formData.marca || !formData.placa) {
-        setError("Marca y placa son obligatorios");
-        setLoading(false);
-        return;
+      setError("");
+
+      if (!formData.id_centro_de_formacion)
+        return setError("Centro de formación obligatorio");
+
+      if (!formData.marca)
+        return setError("Marca obligatoria");
+
+      if (
+        formData.tipo === "bicicleta" &&
+        !formData.serial
+      ) {
+        return setError("Serial obligatorio");
       }
 
-      // LIMPIAR VACÍOS
-      const cleanData = {
-        ...formData,
-        id_centro_de_formacion: formData.id_centro_de_formacion || null,
-        color: formData.color || null,
-        serial: formData.serial || null,
-        placa: formData.placa || null,
-        cilindraje: formData.cilindraje || null,
-        modelo: formData.modelo || null,
-        foto_principal: formData.foto_principal || null,
-        foto_secundaria: formData.foto_secundaria || null,
-      };
+      if (
+        formData.tipo === "moto" &&
+        !formData.placa
+      ) {
+        return setError("Placa obligatoria");
+      }
 
       if (editingItem) {
-        await vehiculosApi.update(editingItem.id, cleanData);
+        await vehiculosApi.update(
+          editingItem.id,
+          formData
+        );
       } else {
-        await vehiculosApi.create(cleanData);
+        await vehiculosApi.create(formData);
       }
 
       setShowForm(false);
       setEditingItem(null);
-      await loadVehiculos();
+      setFormData(initialForm);
 
+      await loadVehiculos();
     } catch (err) {
-      setError("Error guardando vehículo");
-    } finally {
-      setLoading(false);
+      setError(
+        err?.response?.data?.message ||
+          "Error guardando vehículo"
+      );
     }
   };
 
@@ -120,6 +112,7 @@ export default function VehiculosCrud() {
 
     try {
       await vehiculosApi.remove(item.id);
+
       await loadVehiculos();
     } catch {
       setError("Error eliminando vehículo");
@@ -127,81 +120,252 @@ export default function VehiculosCrud() {
   };
 
   return (
-    <div style={{ maxWidth: 1200, margin: "40px auto", padding: 20 }}>
-      <h2>Vehículos</h2>
+    <div className="container">
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 20,
+        }}
+      >
+        <h1>Gestión de Vehículos</h1>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+        <button
+          className="btn-primary"
+          onClick={openCreateForm}
+        >
+          + Nuevo Vehículo
+        </button>
+      </div>
 
-      <button onClick={openCreateForm}>Nuevo Vehículo</button>
+      {error && (
+        <div
+          style={{
+            background: "#ffd9d9",
+            color: "#900",
+            padding: 12,
+            borderRadius: 8,
+            marginBottom: 20,
+          }}
+        >
+          {error}
+        </div>
+      )}
 
-      {/* LISTA */}
-      <table width="100%" border="1" style={{ marginTop: 20 }}>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Marca</th>
-            <th>Tipo</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
+      <div className="card">
+        {loading ? (
+          <p>Cargando vehículos...</p>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Tipo</th>
+                <th>Marca</th>
+                <th>Color</th>
+                <th>Placa</th>
+                <th>Serial</th>
+                <th>Centro</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
 
-        <tbody>
-          {items.map((item) => (
-            <tr key={item.id}>
-              <td>{item.id}</td>
-              <td>{item.marca}</td>
-              <td>{item.tipo}</td>
-              <td>
-                <button onClick={() => openEditForm(item)}>Editar</button>
-                <button onClick={() => handleDelete(item)}>Eliminar</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+            <tbody>
+              {items.length > 0 ? (
+                items.map((item) => (
+                  <tr key={item.id}>
+                    <td>{item.id}</td>
+                    <td>{item.tipo}</td>
+                    <td>{item.marca}</td>
+                    <td>{item.color}</td>
+                    <td>{item.placa}</td>
+                    <td>{item.serial}</td>
+                    <td>{item.id_centro_de_formacion}</td>
 
-      {/* FORM */}
+                    <td>
+                      <button
+                        className="btn-warning"
+                        onClick={() =>
+                          openEditForm(item)
+                        }
+                      >
+                        Editar
+                      </button>
+
+                      {" "}
+
+                      <button
+                        className="btn-danger"
+                        onClick={() =>
+                          handleDelete(item)
+                        }
+                      >
+                        Eliminar
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="8">
+                    No hay vehículos registrados
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        )}
+      </div>
+
       {showForm && (
-        <div style={{ marginTop: 20 }}>
-          <h3>{editingItem ? "Editar" : "Crear"}</h3>
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>
+              {editingItem
+                ? "Editar Vehículo"
+                : "Nuevo Vehículo"}
+            </h2>
 
-          <form onSubmit={handleSubmit}>
-            <input
-              name="tipo"
-              placeholder="Tipo"
-              value={formData.tipo}
-              onChange={handleChange}
-            />
+            <form onSubmit={handleSubmit}>
+              <label>Tipo de Vehículo</label>
 
-            <input
-              name="marca"
-              placeholder="Marca *"
-              value={formData.marca}
-              onChange={handleChange}
-            />
+              <select
+                name="tipo"
+                value={formData.tipo}
+                onChange={handleChange}
+              >
+                <option value="bicicleta">
+                  Bicicleta
+                </option>
 
-            <input
-              name="placa"
-              placeholder="Placa *"
-              value={formData.placa}
-              onChange={handleChange}
-            />
+                <option value="moto">
+                  Moto
+                </option>
+              </select>
 
-            <input
-              name="serial"
-              placeholder="Serial"
-              value={formData.serial}
-              onChange={handleChange}
-            />
+              <br />
+              <br />
 
-            <button type="submit">
-              {editingItem ? "Actualizar" : "Crear"}
-            </button>
+              <input
+                name="id_centro_de_formacion"
+                placeholder="Centro de Formación"
+                value={formData.id_centro_de_formacion}
+                onChange={handleChange}
+              />
 
-            <button type="button" onClick={() => setShowForm(false)}>
-              Cancelar
-            </button>
-          </form>
+              <br />
+              <br />
+
+              <input
+                name="marca"
+                placeholder="Marca"
+                value={formData.marca}
+                onChange={handleChange}
+              />
+
+              <br />
+              <br />
+
+              <input
+                name="color"
+                placeholder="Color"
+                value={formData.color}
+                onChange={handleChange}
+              />
+
+              <br />
+              <br />
+
+              {formData.tipo === "bicicleta" && (
+                <>
+                  <input
+                    name="serial"
+                    placeholder="Serial"
+                    value={formData.serial}
+                    onChange={handleChange}
+                  />
+
+                  <br />
+                  <br />
+                </>
+              )}
+
+              {formData.tipo === "moto" && (
+                <>
+                  <input
+                    name="placa"
+                    placeholder="Placa"
+                    value={formData.placa}
+                    onChange={handleChange}
+                  />
+
+                  <br />
+                  <br />
+
+                  <input
+                    name="cilindraje"
+                    placeholder="Cilindraje"
+                    value={formData.cilindraje}
+                    onChange={handleChange}
+                  />
+
+                  <br />
+                  <br />
+
+                  <input
+                    name="modelo"
+                    placeholder="Modelo"
+                    value={formData.modelo}
+                    onChange={handleChange}
+                  />
+
+                  <br />
+                  <br />
+                </>
+              )}
+
+              <input
+                name="foto_principal"
+                placeholder="URL Foto Principal"
+                value={formData.foto_principal}
+                onChange={handleChange}
+              />
+
+              <br />
+              <br />
+
+              <input
+                name="foto_secundaria"
+                placeholder="URL Foto Secundaria"
+                value={formData.foto_secundaria}
+                onChange={handleChange}
+              />
+
+              <br />
+              <br />
+
+              <button
+                type="submit"
+                className="btn-primary"
+              >
+                {editingItem
+                  ? "Actualizar"
+                  : "Guardar"}
+              </button>
+
+              <button
+                type="button"
+                className="btn-danger"
+                style={{ marginLeft: 10 }}
+                onClick={() =>
+                  setShowForm(false)
+                }
+              >
+                Cancelar
+              </button>
+            </form>
+          </div>
         </div>
       )}
     </div>

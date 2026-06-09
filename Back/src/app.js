@@ -22,7 +22,6 @@ app.use("/api", require("./routers/jornadaRouter"));
 app.use("/api", require("./routers/entradaSalidaAprendizRouter"));
 app.use("/api", require("./routers/configGrRouter"));
 app.use("/api/vehiculos", require("./routers/vehiculoRouter"));
-
 sequelize
   .authenticate()
   .then(() => console.log("DB conectada correctamente"))

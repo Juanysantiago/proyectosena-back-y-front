@@ -1,15 +1,23 @@
 const express = require("express");
+
 const {
   createTipoDocumento,
   getTipoDocumentos,
+  getTipoDocumentoById,
+  updateTipoDocumento,
+  deleteTipoDocumento,
 } = require("../controllers/tipoDocumentoController");
 
 const router = express.Router();
 
-// crear
 router.post("/tipo-documento", createTipoDocumento);
 
-// listar
 router.get("/tipo-documento", getTipoDocumentos);
+
+router.get("/tipo-documento/:id", getTipoDocumentoById);
+
+router.put("/tipo-documento/:id", updateTipoDocumento);
+
+router.delete("/tipo-documento/:id", deleteTipoDocumento);
 
 module.exports = router;
