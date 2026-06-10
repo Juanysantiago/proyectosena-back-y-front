@@ -4,6 +4,7 @@ const sequelize = require("./config/database");
 const app = express();
 
 /* IMPORTAR MODELOS */
+require("./models/User");
 require("./models/Vehiculo");
 // require("./models/TipoDocumento");
 // require("./models/Jornada");
@@ -13,14 +14,31 @@ require("./models/Vehiculo");
 /* CORS */
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET,POST,PUT,DELETE,OPTIONS"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization"
+  );
 
-  if (req.method === "OPTIONS") return res.sendStatus(200);
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+
   next();
 });
 
+/* MIDDLEWARES */
 app.use(express.json());
+
+/* RUTA DE PRUEBA */
+app.get("/", (req, res) => {
+  res.json({
+    message: "API SENA Parking funcionando correctamente"
+  });
+});
 
 /* RUTAS */
 app.use("/auth", require("./routers/authRouter"));
@@ -34,16 +52,19 @@ app.use("/api/vehiculos", require("./routers/vehiculoRouter"));
 sequelize
   .authenticate()
   .then(async () => {
-    console.log("DB conectada correctamente");
+    console.log("✅ DB conectada correctamente");
 
     await sequelize.sync({ alter: true });
 
-    console.log("Tablas sincronizadas");
+    console.log("✅ Tablas sincronizadas");
   })
   .catch((err) => {
-    console.log("Error DB:", err);
+    console.error("❌ Error DB:", err);
   });
 
-app.listen(3000, () => {
-  console.log("Servidor corriendo en puerto 3000");
+/* SERVIDOR */
+const PORT = 3000;
+
+app.listen(PORT, () => {
+  console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
 });

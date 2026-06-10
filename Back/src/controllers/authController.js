@@ -3,11 +3,26 @@ const User = require("../models/User");
 // POST - Registrar usuario
 const register = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const {
+      email,
+      password,
+      documento,
+      ficha,
+      nombres,
+      apellidos,
+      rol
+    } = req.body;
 
-    if (!email || !password) {
+    if (
+      !email ||
+      !password ||
+      !documento ||
+      !nombres ||
+      !apellidos ||
+      !rol
+    ) {
       return res.status(400).json({
-        message: "Email y password son obligatorios",
+        message: "Todos los campos son obligatorios"
       });
     }
 
@@ -17,13 +32,18 @@ const register = async (req, res) => {
 
     if (userExists) {
       return res.status(409).json({
-        message: "El usuario ya existe",
+        message: "El usuario ya existe"
       });
     }
 
     const newUser = await User.create({
       email,
-      password
+      password,
+      documento,
+      ficha: rol === "aprendiz" ? ficha : null,
+      nombres,
+      apellidos,
+      rol
     });
 
     return res.status(201).json({
@@ -43,7 +63,6 @@ const register = async (req, res) => {
 // GET - Todos los usuarios
 const getUsers = async (req, res) => {
   const users = await User.findAll();
-
   res.json(users);
 };
 
