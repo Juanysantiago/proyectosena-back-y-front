@@ -5,40 +5,64 @@ export default function Home() {
   const user = userRaw ? JSON.parse(userRaw) : null;
 
   return (
-    <div style={{ maxWidth: 900, margin: "24px auto", fontFamily: "sans-serif", padding: 16 }}>
-      <h1>Inicio</h1>
-      <p>Bienvenido. Usa el menú superior para navegar.</p>
+    <div className="home-container">
+      <div className="home-card">
+        <h1>🚗 Sistema de Control de Acceso</h1>
 
-      {user ? (
-        <div style={{ background: "#f6f8fa", padding: 12, borderRadius: 8 }}>
-          <div>
-            <strong>Usuario:</strong> {user.email} (id: {user.id})
+        <p className="subtitle">
+          Bienvenido. Usa el menú superior para navegar por el sistema.
+        </p>
+
+        {user ? (
+          <div className="user-box">
+            <h3>👤 Sesión activa</h3>
+            <p>
+              <strong>Correo:</strong> {user.email}
+            </p>
+            <p>
+              <strong>ID:</strong> {user.id}
+            </p>
           </div>
-        </div>
-      ) : (
-        <div style={{ background: "#fff7e6", padding: 12, borderRadius: 8 }}>
-          No hay usuario en localStorage. Puedes{" "}
-          <Link to="/login">iniciar sesión</Link> o <Link to="/register">registrarte</Link>.
-        </div>
-      )}
+        ) : (
+          <div className="warning-box">
+            <p>⚠️ No has iniciado sesión.</p>
 
-      <hr style={{ margin: "20px 0", border: "none", borderTop: "1px solid #eee" }} />
+            <div className="auth-buttons">
+              <Link to="/login" className="btn-primary">
+                Iniciar Sesión
+              </Link>
 
-      <h3>Accesos rápidos</h3>
-      <ul>
-        <li>
-          <Link to="/login">Ir a Login</Link>
-        </li>
-        <li>
-          <Link to="/register">Ir a Registro</Link>
-        </li>
-        <li>
-          <Link to="/tipo-documentos">Ir a CRUD Tipo Documentos</Link>
-        </li>
-        <li>
-          <Link to="/vehiculos">Ir a vehiculos</Link>
-        </li>
-      </ul>
+              <Link to="/register" className="btn-secondary">
+                Registrarse
+              </Link>
+            </div>
+          </div>
+        )}
+
+        <h2>Accesos Rápidos</h2>
+
+        <div className="cards-grid">
+          <Link to="/login" className="menu-card">
+            🔐
+            <span>Login</span>
+          </Link>
+
+          <Link to="/register" className="menu-card">
+            👤
+            <span>Registro</span>
+          </Link>
+
+          <Link to="/tipo-documentos" className="menu-card">
+            📄
+            <span>Documentos</span>
+          </Link>
+
+          <Link to="/vehiculos" className="menu-card">
+            🚘
+            <span>Vehículos</span>
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }
