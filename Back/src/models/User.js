@@ -24,9 +24,9 @@ const User = sequelize.define("users", {
     allowNull: false
   },
 
-  ficha: {
-    type: DataTypes.STRING,
-    allowNull: true
+  tipoDocumento: {
+    type: DataTypes.ENUM("CC", "TI", "CE", "PAS"),
+    allowNull: false
   },
 
   nombres: {
@@ -40,9 +40,9 @@ const User = sequelize.define("users", {
   },
 
   rol: {
-    type: DataTypes.ENUM("aprendiz", "guarda"),
-    allowNull: false
-  }
+  type: DataTypes.ENUM("aprendiz", "guarda", "administrador"),
+  allowNull: false
+}
 });
 
 module.exports = User;

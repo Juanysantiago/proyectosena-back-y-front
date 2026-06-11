@@ -1,8 +1,5 @@
-// Importa useState (aunque no se usa aquí, podría servir después)
-import { useState } from 'react'
-import './App.css'
+import './App.css';
 
-// Importa las páginas (cada una es un componente)
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -11,32 +8,49 @@ import VehiculosCrud from './pages/VehiculosCrud';
 import ConfigGrCrud from './pages/ConfigGrCrud';
 import EntradaSalidaCrud from './pages/EntradaSalidaCrud';
 
-// Importa herramientas de React Router para navegación
+import DashboardGuarda from "./pages/DashboardGuarda";
+import DashboardAprendiz from "./pages/DashboardAprendiz";
+
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 
-// Componente principal de la aplicación
 export default function App() {
-  return (
-    // BrowserRouter: Habilita el enrutamiento en la app
-    <BrowserRouter>
-      {/* Navbar: Barra de navegación que se muestra en todas las páginas */}
-      <Navbar />
+  const user = JSON.parse(localStorage.getItem("user"));
 
-      {/* Routes: Contiene todas las rutas de la aplicación */}
+  return (
+    <BrowserRouter>
+
+      {user && <Navbar />}
+
       <Routes>
-        {/* Cada Route asocia una URL con un componente */}
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
+        {/* Login como pantalla principal */}
+        <Route path="/" element={<Login />} />
+
         <Route path="/register" element={<Register />} />
+
+        {/* Admin */}
+        <Route path="/dashboard-admin" element={<Home />} />
+
+        {/* Guarda */}
+        <Route
+          path="/dashboard-guarda"
+          element={<DashboardGuarda />}
+        />
+
+        {/* Aprendiz */}
+        <Route
+          path="/dashboard-aprendiz"
+          element={<DashboardAprendiz />}
+        />
+
         <Route path="/tipo-documentos" element={<TipoDocumentosCrud />} />
         <Route path="/vehiculos" element={<VehiculosCrud />} />
         <Route path="/config-gr" element={<ConfigGrCrud />} />
         <Route path="/entrada-salida" element={<EntradaSalidaCrud />} />
 
-        {/* Fallback: Si la URL no existe, redirige al inicio */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+
     </BrowserRouter>
   );
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { vehiculosApi } from "../api/vehiculosApi";
+import "../styles/vehiculos.css";
 
 const initialForm = {
   tipo: "bicicleta",
