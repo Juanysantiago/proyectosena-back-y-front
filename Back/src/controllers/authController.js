@@ -1,4 +1,6 @@
 const User = require("../models/User");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 // POST - Registrar usuario
 const register = async (req, res) => {
@@ -27,18 +29,6 @@ const register = async (req, res) => {
       });
     }
 
-   if (!["aprendiz", "guarda", "administrador"].includes(rol)) {
-  return res.status(400).json({
-    message: "Rol inválido. Debe ser 'aprendiz', 'guarda' o 'administrador'"
-  });
-}
-
-    if (!["CC", "TI", "CE", "PAS"].includes(tipoDocumento)) {
-      return res.status(400).json({
-        message: "Tipo de documento inválido. Debe ser CC, TI, CE o PAS"
-      });
-    }
-
     const userExists = await User.findOne({
       where: { email }
     });
@@ -49,9 +39,11 @@ const register = async (req, res) => {
       });
     }
 
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const newUser = await User.create({
       email,
-      password,
+      password: hashedPassword,
       documento,
       tipoDocumento,
       nombres,
@@ -59,21 +51,31 @@ const register = async (req, res) => {
       rol
     });
 
-    const userResponse = {
-      id: newUser.id,
-      email: newUser.email,
-      documento: newUser.documento,
-      tipoDocumento: newUser.tipoDocumento,
-      nombres: newUser.nombres,
-      apellidos: newUser.apellidos,
-      rol: newUser.rol
-    };
+    const accessToken = jwt.sign(
+      {
+        id: newUser.id,
+        email: newUser.email,
+        rol: newUser.rol
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "24h"
+      }
+    );
 
     return res.status(201).json({
       message: "Usuario registrado correctamente",
-      user: userResponse
+      accessToken,
+      user: {
+        id: newUser.id,
+        email: newUser.email,
+        documento: newUser.documento,
+        tipoDocumento: newUser.tipoDocumento,
+        nombres: newUser.nombres,
+        apellidos: newUser.apellidos,
+        rol: newUser.rol
+      }
     });
-
   } catch (error) {
     console.log(error);
 
@@ -104,7 +106,12 @@ const login = async (req, res) => {
       });
     }
 
-    if (user.password !== password) {
+    const validPassword = await bcrypt.compare(
+      password,
+      user.password
+    );
+
+    if (!validPassword) {
       return res.status(401).json({
         message: "Contraseña incorrecta"
       });
@@ -116,9 +123,21 @@ const login = async (req, res) => {
       });
     }
 
+    const accessToken = jwt.sign(
+      {
+        id: user.id,
+        email: user.email,
+        rol: user.rol
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "24h"
+      }
+    );
+
     return res.status(200).json({
       message: "Login exitoso",
-      accessToken: "token-demo",
+      accessToken,
       user: {
         id: user.id,
         email: user.email,
@@ -129,7 +148,29 @@ const login = async (req, res) => {
         rol: user.rol
       }
     });
+  } catch (error) {
+    console.log(error);
 
+    return res.status(500).json({
+      message: "Error en el servidor"
+    });
+  }
+};
+
+// GET - Perfil usando el token
+const getProfile = async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.id, {
+      attributes: { exclude: ["password"] }
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "Usuario no encontrado"
+      });
+    }
+
+    return res.status(200).json(user);
   } catch (error) {
     console.log(error);
 
@@ -146,11 +187,11 @@ const getUsers = async (req, res) => {
       attributes: { exclude: ["password"] }
     });
 
-    res.json(users);
+    return res.status(200).json(users);
   } catch (error) {
     console.log(error);
 
-    res.status(500).json({
+    return res.status(500).json({
       message: "Error en el servidor"
     });
   }
@@ -169,11 +210,11 @@ const getUserById = async (req, res) => {
       });
     }
 
-    res.json(user);
+    return res.status(200).json(user);
   } catch (error) {
     console.log(error);
 
-    res.status(500).json({
+    return res.status(500).json({
       message: "Error en el servidor"
     });
   }
@@ -194,25 +235,14 @@ const updateUser = async (req, res) => {
 
     await user.update(updateData);
 
-    const userResponse = {
-      id: user.id,
-      email: user.email,
-      documento: user.documento,
-      tipoDocumento: user.tipoDocumento,
-      nombres: user.nombres,
-      apellidos: user.apellidos,
-      rol: user.rol
-    };
-
-    res.json({
+    return res.status(200).json({
       message: "Usuario actualizado",
-      user: userResponse
+      user
     });
-
   } catch (error) {
     console.log(error);
 
-    res.status(500).json({
+    return res.status(500).json({
       message: "Error en el servidor"
     });
   }
@@ -231,14 +261,13 @@ const deleteUser = async (req, res) => {
 
     await user.destroy();
 
-    res.json({
+    return res.status(200).json({
       message: "Usuario eliminado"
     });
-
   } catch (error) {
     console.log(error);
 
-    res.status(500).json({
+    return res.status(500).json({
       message: "Error en el servidor"
     });
   }
@@ -247,6 +276,7 @@ const deleteUser = async (req, res) => {
 module.exports = {
   register,
   login,
+  getProfile,
   getUsers,
   getUserById,
   updateUser,

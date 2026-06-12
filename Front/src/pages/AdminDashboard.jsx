@@ -44,36 +44,6 @@ export default function AdminDashboard() {
         </NavLink>
       </nav>
 
-      {/* ========== NUEVOS BOTONES DE ADMIN (AGREGADOS SIN ELIMINAR LOS DE ARRIBA) ========== */}
-      <nav style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginBottom: "30px", borderTop: "1px solid #eee", paddingTop: "20px" }}>
-        <NavLink to="inicio" style={adminLinkStyle}>
-          INICIO
-        </NavLink>
-
-        <NavLink to="ver-peticiones" style={adminLinkStyle}>
-          VER PETICIONES
-        </NavLink>
-
-        <NavLink to="generar-carnet" style={adminLinkStyle}>
-          GENERAR CARNET
-        </NavLink>
-
-        <NavLink to="bloqueos-reportes" style={adminLinkStyle}>
-          BLOQUEOS / REPORTE DE APRENDICES
-        </NavLink>
-
-        <NavLink to="reportes-recibidos" style={adminLinkStyle}>
-          Reportes recibidos
-        </NavLink>
-
-        <NavLink to="datos-usuarios" style={adminLinkStyle}>
-          Datos de usuarios
-        </NavLink>
-
-        <NavLink to="/login" style={{ ...adminLinkStyle({ isActive: false }), backgroundColor: "#c0392b", color: "#fff", border: "none" }}>
-          Cerrar sesión
-        </NavLink>
-      </nav>
 
       {/* 👇 AQUÍ SE MUESTRA LO QUE SELECCIONAS */}
       <div style={{ marginTop: "20px" }}>

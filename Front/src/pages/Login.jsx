@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { axiosClient } from "../api/axiosClient";
+import { Link } from "react-router-dom";
 import "../styles/login.css";
 
 export default function Login() {
@@ -156,9 +157,13 @@ if (user.rol === "administrador") {
             marginBottom: "25px",
             fontSize: "0.85rem"
           }}>
-            <div>
-              ¿No tienes una cuenta? <a href="/registro" style={{ color: "#4caf50", textDecoration: "none" }}>Regístrate</a>
-            </div>
+            ¿No tienes una cuenta?{" "}
+<Link
+  to="/register"
+  style={{ color: "#4caf50", textDecoration: "none" }}
+>
+  Regístrate
+</Link>
             <div>
               <a href="/olvide-contraseña" style={{ color: "#4caf50", textDecoration: "none" }}>¿Olvidaste tu contraseña?</a>
             </div>

@@ -50,7 +50,7 @@ const res = await axiosClient.post("/auth/register", dataToSend);
       
       alert(`Registro exitoso. Bienvenido ${formData.nombres}`);
       // Redireccionar a login
-      window.location.href = "/login";
+      window.location.href = "/";
     } catch (err) {
       const msg =
         err?.response?.data?.message ||
@@ -96,7 +96,6 @@ const res = await axiosClient.post("/auth/register", dataToSend);
         >
           <option value="aprendiz">Aprendiz</option>
 <option value="guarda">Guarda</option>
-<option value="administrador">Administrador</option>
         </select>
       </div>
 

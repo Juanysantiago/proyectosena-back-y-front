@@ -29,7 +29,7 @@ export default function Home() {
             <p>⚠️ No has iniciado sesión.</p>
 
             <div className="auth-buttons">
-              <Link to="/login" className="btn-primary">
+              <Link to="/" className="btn-primary">
                 Iniciar Sesión
               </Link>
 
@@ -43,7 +43,7 @@ export default function Home() {
         <h2>Accesos Rápidos</h2>
 
         <div className="cards-grid">
-          <Link to="/login" className="menu-card">
+          <Link to="/" className="menu-card">
             🔐
             <span>Login</span>
           </Link>

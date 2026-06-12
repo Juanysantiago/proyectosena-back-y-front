@@ -1,1 +1,0 @@
-# proyectosena-back-y-front
