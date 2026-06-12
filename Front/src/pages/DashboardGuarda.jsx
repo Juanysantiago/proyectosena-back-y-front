@@ -9,33 +9,8 @@ export default function DashboardGuarda() {
 
       <header className="guarda-header">
 
-        <div className="logo-box">
-          <img src="/logo.png" alt="Sena Parking" />
-        </div>
-
-        <button className="menu-item active">
-          INICIO
-        </button>
-
-        <button className="menu-item">
-          ESCANEAR QR
-        </button>
-
-        <button className="menu-item">
-          MANUAL DE MANEJO DE LA PLATAFORMA
-        </button>
-
-        <button className="menu-item">
-          VISUALIZAR INGRESO Y SALIDA
-        </button>
 
         <div className="menu-hamburger">
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-          >
-            ☰
-          </button>
-
           {menuOpen && (
             <div className="dropdown">
               <button
