@@ -3,7 +3,6 @@ const express = require("express");
 const {
   register,
   login,
-  getProfile,
   getUsers,
   getUserById,
   updateUser,
@@ -11,22 +10,37 @@ const {
 } = require("../controllers/authController");
 
 const verifyToken = require("../middlewares/verifyToken");
+const authorizeRoles = require("../middlewares/roles");
 
 const router = express.Router();
 
-// Registro
 router.post("/register", register);
-
-// Login
 router.post("/login", login);
 
-// Perfil usando token
-router.get("/profile", verifyToken, getProfile);
+router.get(
+  "/users",
+  verifyToken,
+  authorizeRoles("administrador"),
+  getUsers
+);
 
-// Rutas de usuarios
-router.get("/users", getUsers);
-router.get("/users/:id", getUserById);
-router.put("/users/:id", updateUser);
-router.delete("/users/:id", deleteUser);
+router.get(
+  "/users/:id",
+  verifyToken,
+  getUserById
+);
+
+router.put(
+  "/users/:id",
+  verifyToken,
+  updateUser
+);
+
+router.delete(
+  "/users/:id",
+  verifyToken,
+  authorizeRoles("administrador"),
+  deleteUser
+);
 
 module.exports = router;
