@@ -1,6 +1,10 @@
 import { NavLink } from "react-router-dom";
+import { useState } from "react";
+import logo from "../styles/logo/logo sena parking.png";
+import "../styles/guarda/NavbarGuarda.css";
 
 export default function NavbarGuarda() {
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const logout = () => {
     localStorage.clear();
@@ -8,36 +12,77 @@ export default function NavbarGuarda() {
   };
 
   return (
-    <nav
-      style={{
-        background: "#16bb00",
-        color: "white",
-        padding: "15px",
-        display: "flex",
-        justifyContent: "space-between",
-      }}
-    >
-      <div>
+    <header className="guarda-header">
 
-        <NavLink
-          to="/dashboard-guarda"
-          style={{ color: "white", marginRight: 20 }}
-        >
-          Inicio
-        </NavLink>
+  <div className="logo">
+ <img src={logo} alt="Logo Sena Parking" />
+  </div>
 
-        <NavLink
-          to="/entrada-salida"
-          style={{ color: "white" }}
-        >
-          Entrada / Salida
-        </NavLink>
+  <nav className="menu-principal">
+    <NavLink to="/dashboard-guarda">INICIO</NavLink>
 
-      </div>
+    <NavLink to="/dashboard-guarda/escanear-qr">
+      ESCANEAR QR
+    </NavLink>
+
+    <NavLink to="/dashboard-guarda/manual">
+      MANUAL
+    </NavLink>
+
+    <NavLink to="/dashboard-guarda/ingreso-salida">
+      INGRESO Y SALIDA
+    </NavLink>
+  </nav>
+
+  <div className="menu-hamburguesa">
+
+  <button
+    className="hamburguesa"
+    onClick={() => setMenuOpen(!menuOpen)}
+  >
+    ☰
+  </button>
+
+  {menuOpen && (
+    <div className="dropdown">
+
+      <NavLink
+        to="/dashboard-guarda"
+        onClick={() => setMenuOpen(false)}
+      >
+        Inicio
+      </NavLink>
+
+      <NavLink
+        to="/dashboard-guarda/escanear-qr"
+        onClick={() => setMenuOpen(false)}
+      >
+        Escanear QR
+      </NavLink>
+
+      <NavLink
+        to="/dashboard-guarda/manual"
+        onClick={() => setMenuOpen(false)}
+      >
+        Manual
+      </NavLink>
+
+      <NavLink
+        to="/dashboard-guarda/ingreso-salida"
+        onClick={() => setMenuOpen(false)}
+      >
+        Ingreso y Salida
+      </NavLink>
 
       <button onClick={logout}>
         Cerrar sesión
       </button>
-    </nav>
+
+    </div>
+  )}
+
+</div>
+
+</header>
   );
 }

@@ -1,6 +1,6 @@
 // /src/pages/ConfigGrCrud.jsx
 import { useEffect, useState } from "react";
-import { configGrApi } from "../api/configGrApi";
+import { configGrApi } from "../../api/configGrApi";
 
 export default function ConfigGrCrud() {
   const [items, setItems] = useState([]);

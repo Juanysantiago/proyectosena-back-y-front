@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { entradaSalidaApi } from "../api/entradaSalidaApi";
-import { configGrApi } from "../api/configGrApi";
+import { entradaSalidaApi } from "../../api/entradaSalidaApi";
+import { configGrApi } from "../../api/configGrApi";
+
 
 export default function EntradaSalidaCrud() {
   const [items, setItems] = useState([]);

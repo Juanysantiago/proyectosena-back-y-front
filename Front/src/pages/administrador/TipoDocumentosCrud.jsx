@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { tipoDocumentosApi } from "../api/tipoDocumentosApi";
+import { tipoDocumentosApi } from "../../api/tipoDocumentosApi";
 
 const emptyForm = {
   sigla: "",
