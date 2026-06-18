@@ -24,14 +24,26 @@ export default function Login() {
 
       const { accessToken, user } = res.data;
 
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("user", JSON.stringify({ ...user, rol }));
-if (user.rol === "administrador") {
-  window.location.href = "/dashboard-guarda";
-} else if (user.rol === "guarda") {
-  window.location.href = "/dashboard-guarda";
-} else {
-  window.location.href = "/dashboard-aprendiz";
+     localStorage.setItem("accessToken", accessToken);
+localStorage.setItem("user", JSON.stringify(user));
+
+switch (user.rol) {
+  case "administrador":
+    window.location.href = "/dashboard-admin";
+    break;
+
+  case "guarda":
+    window.location.href = "/dashboard-guarda";
+    break;
+
+  case "aprendiz":
+    window.location.href = "/dashboard-aprendiz";
+    break;
+
+  default:
+    alert("Rol no reconocido");
+    localStorage.clear();
+    window.location.href = "/";
 }
 
       alert(`Bienvenido ${user.email} - Rol: ${rol}`);
