@@ -39,22 +39,34 @@ const User = sequelize.define("users", {
     allowNull: false
   },
 
+  ficha: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+
+  celular: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+
   rol: {
-  type: DataTypes.ENUM("aprendiz", "guarda", "administrador"),
-  allowNull: false
-},
+    type: DataTypes.ENUM(
+      "aprendiz",
+      "guarda",
+      "administrador"
+    ),
+    allowNull: false
+  },
 
-pinRecuperacion: {
-  type: DataTypes.STRING,
-  allowNull: true
-},
+  pinRecuperacion: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
 
-fechaPin: {
-  type: DataTypes.DATE,
-  allowNull: true
-}
+  fechaPin: {
+    type: DataTypes.DATE,
+    allowNull: true
+  }
 });
-
-
 
 module.exports = User;

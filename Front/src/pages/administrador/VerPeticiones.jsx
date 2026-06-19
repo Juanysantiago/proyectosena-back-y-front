@@ -7,6 +7,7 @@ export default function VerPeticiones() {
   const cargarSolicitudes = async () => {
     try {
       const res = await axiosClient.get("/api/solicitudes-carnet");
+      console.log(res.data);
       setSolicitudes(res.data);
     } catch (error) {
       console.error(error);
@@ -42,88 +43,85 @@ export default function VerPeticiones() {
 
       <table className="tablaSolicitudes">
         <thead>
-          <tr>
-            <th>Aprendiz</th>
-            <th>Documento</th>
-            <th>Serial / Placa</th>
-            <th>Estado</th>
-            <th>Foto Aprendiz</th>
-            <th>Foto Vehículo</th>
-            <th>Formato</th>
-            <th>Anexos</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
+  <tr>
+    <th>Documento</th>
+    <th>Aprendiz</th>
+    <th>Serial / Placa</th>
+    <th>Estado</th>
+    <th>Foto Aprendiz</th>
+    <th>Foto Vehículo</th>
+    <th>Formato</th>
+    <th>Anexos</th>
+    <th>Acciones</th>
+  </tr>
+</thead>
 
         <tbody>
-          {solicitudes.map((s) => (
-            <tr key={s.id}>
-              <td>
-                {s.User?.nombres} {s.User?.apellidos}
-              </td>
+  {solicitudes.map((s) => (
+    <tr key={s.id}>
+      
+      <td>{s.User?.documento}</td>
 
-              <td>{s.User?.documento}</td>
+      <td>
+        {s.User?.nombres} {s.User?.apellidos}
+      </td>
 
-              <td>{s.serialPlaca}</td>
+      <td>{s.serialPlaca}</td>
 
-              <td>{s.estado}</td>
+      <td>{s.estado}</td>
 
-              <td>
-                <a
-                  href={`http://localhost:3000/uploads/${s.fotoAprendiz}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Ver
-                </a>
-              </td>
+      <td>
+        <a
+          href={`http://localhost:3000/uploads/${s.fotoAprendiz}`}
+          target="_blank"
+          rel="noreferrer"
+        >
+          Ver
+        </a>
+      </td>
 
-              <td>
-                <a
-                  href={`http://localhost:3000/uploads/${s.fotoVehiculo}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Ver
-                </a>
-              </td>
+      <td>
+        <a
+          href={`http://localhost:3000/uploads/${s.fotoVehiculo}`}
+          target="_blank"
+          rel="noreferrer"
+        >
+          Ver
+        </a>
+      </td>
 
-              <td>
-                <a
-                  href={`http://localhost:3000/uploads/${s.formatoDiligenciado}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Ver
-                </a>
-              </td>
+      <td>
+        <a
+          href={`http://localhost:3000/uploads/${s.formatoDiligenciado}`}
+          target="_blank"
+          rel="noreferrer"
+        >
+          Ver
+        </a>
+      </td>
 
-              <td>
-                {s.documentosAnexos ? (
-                  <a
-                    href={`http://localhost:3000/uploads/${s.documentosAnexos}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Ver
-                  </a>
-                ) : (
-                  "Sin anexos"
-                )}
-              </td>
+      <td>
+        {s.documentosAnexos ? (
+          <a
+            href={`http://localhost:3000/uploads/${s.documentosAnexos}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Ver
+          </a>
+        ) : (
+          "Sin anexos"
+        )}
+      </td>
 
-              <td>
-                <button onClick={() => aprobar(s.id)}>
-                  Aprobar
-                </button>
+      <td>
+        <button onClick={() => aprobar(s.id)}>Aprobar</button>
+        <button onClick={() => rechazar(s.id)}>Rechazar</button>
+      </td>
 
-                <button onClick={() => rechazar(s.id)}>
-                  Rechazar
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
+    </tr>
+  ))}
+</tbody>
       </table>
     </div>
   );

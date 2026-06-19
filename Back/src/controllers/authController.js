@@ -7,12 +7,14 @@ const register = async (req, res) => {
   try {
     const {
       email,
-      password,
-      documento,
-      tipoDocumento,
-      nombres,
-      apellidos,
-      rol
+    password,
+    documento,
+    tipoDocumento,
+    nombres,
+    apellidos,
+    ficha,
+    celular,
+    rol
     } = req.body;
 
     if (
@@ -48,6 +50,8 @@ const register = async (req, res) => {
       tipoDocumento,
       nombres,
       apellidos,
+      ficha,
+      celular,
       rol
     });
 
@@ -73,6 +77,8 @@ const register = async (req, res) => {
         tipoDocumento: newUser.tipoDocumento,
         nombres: newUser.nombres,
         apellidos: newUser.apellidos,
+        ficha: newUser.ficha,
+        celular: newUser.celular,
         rol: newUser.rol
       }
     });
@@ -145,6 +151,8 @@ const login = async (req, res) => {
         tipoDocumento: user.tipoDocumento,
         nombres: user.nombres,
         apellidos: user.apellidos,
+        ficha: user.ficha,
+        celular: user.celular,
         rol: user.rol
       }
     });

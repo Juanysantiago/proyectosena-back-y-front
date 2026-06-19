@@ -9,6 +9,11 @@ const SolicitudCarnet = sequelize.define("solicitudes_carnet", {
     autoIncrement: true
   },
 
+  userId: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+
   fotoAprendiz: {
     type: DataTypes.STRING,
     allowNull: false
@@ -35,15 +40,12 @@ const SolicitudCarnet = sequelize.define("solicitudes_carnet", {
   },
 
   estado: {
-    type: DataTypes.ENUM(
-      "pendiente",
-      "aprobada",
-      "rechazada"
-    ),
+    type: DataTypes.ENUM("pendiente", "aprobada", "rechazada"),
     defaultValue: "pendiente"
   }
 });
 
+// 🔥 ESTO ES LO QUE TE FALTA
 User.hasMany(SolicitudCarnet, {
   foreignKey: "userId"
 });
