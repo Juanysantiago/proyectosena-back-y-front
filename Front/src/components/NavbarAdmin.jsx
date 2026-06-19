@@ -1,56 +1,133 @@
 import { NavLink } from "react-router-dom";
-
-const linkStyle = ({ isActive }) => ({
-  padding: "10px 15px",
-  borderRadius: "6px",
-  textDecoration: "none",
-  color: isActive ? "#fff" : "#333",
-  backgroundColor: isActive ? "#16bb00" : "transparent",
-  fontWeight: "500",
-});
+import { useState } from "react";
+import logo from "../Styles/logo/logo sena parking.png";
+import "../Styles/administrador/navbarAdmin.css";
 
 export default function NavbarAdmin() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   const logout = () => {
     localStorage.clear();
     window.location.href = "/";
   };
 
   return (
-    <nav
-      style={{
-        background: "#fff",
-        padding: "15px 25px",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        boxShadow: "0 2px 10px rgba(0,0,0,.08)",
-      }}
-    >
-      <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-        <h2 style={{ color: "#16bb00" }}>SenaParking</h2>
+    <nav className="navbar-admin">
+      <div className="navbar-left">
 
-        <NavLink to="/dashboard-admin" style={linkStyle}>
+        <div className="logo-admin">
+  <img
+    src={logo}
+    alt="SenaParking"
+  />
+</div>
+
+        <NavLink
+          end
+          to="/dashboard-admin"
+          className={({ isActive }) =>
+            isActive
+              ? "nav-link-admin active"
+              : "nav-link-admin"
+          }
+        >
           Inicio
         </NavLink>
 
-        <NavLink to="/tipo-documentos" style={linkStyle}>
-          Tipo Documentos
+        <NavLink
+          to="/dashboard-admin/ver-peticiones"
+          className={({ isActive }) =>
+            isActive
+              ? "nav-link-admin active"
+              : "nav-link-admin"
+          }
+        >
+          Ver Peticiones
         </NavLink>
 
-        <NavLink to="/vehiculos" style={linkStyle}>
-          Vehículos
+        <NavLink
+          to="/dashboard-admin/generar-carnet"
+          className={({ isActive }) =>
+            isActive
+              ? "nav-link-admin active"
+              : "nav-link-admin"
+          }
+        >
+          Generar Carnet
         </NavLink>
 
-        <NavLink to="/config-gr" style={linkStyle}>
-          Configuración GR
-        </NavLink>
-
-        <NavLink to="/entrada-salida" style={linkStyle}>
-          Entrada/Salida
+        <NavLink
+          to="/dashboard-admin/bloqueos"
+          className={({ isActive }) =>
+            isActive
+              ? "nav-link-admin active"
+              : "nav-link-admin"
+          }
+        >
+          Bloqueos / Reportes
         </NavLink>
       </div>
 
-      <button onClick={logout}>Cerrar sesión</button>
+    <div className="menu-hamburguesa">
+  <button
+    className="menu-btn"
+    onClick={() => setMenuOpen(!menuOpen)}
+  >
+    {menuOpen ? "✕" : "☰"}
+  </button>
+
+  {menuOpen && (
+    <div className="dropdown-admin">
+
+      <NavLink
+        to="/dashboard-admin/tipo-documentos"
+        onClick={() => setMenuOpen(false)}
+      >
+        Tipo Documentos
+      </NavLink>
+
+      <NavLink
+        to="/dashboard-admin/vehiculos"
+        onClick={() => setMenuOpen(false)}
+      >
+        Vehículos
+      </NavLink>
+
+      <NavLink
+        to="/dashboard-admin/config-gr"
+        onClick={() => setMenuOpen(false)}
+      >
+        Configuración GR
+      </NavLink>
+
+      <NavLink
+        to="/dashboard-admin/entrada-salida"
+        onClick={() => setMenuOpen(false)}
+      >
+        Entrada / Salida
+      </NavLink>
+
+      <NavLink
+        to="/dashboard-admin/datos-usuarios"
+        onClick={() => setMenuOpen(false)}
+      >
+        Datos Usuarios
+      </NavLink>
+
+      <NavLink
+        to="/dashboard-admin/reportes"
+        onClick={() => setMenuOpen(false)}
+      >
+        Reportes Recibidos
+      </NavLink>
+
+      <button onClick={logout}>
+        Cerrar Sesión
+      </button>
+
+    </div>
+  )}
+</div>
     </nav>
   );
 }

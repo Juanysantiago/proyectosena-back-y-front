@@ -1,25 +1,31 @@
 import "./App.css";
 
-import Home from "./pages/Home";
 import Login from "./pages/Login";
 import OlvideContraseña from "./pages/OlvideContraseña";
 import VerificarCodigo from "./pages/VerificarCodigo";
 import Register from "./pages/Register";
 
+// Administrador
+import DashboardAdmin from "./pages/administrador/DashboardAdmin";
+import VerPeticiones from "./pages/administrador/VerPeticiones";
+import GenerarCarnet from "./pages/administrador/GenerarCarnet";
+import Bloqueos from "./pages/administrador/Bloqueos";
+import DatosUsuarios from "./pages/administrador/DatosUsuarios";
+import ReportesRecibidos from "./pages/administrador/ReportesRecibidos";
+import InicioAdmin from "./pages/administrador/InicioAdmin";
 import TipoDocumentosCrud from "./pages/administrador/TipoDocumentosCrud";
 import VehiculosCrud from "./pages/administrador/VehiculosCrud";
 import ConfigGrCrud from "./pages/administrador/ConfigGrCrud";
 import EntradaSalidaCrud from "./pages/administrador/EntradaSalidaCrud";
 
+// Guarda
 import DashboardGuarda from "./pages/guarda/DashboardGuarda";
-
-// Módulo Guarda
 import InicioGuarda from "./pages/guarda/InicioGuarda";
 import EscanearQR from "./pages/guarda/EscanearQR";
 import ManualPlataforma from "./pages/guarda/ManualPlataforma";
 import IngresoSalida from "./pages/guarda/IngresoSalida";
 
-// Módulo Aprendiz
+// Aprendiz
 import DashboardAprendiz from "./pages/aprendiz/DashboardAprendiz";
 import InicioAprendiz from "./pages/aprendiz/InicioAprendiz";
 import VisualizarCarnet from "./pages/aprendiz/VisualizarCarnet";
@@ -45,23 +51,73 @@ export default function App() {
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-   <Route
-  path="/olvide-contraseña"
-  element={<OlvideContraseña />}
-/>
-
-<Route
-  path="/verificar-codigo"
-  element={<VerificarCodigo />}
-/>
-
-        {/* Dashboard Admin */}
         <Route
-          path="/dashboard-admin"
-          element={<Home />}
+          path="/olvide-contraseña"
+          element={<OlvideContraseña />}
         />
 
-        {/* Dashboard Guarda */}
+        <Route
+          path="/verificar-codigo"
+          element={<VerificarCodigo />}
+        />
+
+        {/* ================= ADMINISTRADOR ================= */}
+        <Route
+  path="/dashboard-admin"
+  element={<DashboardAdmin />}
+>
+  <Route
+    index
+    element={<InicioAdmin />}
+  />
+
+  <Route
+    path="ver-peticiones"
+    element={<VerPeticiones />}
+  />
+
+  <Route
+    path="generar-carnet"
+    element={<GenerarCarnet />}
+  />
+
+  <Route
+    path="bloqueos"
+    element={<Bloqueos />}
+  />
+
+  <Route
+    path="datos-usuarios"
+    element={<DatosUsuarios />}
+  />
+
+  <Route
+    path="reportes"
+    element={<ReportesRecibidos />}
+  />
+
+  <Route
+    path="tipo-documentos"
+    element={<TipoDocumentosCrud />}
+  />
+
+  <Route
+    path="vehiculos"
+    element={<VehiculosCrud />}
+  />
+
+  <Route
+    path="config-gr"
+    element={<ConfigGrCrud />}
+  />
+
+  <Route
+    path="entrada-salida"
+    element={<EntradaSalidaCrud />}
+  />
+</Route>
+
+        {/* ================= GUARDA ================= */}
         <Route
           path="/dashboard-guarda"
           element={<DashboardGuarda />}
@@ -87,7 +143,7 @@ export default function App() {
           />
         </Route>
 
-        {/* Dashboard Aprendiz */}
+        {/* ================= APRENDIZ ================= */}
         <Route
           path="/dashboard-aprendiz"
           element={<DashboardAprendiz />}
@@ -127,27 +183,6 @@ export default function App() {
             element={<VencimientoCarnet />}
           />
         </Route>
-
-        {/* CRUD */}
-        <Route
-          path="/tipo-documentos"
-          element={<TipoDocumentosCrud />}
-        />
-
-        <Route
-          path="/vehiculos"
-          element={<VehiculosCrud />}
-        />
-
-        <Route
-          path="/config-gr"
-          element={<ConfigGrCrud />}
-        />
-
-        <Route
-          path="/entrada-salida"
-          element={<EntradaSalidaCrud />}
-        />
 
         {/* Ruta no encontrada */}
         <Route

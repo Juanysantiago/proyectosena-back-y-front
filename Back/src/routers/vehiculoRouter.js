@@ -1,5 +1,6 @@
 const express = require("express");
 
+
 const {
   createVehiculo,
   getVehiculos,
@@ -8,16 +9,18 @@ const {
   deleteVehiculo,
 } = require("../controllers/vehiculoController");
 
+const verifyToken = require("../middlewares/verifyToken");
+
 const router = express.Router();
 
-router.get("/", getVehiculos);
+router.get("/", verifyToken, getVehiculos);
 
-router.post("/", createVehiculo);
+router.post("/", verifyToken, createVehiculo);
 
-router.get("/:id", getVehiculoById);
+router.get("/:id", verifyToken, getVehiculoById);
 
-router.put("/:id", updateVehiculo);
+router.put("/:id", verifyToken, updateVehiculo);
 
-router.delete("/:id", deleteVehiculo);
+router.delete("/:id", verifyToken, deleteVehiculo);
 
 module.exports = router;

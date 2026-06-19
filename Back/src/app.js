@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 const express = require("express");
+const path = require("path");
 const sequelize = require("./config/database");
 
 const app = express();
@@ -8,6 +9,7 @@ const app = express();
 /* IMPORTAR MODELOS */
 require("./models/User");
 require("./models/Vehiculo");
+require("./models/aprendiz/SolicitudCarnet");
 
 /* CORS */
 app.use((req, res, next) => {
@@ -30,6 +32,11 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
+app.use(
+  "/uploads",
+  express.static(path.join(__dirname, "../uploads"))
+);
+
 app.get("/", (req, res) => {
   res.json({
     message: "API SENA Parking funcionando correctamente"
@@ -42,13 +49,17 @@ app.use("/api", require("./routers/jornadaRouter"));
 app.use("/api", require("./routers/entradaSalidaAprendizRouter"));
 app.use("/api", require("./routers/configGrRouter"));
 app.use("/api/vehiculos", require("./routers/vehiculoRouter"));
+app.use(
+  "/api",
+  require("./routers/aprendiz/solicitudCarnetRouter")
+);
 
 sequelize
   .authenticate()
   .then(async () => {
     console.log("✅ DB conectada correctamente");
 
-    await sequelize.sync({ alter: true });
+    await sequelize.sync();
 
     console.log("✅ Tablas sincronizadas");
   })

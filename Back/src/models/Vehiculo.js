@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
+const User = require("./User");
 
 const Vehiculo = sequelize.define(
   "vehiculos",
@@ -8,6 +9,15 @@ const Vehiculo = sequelize.define(
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
+    },
+
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "users",
+        key: "id",
+      },
     },
 
     tipo: {
@@ -64,5 +74,14 @@ const Vehiculo = sequelize.define(
     tableName: "vehiculos",
   }
 );
+
+// Relación Usuario -> Vehículos
+User.hasMany(Vehiculo, {
+  foreignKey: "userId",
+});
+
+Vehiculo.belongsTo(User, {
+  foreignKey: "userId",
+});
 
 module.exports = Vehiculo;

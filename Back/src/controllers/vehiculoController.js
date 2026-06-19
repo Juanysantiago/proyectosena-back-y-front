@@ -23,7 +23,10 @@ const createVehiculo = async (req, res) => {
       });
     }
 
-    const nuevo = await Vehiculo.create(req.body);
+   const nuevo = await Vehiculo.create({
+  ...req.body,
+  userId: req.user.id
+});
 
     return res.status(201).json({
       message: "Vehículo creado correctamente",
