@@ -42,7 +42,19 @@ const User = sequelize.define("users", {
   rol: {
   type: DataTypes.ENUM("aprendiz", "guarda", "administrador"),
   allowNull: false
+},
+
+pinRecuperacion: {
+  type: DataTypes.STRING,
+  allowNull: true
+},
+
+fechaPin: {
+  type: DataTypes.DATE,
+  allowNull: true
 }
 });
+
+
 
 module.exports = User;

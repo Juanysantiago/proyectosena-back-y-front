@@ -157,6 +157,53 @@ const login = async (req, res) => {
   }
 };
 
+const recuperarPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        message: "Debe ingresar un correo"
+      });
+    }
+
+    const user = await User.findOne({
+      where: { email }
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "No existe un usuario con ese correo"
+      });
+    }
+
+    const pin = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
+
+    user.pinRecuperacion = pin;
+    user.fechaPin = new Date();
+
+    await user.save();
+
+    console.log(
+      `PIN de recuperación para ${email}: ${pin}`
+    );
+
+    return res.status(200).json({
+      message: "PIN enviado correctamente"
+    });
+
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      message: "Error en el servidor"
+    });
+  }
+};
+
+
 // GET - Perfil usando el token
 const getProfile = async (req, res) => {
   try {
@@ -273,9 +320,102 @@ const deleteUser = async (req, res) => {
   }
 };
 
+const verificarPin = async (req, res) => {
+  try {
+    const { email, pin } = req.body;
+
+    const user = await User.findOne({
+      where: { email }
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "Usuario no encontrado"
+      });
+    }
+
+   console.log("PIN BD:", user.pinRecuperacion);
+console.log("PIN recibido:", pin);
+
+if (String(user.pinRecuperacion) !== String(pin)) {
+  return res.status(400).json({
+    message: "Código incorrecto"
+  });
+}
+
+    const accessToken = jwt.sign(
+      {
+        id: user.id,
+        email: user.email,
+        rol: user.rol
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "24h"
+      }
+    );
+
+    return res.status(200).json({
+      message: "Código correcto",
+      accessToken,
+      user
+    });
+
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      message: "Error en servidor"
+    });
+  }
+};
+
+
+const reenviarPin = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const user = await User.findOne({
+      where: { email }
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "Usuario no encontrado"
+      });
+    }
+
+    const pin = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
+
+    user.pinRecuperacion = pin;
+    user.fechaPin = new Date();
+
+    await user.save();
+
+    console.log(
+      `Nuevo PIN para ${email}: ${pin}`
+    );
+
+    return res.status(200).json({
+      message: "Código reenviado"
+    });
+
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      message: "Error en servidor"
+    });
+  }
+};
 module.exports = {
   register,
   login,
+  recuperarPassword,
+  verificarPin,
+  reenviarPin,
   getProfile,
   getUsers,
   getUserById,

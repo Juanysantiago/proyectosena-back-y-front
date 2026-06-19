@@ -176,9 +176,17 @@ switch (user.rol) {
 >
   Regístrate
 </Link>
-            <div>
-              <a href="/olvide-contraseña" style={{ color: "#4caf50", textDecoration: "none" }}>¿Olvidaste tu contraseña?</a>
-            </div>
+           <div>
+  <Link
+    to="/olvide-contraseña"
+    style={{
+      color: "#4caf50",
+      textDecoration: "none"
+    }}
+  >
+    ¿Olvidaste tu contraseña?
+  </Link>
+</div>
           </div>
 
           {error && <div style={{

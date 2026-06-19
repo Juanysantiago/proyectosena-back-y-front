@@ -6,7 +6,10 @@ const {
   getUsers,
   getUserById,
   updateUser,
-  deleteUser
+  deleteUser,
+  recuperarPassword,
+verificarPin,
+reenviarPin,
 } = require("../controllers/authController");
 
 const verifyToken = require("../middlewares/verifyToken");
@@ -16,6 +19,22 @@ const router = express.Router();
 
 router.post("/register", register);
 router.post("/login", login);
+
+
+router.post(
+  "/recuperar-password",
+  recuperarPassword
+);
+
+router.post(
+  "/verificar-pin",
+  verificarPin
+);
+
+router.post(
+  "/reenviar-pin",
+  reenviarPin
+);
 
 router.get(
   "/users",

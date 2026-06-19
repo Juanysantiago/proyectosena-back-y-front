@@ -1,0 +1,91 @@
+.verificar-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(
+    135deg,
+    #ffffff 0%,
+    #e8f5e9 100%
+  );
+  padding: 20px;
+}
+
+.verificar-card {
+  background: white;
+  width: 100%;
+  max-width: 450px;
+  padding: 40px;
+  border-radius: 15px;
+  border: 1px solid #4caf50;
+  box-shadow: 0 10px 30px rgba(0,0,0,.1);
+  text-align: center;
+}
+
+.verificar-card h2 {
+  color: #2e7d32;
+  margin-bottom: 15px;
+}
+
+.verificar-card p {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 25px;
+}
+
+.verificar-card input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 18px;
+  text-align: center;
+  letter-spacing: 5px;
+  margin-bottom: 20px;
+}
+
+.verificar-card input:focus {
+  outline: none;
+  border-color: #4caf50;
+  box-shadow: 0 0 5px rgba(76,175,80,.3);
+}
+
+.verificar-card button[type="submit"] {
+  width: 100%;
+  padding: 12px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.verificar-card button[type="submit"]:hover {
+  background: #2e7d32;
+}
+
+.reenviar-btn {
+  margin-top: 15px;
+  background: transparent;
+  border: none;
+  color: #4caf50;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.reenviar-btn:hover {
+  text-decoration: underline;
+}
+
+.success-message {
+  margin-top: 15px;
+  color: #2e7d32;
+  font-weight: bold;
+}
+
+.error-message {
+  margin-top: 15px;
+  color: #c62828;
+  font-weight: bold;
+}

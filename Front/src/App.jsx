@@ -2,6 +2,8 @@ import "./App.css";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import OlvideContraseña from "./pages/OlvideContraseña";
+import VerificarCodigo from "./pages/VerificarCodigo";
 import Register from "./pages/Register";
 
 import TipoDocumentosCrud from "./pages/administrador/TipoDocumentosCrud";
@@ -42,6 +44,16 @@ export default function App() {
         {/* Login */}
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
+   <Route
+  path="/olvide-contraseña"
+  element={<OlvideContraseña />}
+/>
+
+<Route
+  path="/verificar-codigo"
+  element={<VerificarCodigo />}
+/>
 
         {/* Dashboard Admin */}
         <Route
