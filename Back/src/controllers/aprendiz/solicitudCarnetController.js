@@ -1,11 +1,21 @@
-const SolicitudCarnet = require("../../models/aprendiz/SolicitudCarnet");
 const User = require("../../models/User");
+const SolicitudCarnet = require("../../models/aprendiz/SolicitudCarnet");
 
 const crearSolicitud = async (req, res) => {
   try {
+    if (
+      !req.files ||
+      !req.files.fotoAprendiz ||
+      !req.files.fotoVehiculo ||
+      !req.files.formatoDiligenciado
+    ) {
+      return res.status(400).json({
+        message: "Faltan archivos obligatorios"
+      });
+    }
+
     const solicitud = await SolicitudCarnet.create({
       userId: req.user.id,
-
       tipoVehiculo: req.body.tipoVehiculo,
       marca: req.body.marca,
       color: req.body.color,
@@ -24,80 +34,80 @@ const crearSolicitud = async (req, res) => {
       estado: "pendiente"
     });
 
-    res.status(201).json(solicitud);
+    return res.status(201).json(solicitud);
 
   } catch (error) {
+    console.error("ERROR CREAR SOLICITUD:", error);
 
-    console.error(error);
-
-    res.status(500).json({
-      message: error.message
+    return res.status(500).json({
+      message: "Error al crear la solicitud",
+      error: error.message
     });
   }
 };
 
 const listarSolicitudes = async (req, res) => {
   try {
-
     const solicitudes = await SolicitudCarnet.findAll({
       include: [
         {
           model: User,
-          attributes: [
-            "id",
-            "documento",
-            "nombres",
-            "apellidos",
-            "ficha"
-          ]
+          as: "user",
+          attributes: ["id", "documento", "nombres", "apellidos", "ficha"]
         }
       ],
       order: [["createdAt", "DESC"]]
     });
 
-    res.json(solicitudes);
-
+    return res.json(solicitudes);
   } catch (error) {
+    console.error("ERROR LISTAR SOLICITUDES:", error);
 
-    res.status(500).json({
-      message: error.message
+    return res.status(500).json({
+      message: "Error al listar solicitudes",
+      error: error.message
     });
-
   }
 };
 
 const aprobarSolicitud = async (req, res) => {
+  try {
+    const solicitud = await SolicitudCarnet.findByPk(req.params.id);
 
-  const solicitud = await SolicitudCarnet.findByPk(req.params.id);
+    if (!solicitud) {
+      return res.status(404).json({ message: "Solicitud no encontrada" });
+    }
 
-  if (!solicitud) {
-    return res.status(404).json({
-      message: "Solicitud no encontrada"
+    solicitud.estado = "aprobada";
+    await solicitud.save();
+
+    return res.json(solicitud);
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error al aprobar solicitud",
+      error: error.message
     });
   }
-
-  solicitud.estado = "aprobada";
-
-  await solicitud.save();
-
-  res.json(solicitud);
 };
 
 const rechazarSolicitud = async (req, res) => {
+  try {
+    const solicitud = await SolicitudCarnet.findByPk(req.params.id);
 
-  const solicitud = await SolicitudCarnet.findByPk(req.params.id);
+    if (!solicitud) {
+      return res.status(404).json({ message: "Solicitud no encontrada" });
+    }
 
-  if (!solicitud) {
-    return res.status(404).json({
-      message: "Solicitud no encontrada"
+    solicitud.estado = "rechazada";
+    await solicitud.save();
+
+    return res.json(solicitud);
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error al rechazar solicitud",
+      error: error.message
     });
   }
-
-  solicitud.estado = "rechazada";
-
-  await solicitud.save();
-
-  res.json(solicitud);
 };
 
 module.exports = {

@@ -1,8 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../../config/database");
-const User = require("../User");
 
-const SolicitudCarnet = sequelize.define("solicitudes_carnet", {
+const SolicitudCarnet = sequelize.define("SolicitudCarnet", {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -68,14 +67,6 @@ const SolicitudCarnet = sequelize.define("solicitudes_carnet", {
     type: DataTypes.ENUM("pendiente", "aprobada", "rechazada"),
     defaultValue: "pendiente"
   }
-});
-
-User.hasMany(SolicitudCarnet, {
-  foreignKey: "userId"
-});
-
-SolicitudCarnet.belongsTo(User, {
-  foreignKey: "userId"
 });
 
 module.exports = SolicitudCarnet;
