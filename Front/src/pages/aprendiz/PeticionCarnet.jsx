@@ -3,7 +3,14 @@ import { axiosClient } from "../../api/axiosClient";
 import "../../styles/aprendiz/peticionCarnet.css";
 
 export default function PeticionCarnet() {
+
+  const [tipoVehiculo, setTipoVehiculo] = useState("bicicleta");
+
+  const [marca, setMarca] = useState("");
+  const [color, setColor] = useState("");
   const [serialPlaca, setSerialPlaca] = useState("");
+  const [cilindraje, setCilindraje] = useState("");
+  const [modelo, setModelo] = useState("");
 
   const [fotoAprendiz, setFotoAprendiz] = useState(null);
   const [fotoVehiculo, setFotoVehiculo] = useState(null);
@@ -11,16 +18,24 @@ export default function PeticionCarnet() {
   const [documentosAnexos, setDocumentosAnexos] = useState(null);
 
   const [loading, setLoading] = useState(false);
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const enviarSolicitud = async (e) => {
     e.preventDefault();
 
     try {
+
       setLoading(true);
 
       const formData = new FormData();
 
+      formData.append("tipoVehiculo", tipoVehiculo);
+      formData.append("marca", marca);
+      formData.append("color", color);
       formData.append("serialPlaca", serialPlaca);
+      formData.append("cilindraje", cilindraje);
+      formData.append("modelo", modelo);
+
       formData.append("fotoAprendiz", fotoAprendiz);
       formData.append("fotoVehiculo", fotoVehiculo);
       formData.append("formatoDiligenciado", formatoDiligenciado);
@@ -30,17 +45,17 @@ export default function PeticionCarnet() {
       }
 
       await axiosClient.post(
-  "/api/solicitudes-carnet",
-  formData
-);
+        "/api/solicitudes-carnet",
+        formData
+      );
 
       alert("Solicitud enviada correctamente.");
 
+      setMarca("");
+      setColor("");
       setSerialPlaca("");
-      setFotoAprendiz(null);
-      setFotoVehiculo(null);
-      setFormatoDiligenciado(null);
-      setDocumentosAnexos(null);
+      setModelo("");
+      setCilindraje("");
 
       document.getElementById("fotoAprendiz").value = "";
       document.getElementById("fotoVehiculo").value = "";
@@ -48,34 +63,124 @@ export default function PeticionCarnet() {
       document.getElementById("documentosAnexos").value = "";
 
     } catch (error) {
-      console.error(error);
 
       alert(
         error.response?.data?.message ||
         "Error al enviar la solicitud."
       );
+
     } finally {
+
       setLoading(false);
+
     }
   };
 
   return (
+
     <div className="peticion-container">
 
       <h2>Solicitud de Carnet</h2>
 
       <form onSubmit={enviarSolicitud}>
 
-        <label>Serial o placa</label>
+<label>Documento</label>
+
+<input
+  type="text"
+  value={user?.documento || ""}
+  disabled
+/>
+
+<label>Nombre Completo</label>
+
+<input
+  type="text"
+  value={`${user?.nombres || ""} ${user?.apellidos || ""}`}
+  disabled
+/>
+
+<label>Ficha</label>
+
+<input
+  type="text"
+  value={user?.ficha || ""}
+  disabled
+/>
+
+        <label>Tipo de vehículo</label>
+
+        <select
+          value={tipoVehiculo}
+          onChange={(e)=>setTipoVehiculo(e.target.value)}
+        >
+          <option value="bicicleta">Bicicleta</option>
+          <option value="moto">Moto</option>
+        </select>
+
+        <label>Marca</label>
 
         <input
           type="text"
-          value={serialPlaca}
-          onChange={(e) =>
-            setSerialPlaca(e.target.value)
-          }
+          value={marca}
+          onChange={(e)=>setMarca(e.target.value)}
           required
         />
+
+        <label>Color</label>
+
+        <input
+          type="text"
+          value={color}
+          onChange={(e)=>setColor(e.target.value)}
+          required
+        />
+
+        {tipoVehiculo==="bicicleta" ? (
+
+          <>
+            <label>Serial</label>
+
+            <input
+              type="text"
+              value={serialPlaca}
+              onChange={(e)=>setSerialPlaca(e.target.value)}
+              required
+            />
+          </>
+
+        ) : (
+
+          <>
+
+            <label>Placa</label>
+
+            <input
+              type="text"
+              value={serialPlaca}
+              onChange={(e)=>setSerialPlaca(e.target.value)}
+              required
+            />
+
+            <label>Cilindraje</label>
+
+            <input
+              type="text"
+              value={cilindraje}
+              onChange={(e)=>setCilindraje(e.target.value)}
+            />
+
+            <label>Modelo</label>
+
+            <input
+              type="text"
+              value={modelo}
+              onChange={(e)=>setModelo(e.target.value)}
+            />
+
+          </>
+
+        )}
 
         <label>Foto del aprendiz</label>
 
@@ -83,9 +188,7 @@ export default function PeticionCarnet() {
           id="fotoAprendiz"
           type="file"
           accept="image/*"
-          onChange={(e) =>
-            setFotoAprendiz(e.target.files[0])
-          }
+          onChange={(e)=>setFotoAprendiz(e.target.files[0])}
           required
         />
 
@@ -95,9 +198,7 @@ export default function PeticionCarnet() {
           id="fotoVehiculo"
           type="file"
           accept="image/*"
-          onChange={(e) =>
-            setFotoVehiculo(e.target.files[0])
-          }
+          onChange={(e)=>setFotoVehiculo(e.target.files[0])}
           required
         />
 
@@ -106,9 +207,7 @@ export default function PeticionCarnet() {
         <input
           id="formatoDiligenciado"
           type="file"
-          onChange={(e) =>
-            setFormatoDiligenciado(e.target.files[0])
-          }
+          onChange={(e)=>setFormatoDiligenciado(e.target.files[0])}
           required
         />
 
@@ -117,22 +216,20 @@ export default function PeticionCarnet() {
         <input
           id="documentosAnexos"
           type="file"
-          onChange={(e) =>
-            setDocumentosAnexos(e.target.files[0])
-          }
+          onChange={(e)=>setDocumentosAnexos(e.target.files[0])}
         />
 
         <button
           type="submit"
           disabled={loading}
         >
-          {loading
-            ? "Enviando..."
-            : "Enviar Solicitud"}
+          {loading ? "Enviando..." : "Enviar Solicitud"}
         </button>
 
       </form>
 
     </div>
+
   );
+
 }

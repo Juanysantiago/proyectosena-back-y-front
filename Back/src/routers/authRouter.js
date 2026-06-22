@@ -8,8 +8,9 @@ const {
   updateUser,
   deleteUser,
   recuperarPassword,
-verificarPin,
-reenviarPin,
+  verificarPin,
+  reenviarPin,
+  getCarnet
 } = require("../controllers/authController");
 
 const verifyToken = require("../middlewares/verifyToken");
@@ -20,21 +21,9 @@ const router = express.Router();
 router.post("/register", register);
 router.post("/login", login);
 
-
-router.post(
-  "/recuperar-password",
-  recuperarPassword
-);
-
-router.post(
-  "/verificar-pin",
-  verificarPin
-);
-
-router.post(
-  "/reenviar-pin",
-  reenviarPin
-);
+router.post("/recuperar-password", recuperarPassword);
+router.post("/verificar-pin", verificarPin);
+router.post("/reenviar-pin", reenviarPin);
 
 router.get(
   "/users",
@@ -61,5 +50,10 @@ router.delete(
   authorizeRoles("administrador"),
   deleteUser
 );
+
+console.log("verifyToken:", verifyToken);
+console.log("authorizeRoles:", authorizeRoles);
+// CARNET
+router.get("/carnet/:id", verifyToken, getCarnet);
 
 module.exports = router;

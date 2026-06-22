@@ -1,9 +1,13 @@
-const authorizeRoles = (...roles) => {
+const authorizeRoles = (...rolesPermitidos) => {
   return (req, res, next) => {
-    if (!roles.includes(req.user.rol)) {
-      return res.status(403).json({
-        message: "No autorizado"
-      });
+    const userRole = req.user?.rol;
+
+    if (!userRole) {
+      return res.status(401).json({ message: "No autenticado" });
+    }
+
+    if (!rolesPermitidos.includes(userRole)) {
+      return res.status(403).json({ message: "No autorizado" });
     }
 
     next();

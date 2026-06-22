@@ -14,17 +14,42 @@ const SolicitudCarnet = sequelize.define("solicitudes_carnet", {
     allowNull: false
   },
 
+  tipoVehiculo: {
+    type: DataTypes.ENUM("bicicleta", "moto"),
+    allowNull: false
+  },
+
+  marca: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+
+  color: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+
+  serialPlaca: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+
+  cilindraje: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+
+  modelo: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+
   fotoAprendiz: {
     type: DataTypes.STRING,
     allowNull: false
   },
 
   fotoVehiculo: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-
-  serialPlaca: {
     type: DataTypes.STRING,
     allowNull: false
   },
@@ -45,7 +70,6 @@ const SolicitudCarnet = sequelize.define("solicitudes_carnet", {
   }
 });
 
-// 🔥 ESTO ES LO QUE TE FALTA
 User.hasMany(SolicitudCarnet, {
   foreignKey: "userId"
 });

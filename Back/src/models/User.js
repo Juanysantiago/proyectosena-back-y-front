@@ -66,7 +66,13 @@ const User = sequelize.define("users", {
   fechaPin: {
     type: DataTypes.DATE,
     allowNull: true
-  }
+  },
+
+  qrCode: {
+  type: DataTypes.STRING,
+  allowNull: true,
+  unique: true
+},
 });
 
 module.exports = User;

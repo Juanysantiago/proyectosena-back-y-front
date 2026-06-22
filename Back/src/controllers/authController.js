@@ -1,20 +1,22 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { v4: uuidv4 } = require("uuid");
+const QRCode = require("qrcode");
 
 // POST - Registrar usuario
 const register = async (req, res) => {
   try {
     const {
       email,
-    password,
-    documento,
-    tipoDocumento,
-    nombres,
-    apellidos,
-    ficha,
-    celular,
-    rol
+      password,
+      documento,
+      tipoDocumento,
+      nombres,
+      apellidos,
+      ficha,
+      celular,
+      rol
     } = req.body;
 
     if (
@@ -43,6 +45,8 @@ const register = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    const qrCode = uuidv4();
+
     const newUser = await User.create({
       email,
       password: hashedPassword,
@@ -52,7 +56,8 @@ const register = async (req, res) => {
       apellidos,
       ficha,
       celular,
-      rol
+      rol,
+      qrCode
     });
 
     const accessToken = jwt.sign(
@@ -62,9 +67,7 @@ const register = async (req, res) => {
         rol: newUser.rol
       },
       process.env.JWT_SECRET,
-      {
-        expiresIn: "24h"
-      }
+      { expiresIn: "24h" }
     );
 
     return res.status(201).json({
@@ -79,12 +82,12 @@ const register = async (req, res) => {
         apellidos: newUser.apellidos,
         ficha: newUser.ficha,
         celular: newUser.celular,
-        rol: newUser.rol
+        rol: newUser.rol,
+        qrCode: newUser.qrCode
       }
     });
   } catch (error) {
     console.log(error);
-
     return res.status(500).json({
       message: "Error en el servidor"
     });
@@ -102,9 +105,7 @@ const login = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({
-      where: { email }
-    });
+    const user = await User.findOne({ where: { email } });
 
     if (!user) {
       return res.status(404).json({
@@ -112,10 +113,7 @@ const login = async (req, res) => {
       });
     }
 
-    const validPassword = await bcrypt.compare(
-      password,
-      user.password
-    );
+    const validPassword = await bcrypt.compare(password, user.password);
 
     if (!validPassword) {
       return res.status(401).json({
@@ -136,88 +134,90 @@ const login = async (req, res) => {
         rol: user.rol
       },
       process.env.JWT_SECRET,
-      {
-        expiresIn: "24h"
-      }
+      { expiresIn: "24h" }
     );
 
     return res.status(200).json({
       message: "Login exitoso",
       accessToken,
-      user: {
-        id: user.id,
-        email: user.email,
-        documento: user.documento,
-        tipoDocumento: user.tipoDocumento,
-        nombres: user.nombres,
-        apellidos: user.apellidos,
-        ficha: user.ficha,
-        celular: user.celular,
-        rol: user.rol
-      }
+      user
     });
   } catch (error) {
     console.log(error);
-
     return res.status(500).json({
       message: "Error en el servidor"
     });
   }
 };
 
+// GET CARNET
+const getCarnet = async (req, res) => {
+  try {
+    const user = await User.findByPk(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "Usuario no encontrado"
+      });
+    }
+
+    const qrImage = await QRCode.toDataURL(user.qrCode);
+
+    return res.json({
+      id: user.id,
+      nombres: user.nombres,
+      apellidos: user.apellidos,
+      documento: user.documento,
+      ficha: user.ficha,
+      rol: user.rol,
+      qrImage
+    });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Error generando carnet"
+    });
+  }
+};
+
+// RECUPERAR PIN
 const recuperarPassword = async (req, res) => {
   try {
     const { email } = req.body;
 
-    if (!email) {
-      return res.status(400).json({
-        message: "Debe ingresar un correo"
-      });
-    }
-
-    const user = await User.findOne({
-      where: { email }
-    });
+    const user = await User.findOne({ where: { email } });
 
     if (!user) {
       return res.status(404).json({
-        message: "No existe un usuario con ese correo"
+        message: "No existe usuario"
       });
     }
 
-    const pin = Math.floor(
-      100000 + Math.random() * 900000
-    ).toString();
+    const pin = Math.floor(100000 + Math.random() * 900000).toString();
 
     user.pinRecuperacion = pin;
     user.fechaPin = new Date();
 
     await user.save();
 
-    console.log(
-      `PIN de recuperación para ${email}: ${pin}`
-    );
+    console.log(`PIN: ${pin}`);
 
-    return res.status(200).json({
-      message: "PIN enviado correctamente"
-    });
-
+    return res.json({ message: "PIN enviado" });
   } catch (error) {
     console.log(error);
-
     return res.status(500).json({
-      message: "Error en el servidor"
+      message: "Error en servidor"
     });
   }
 };
 
-
-// GET - Perfil usando el token
-const getProfile = async (req, res) => {
+// VERIFICAR PIN
+const verificarPin = async (req, res) => {
   try {
-    const user = await User.findByPk(req.user.id, {
-      attributes: { exclude: ["password"] }
-    });
+    const { email, pin } = req.body;
+
+    const user = await User.findOne({ where: { email } });
 
     if (!user) {
       return res.status(404).json({
@@ -225,38 +225,89 @@ const getProfile = async (req, res) => {
       });
     }
 
-    return res.status(200).json(user);
+    if (String(user.pinRecuperacion) !== String(pin)) {
+      return res.status(400).json({
+        message: "Código incorrecto"
+      });
+    }
+
+    const token = jwt.sign(
+      { id: user.id, email: user.email, rol: user.rol },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" }
+    );
+
+    return res.json({
+      message: "Código correcto",
+      accessToken: token,
+      user
+    });
+
   } catch (error) {
     console.log(error);
-
     return res.status(500).json({
-      message: "Error en el servidor"
+      message: "Error en servidor"
     });
   }
 };
 
-// GET - Todos los usuarios
+// REENVIAR PIN
+const reenviarPin = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "Usuario no encontrado"
+      });
+    }
+
+    const pin = Math.floor(100000 + Math.random() * 900000).toString();
+
+    user.pinRecuperacion = pin;
+    user.fechaPin = new Date();
+
+    await user.save();
+
+    console.log(`Nuevo PIN: ${pin}`);
+
+    return res.json({ message: "PIN reenviado" });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Error en servidor"
+    });
+  }
+};
+
+// OBTENER TODOS LOS USUARIOS
 const getUsers = async (req, res) => {
   try {
     const users = await User.findAll({
-      attributes: { exclude: ["password"] }
+      attributes: {
+        exclude: ["password", "pinRecuperacion", "fechaPin"]
+      }
     });
 
     return res.status(200).json(users);
   } catch (error) {
     console.log(error);
-
     return res.status(500).json({
-      message: "Error en el servidor"
+      message: "Error obteniendo usuarios"
     });
   }
 };
 
-// GET - Usuario por ID
+// OBTENER USUARIO POR ID
 const getUserById = async (req, res) => {
   try {
     const user = await User.findByPk(req.params.id, {
-      attributes: { exclude: ["password"] }
+      attributes: {
+        exclude: ["password", "pinRecuperacion", "fechaPin"]
+      }
     });
 
     if (!user) {
@@ -266,16 +317,16 @@ const getUserById = async (req, res) => {
     }
 
     return res.status(200).json(user);
+
   } catch (error) {
     console.log(error);
-
     return res.status(500).json({
-      message: "Error en el servidor"
+      message: "Error obteniendo usuario"
     });
   }
 };
 
-// PUT - Actualizar usuario
+// ACTUALIZAR USUARIO
 const updateUser = async (req, res) => {
   try {
     const user = await User.findByPk(req.params.id);
@@ -286,24 +337,22 @@ const updateUser = async (req, res) => {
       });
     }
 
-    const { password, ...updateData } = req.body;
-
-    await user.update(updateData);
+    await user.update(req.body);
 
     return res.status(200).json({
-      message: "Usuario actualizado",
+      message: "Usuario actualizado correctamente",
       user
     });
+
   } catch (error) {
     console.log(error);
-
     return res.status(500).json({
-      message: "Error en el servidor"
+      message: "Error actualizando usuario"
     });
   }
 };
 
-// DELETE - Eliminar usuario
+// ELIMINAR USUARIO
 const deleteUser = async (req, res) => {
   try {
     const user = await User.findByPk(req.params.id);
@@ -317,116 +366,27 @@ const deleteUser = async (req, res) => {
     await user.destroy();
 
     return res.status(200).json({
-      message: "Usuario eliminado"
-    });
-  } catch (error) {
-    console.log(error);
-
-    return res.status(500).json({
-      message: "Error en el servidor"
-    });
-  }
-};
-
-const verificarPin = async (req, res) => {
-  try {
-    const { email, pin } = req.body;
-
-    const user = await User.findOne({
-      where: { email }
-    });
-
-    if (!user) {
-      return res.status(404).json({
-        message: "Usuario no encontrado"
-      });
-    }
-
-   console.log("PIN BD:", user.pinRecuperacion);
-console.log("PIN recibido:", pin);
-
-if (String(user.pinRecuperacion) !== String(pin)) {
-  return res.status(400).json({
-    message: "Código incorrecto"
-  });
-}
-
-    const accessToken = jwt.sign(
-      {
-        id: user.id,
-        email: user.email,
-        rol: user.rol
-      },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "24h"
-      }
-    );
-
-    return res.status(200).json({
-      message: "Código correcto",
-      accessToken,
-      user
+      message: "Usuario eliminado correctamente"
     });
 
   } catch (error) {
     console.log(error);
-
     return res.status(500).json({
-      message: "Error en servidor"
+      message: "Error eliminando usuario"
     });
   }
 };
 
 
-const reenviarPin = async (req, res) => {
-  try {
-    const { email } = req.body;
-
-    const user = await User.findOne({
-      where: { email }
-    });
-
-    if (!user) {
-      return res.status(404).json({
-        message: "Usuario no encontrado"
-      });
-    }
-
-    const pin = Math.floor(
-      100000 + Math.random() * 900000
-    ).toString();
-
-    user.pinRecuperacion = pin;
-    user.fechaPin = new Date();
-
-    await user.save();
-
-    console.log(
-      `Nuevo PIN para ${email}: ${pin}`
-    );
-
-    return res.status(200).json({
-      message: "Código reenviado"
-    });
-
-  } catch (error) {
-    console.log(error);
-
-    return res.status(500).json({
-      message: "Error en servidor"
-    });
-  }
-};
 module.exports = {
   register,
   login,
-  recuperarPassword,
-  verificarPin,
-  reenviarPin,
-  getProfile,
   getUsers,
   getUserById,
   updateUser,
-  deleteUser
+  deleteUser,
+  getCarnet,
+  recuperarPassword,
+  verificarPin,
+  reenviarPin
 };
