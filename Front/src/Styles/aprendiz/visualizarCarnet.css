@@ -1,0 +1,90 @@
+
+.carnet-wrapper {
+  width: 350px;
+  height: 550px;
+  background: #ffffff;
+  border-radius: 15px;
+  overflow: hidden;
+  border: 2px solid #0b5ed7;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  font-family: Arial, sans-serif;
+  position: relative;
+}
+
+/* HEADER SENA STYLE */
+.carnet-header {
+  background: #0b5ed7;
+  color: white;
+  text-align: center;
+  padding: 12px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+/* FOTO */
+.carnet-foto {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.carnet-foto img {
+  width: 120px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #0b5ed7;
+}
+
+/* INFO */
+.carnet-info {
+  padding: 10px 20px;
+  font-size: 13px;
+  margin-top: 10px;
+}
+
+.carnet-info p {
+  margin: 5px 0;
+}
+
+/* QR */
+.carnet-qr {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.carnet-qr img {
+  width: 90px;
+  height: 90px;
+}
+
+/* FOOTER */
+.carnet-footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: #0b5ed7;
+  color: white;
+  font-size: 11px;
+  text-align: center;
+  padding: 6px;
+}
+
+/* IMPRESIÓN */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .carnet-wrapper {
+    visibility: visible;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 54mm;
+    height: 86mm;
+  }
+}

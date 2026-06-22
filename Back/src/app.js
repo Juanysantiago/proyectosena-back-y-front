@@ -30,6 +30,7 @@ app.use("/api", require("./routers/tipoDocumentoRouter"));
 app.use("/api", require("./routers/jornadaRouter"));
 app.use("/api", require("./routers/entradaSalidaAprendizRouter"));
 app.use("/api", require("./routers/configGrRouter"));
+app.use("/api/carnet", require("./routers/carnetRouter"));
 app.use("/api/vehiculos", require("./routers/vehiculoRouter"));
 app.use("/api", require("./routers/aprendiz/solicitudCarnetRouter"));
 

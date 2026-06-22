@@ -5,6 +5,7 @@ const TipoDocumento = require("./TipoDocumento");
 const Jornada = require("./Jornada");
 const ConfigGr = require("./ConfigGr");
 const EntradaSalidaAprendiz = require("./EntradaSalidaAprendiz");
+const Carnet = require("./Carnet");
 
 /* RELACIONES */
 User.hasMany(SolicitudCarnet, {
@@ -17,6 +18,16 @@ SolicitudCarnet.belongsTo(User, {
   as: "user"
 });
 
+User.hasMany(Carnet, {
+  foreignKey: "userId",
+  as: "carnets"
+});
+
+Carnet.belongsTo(User, {
+  foreignKey: "userId",
+  as: "user"
+});
+
 module.exports = {
   User,
   Vehiculo,
@@ -24,5 +35,6 @@ module.exports = {
   TipoDocumento,
   Jornada,
   ConfigGr,
-  EntradaSalidaAprendiz
+  EntradaSalidaAprendiz,
+  Carnet
 };

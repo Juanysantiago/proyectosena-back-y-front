@@ -20,61 +20,46 @@ export default function PeticionCarnet() {
   const [loading, setLoading] = useState(false);
   const user = JSON.parse(localStorage.getItem("user"));
 
-  const enviarSolicitud = async (e) => {
-    e.preventDefault();
+ const enviarSolicitud = async (e) => {
+  e.preventDefault();
 
-    try {
+  try {
+    setLoading(true);
 
-      setLoading(true);
+    const formData = new FormData();
 
-      const formData = new FormData();
+    formData.append("tipoVehiculo", tipoVehiculo);
+    formData.append("marca", marca);
+    formData.append("color", color);
+    formData.append("serialPlaca", serialPlaca);
+    formData.append("cilindraje", cilindraje);
+    formData.append("modelo", modelo);
 
-      formData.append("tipoVehiculo", tipoVehiculo);
-      formData.append("marca", marca);
-      formData.append("color", color);
-      formData.append("serialPlaca", serialPlaca);
-      formData.append("cilindraje", cilindraje);
-      formData.append("modelo", modelo);
+    formData.append("fotoAprendiz", fotoAprendiz);
+    formData.append("fotoVehiculo", fotoVehiculo);
+    formData.append("formatoDiligenciado", formatoDiligenciado);
 
-      formData.append("fotoAprendiz", fotoAprendiz);
-      formData.append("fotoVehiculo", fotoVehiculo);
-      formData.append("formatoDiligenciado", formatoDiligenciado);
-
-      if (documentosAnexos) {
-        formData.append("documentosAnexos", documentosAnexos);
-      }
-
-      await axiosClient.post(
-        "/api/solicitudes-carnet",
-        formData
-      );
-
-      alert("Solicitud enviada correctamente.");
-
-      setMarca("");
-      setColor("");
-      setSerialPlaca("");
-      setModelo("");
-      setCilindraje("");
-
-      document.getElementById("fotoAprendiz").value = "";
-      document.getElementById("fotoVehiculo").value = "";
-      document.getElementById("formatoDiligenciado").value = "";
-      document.getElementById("documentosAnexos").value = "";
-
-    } catch (error) {
-
-      alert(
-        error.response?.data?.message ||
-        "Error al enviar la solicitud."
-      );
-
-    } finally {
-
-      setLoading(false);
-
+    if (documentosAnexos) {
+      formData.append("documentosAnexos", documentosAnexos);
     }
-  };
+
+    await axiosClient.post("/api/solicitudes-carnet", formData);
+
+    // 👇 AQUÍ VA LO TUYO
+    alert("Solicitud enviada correctamente.");
+    window.location.reload();
+
+  } catch (error) {
+
+    alert(
+      error.response?.data?.message ||
+      "Error al enviar la solicitud."
+    );
+
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
 

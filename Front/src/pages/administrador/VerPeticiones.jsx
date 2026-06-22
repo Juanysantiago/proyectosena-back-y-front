@@ -1,17 +1,15 @@
 import { useEffect, useState } from "react";
 import { axiosClient } from "../../api/axiosClient";
 import "../../styles/administrador/verPeticiones.css";
+import GenerarCarnet from "./GenerarCarnet";
 
 export default function VerPeticiones() {
   const [solicitudes, setSolicitudes] = useState([]);
 
   const cargarSolicitudes = async () => {
     try {
-     const res = await axiosClient.get("/api/solicitudes-carnet");
-
-console.log(res.data);
-
-setSolicitudes(res.data);
+      const res = await axiosClient.get("/api/solicitudes-carnet");
+      setSolicitudes(res.data);
     } catch (error) {
       console.error(error);
       alert("Error al cargar las solicitudes");
@@ -25,9 +23,10 @@ setSolicitudes(res.data);
   const aprobar = async (id) => {
     try {
       await axiosClient.put(`/api/solicitudes-carnet/${id}/aprobar`);
-      cargarSolicitudes();
+      cargarSolicitudes(); // 🔥 refresca estado
     } catch (error) {
       console.error(error);
+      alert("Error al aprobar");
     }
   };
 
@@ -37,6 +36,7 @@ setSolicitudes(res.data);
       cargarSolicitudes();
     } catch (error) {
       console.error(error);
+      alert("Error al rechazar");
     }
   };
 
@@ -68,26 +68,26 @@ setSolicitudes(res.data);
         <tbody>
           {solicitudes.map((s) => (
             <tr key={s.id}>
-
               <td>{s.user?.documento}</td>
-
-<td>{s.user?.nombres} {s.user?.apellidos}</td>
-
-<td>{s.user?.ficha}</td>
+              <td>{s.user?.nombres} {s.user?.apellidos}</td>
+              <td>{s.user?.ficha}</td>
 
               <td>{s.tipoVehiculo}</td>
-
               <td>{s.marca}</td>
-
               <td>{s.color}</td>
-
               <td>{s.serialPlaca}</td>
-
               <td>{s.cilindraje || "-"}</td>
-
               <td>{s.modelo || "-"}</td>
 
-              <td>{s.estado}</td>
+              {/* 🔥 ESTADO CORRECTO */}
+              <td>
+                <strong>
+                  {s.estado === "pendiente" && "⏳ Pendiente"}
+                  {s.estado === "aprobada" && "🟢 Aprobada"}
+                  {s.estado === "rechazada" && "❌ Rechazada"}
+                  {s.estado === "carnet_generado" && "⚡ Carnet generado"}
+                </strong>
+              </td>
 
               <td>
                 <a
@@ -133,8 +133,9 @@ setSolicitudes(res.data);
                 )}
               </td>
 
+              {/* 🔥 ACCIONES CORRECTAS */}
               <td>
-                {s.estado === "pendiente" ? (
+                {s.estado === "pendiente" && (
                   <>
                     <button onClick={() => aprobar(s.id)}>
                       Aprobar
@@ -147,12 +148,13 @@ setSolicitudes(res.data);
                       Rechazar
                     </button>
                   </>
-                ) : (
-                  <strong>
-                    {s.estado === "aprobada"
-                      ? "✅ Aprobada"
-                      : "❌ Rechazada"}
-                  </strong>
+                )}
+
+                {/* 🔥 BOTÓN GENERAR CARNET SOLO SI ESTÁ APROBADA */}
+                {s.estado === "aprobada" && (
+                  <div style={{ marginTop: 5 }}>
+                    <GenerarCarnet solicitud={s} />
+                  </div>
                 )}
               </td>
 

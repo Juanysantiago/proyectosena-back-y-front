@@ -64,9 +64,14 @@ const SolicitudCarnet = sequelize.define("SolicitudCarnet", {
   },
 
   estado: {
-    type: DataTypes.ENUM("pendiente", "aprobada", "rechazada"),
-    defaultValue: "pendiente"
-  }
+  type: DataTypes.ENUM(
+    "pendiente",
+    "aprobada",
+    "rechazada",
+    "carnet_generado"
+  ),
+  defaultValue: "pendiente"
+}
 });
 
 module.exports = SolicitudCarnet;
