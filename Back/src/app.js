@@ -33,6 +33,7 @@ app.use("/api", require("./routers/configGrRouter"));
 app.use("/api/carnet", require("./routers/carnetRouter"));
 app.use("/api/vehiculos", require("./routers/vehiculoRouter"));
 app.use("/api", require("./routers/aprendiz/solicitudCarnetRouter"));
+app.use("/api", require("./routers/centroFormacionRouter"));
 
 /* DB */
 sequelize.authenticate()

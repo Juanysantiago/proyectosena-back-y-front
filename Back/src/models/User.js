@@ -40,6 +40,11 @@ const User = sequelize.define("User", {
     allowNull: false
   },
 
+centroFormacionId: {
+  type: DataTypes.INTEGER,
+  allowNull: true
+},
+
   ficha: {
     type: DataTypes.STRING,
     allowNull: true
@@ -48,7 +53,23 @@ const User = sequelize.define("User", {
   rol: {
     type: DataTypes.ENUM("administrador", "guarda", "aprendiz"),
     defaultValue: "aprendiz"
-  }
+  },
+
+  celular: {
+  type: DataTypes.STRING,
+  allowNull: true
+},
+
+fechaVinculacion: {
+  type: DataTypes.DATEONLY,
+  allowNull: true
+},
+
+fechaFinalizacion: {
+  type: DataTypes.DATEONLY,
+  allowNull: true
+},
+
 });
 
 module.exports = User;

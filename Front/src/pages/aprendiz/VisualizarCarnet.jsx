@@ -6,11 +6,9 @@ export default function VisualizarCarnet() {
   const [carnet, setCarnet] = useState(null);
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-
     const cargar = async () => {
       try {
-        const res = await obtenerMiCarnet(user.id);
+        const res = await obtenerMiCarnet();
         setCarnet(res.data);
       } catch (error) {
         console.log(error);
@@ -21,57 +19,118 @@ export default function VisualizarCarnet() {
   }, []);
 
   if (!carnet) {
-    return <p>No tienes carnet generado aún</p>;
+    return <p>No tienes carnet generado aún.</p>;
   }
 
   return (
-    <div>
+    <div className="contenedor-carnet">
+
       <div className="carnet-wrapper">
 
-        {/* HEADER */}
         <div className="carnet-header">
-          SERVICIO NACIONAL DE APRENDIZAJE - SENA
+          <h2>SERVICIO NACIONAL DE APRENDIZAJE</h2>
+          <h3>SENA</h3>
         </div>
 
-        {/* FOTO */}
-        <div className="carnet-foto">
-          <img
-            src={`http://localhost:3000/uploads/${carnet.foto}`}
-            alt="foto"
-          />
+        <div className="imagenes">
+
+          <div className="foto-aprendiz">
+            <h4>Aprendiz</h4>
+            <img
+              src={`http://localhost:3000/uploads/${carnet.fotoAprendiz}`}
+              alt="Aprendiz"
+            />
+          </div>
+
+          <div className="foto-vehiculo">
+            <h4>Vehículo</h4>
+            <img
+              src={`http://localhost:3000/uploads/${carnet.fotoVehiculo}`}
+              alt="Vehículo"
+            />
+          </div>
+
         </div>
 
-        {/* INFO */}
-        <div className="carnet-info">
+        <div className="datos">
+
+          <h3>Información del Aprendiz</h3>
+
           <p><b>Nombre:</b> {carnet.nombre}</p>
+
+          <p>
+            <b>Tipo documento:</b> {carnet.tipoDocumento}
+          </p>
+
           <p><b>Documento:</b> {carnet.documento}</p>
+
+          <p><b>Correo:</b> {carnet.correo}</p>
+
+          <p><b>Celular:</b> {carnet.celular}</p>
+
+          <p>
+            <b>Centro de formación:</b>{" "}
+            {carnet.centroFormacion}
+          </p>
+
           <p><b>Ficha:</b> {carnet.ficha}</p>
+
+          <p>
+            <b>Fecha vinculación:</b>{" "}
+            {carnet.fechaVinculacion}
+          </p>
+
+          <p>
+            <b>Fecha finalización:</b>{" "}
+            {carnet.fechaFinalizacion}
+          </p>
+
+          <p><b>Estado:</b> {carnet.estado}</p>
+
+          <hr />
+
+          <h3>Información del Vehículo</h3>
+
           <p><b>Tipo:</b> {carnet.tipoVehiculo}</p>
-          <p><b>Estado:</b> ACTIVO</p>
+
+          <p><b>Marca:</b> {carnet.marca}</p>
+
+          <p><b>Color:</b> {carnet.color}</p>
+
+          {carnet.tipoVehiculo === "bicicleta" ? (
+            <p><b>Serial:</b> {carnet.serial}</p>
+          ) : (
+            <>
+              <p><b>Placa:</b> {carnet.placa}</p>
+              <p><b>Modelo:</b> {carnet.modelo}</p>
+              <p><b>Cilindraje:</b> {carnet.cilindraje}</p>
+            </>
+          )}
+
         </div>
 
-        {/* QR */}
-        <div className="carnet-qr">
+        <div className="qr">
+
           <img
             src={carnet.qr}
             alt="QR"
           />
+
         </div>
 
-        {/* FOOTER */}
         <div className="carnet-footer">
-          VÁLIDO DENTRO DEL CENTRO DE FORMACIÓN
+          Carnet válido para ingreso al Centro de Formación
         </div>
 
       </div>
 
-      {/* BOTÓN IMPRESIÓN */}
       <button
+        className="btn-imprimir"
         onClick={() => window.print()}
-        style={{ marginTop: 15 }}
       >
         Imprimir Carnet
       </button>
+
     </div>
   );
 }

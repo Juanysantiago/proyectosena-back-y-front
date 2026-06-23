@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const CentroFormacion = require("../models/CentroFormacion");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
@@ -8,16 +9,19 @@ const QRCode = require("qrcode");
 const register = async (req, res) => {
   try {
     const {
-      email,
-      password,
-      documento,
-      tipoDocumento,
-      nombres,
-      apellidos,
-      ficha,
-      celular,
-      rol
-    } = req.body;
+  email,
+  password,
+  documento,
+  tipoDocumento,
+  nombres,
+  apellidos,
+  ficha,
+  celular,
+  centroFormacionId,
+  fechaVinculacion,
+  fechaFinalizacion,
+  rol
+} = req.body;
 
     if (
       !email ||
@@ -48,17 +52,20 @@ const register = async (req, res) => {
     const qrCode = uuidv4();
 
     const newUser = await User.create({
-      email,
-      password: hashedPassword,
-      documento,
-      tipoDocumento,
-      nombres,
-      apellidos,
-      ficha,
-      celular,
-      rol,
-      qrCode
-    });
+  email,
+  password: hashedPassword,
+  documento,
+  tipoDocumento,
+  nombres,
+  apellidos,
+  ficha,
+  celular,
+  centroFormacionId,
+  fechaVinculacion,
+  fechaFinalizacion,
+  rol,
+  qrCode
+});
 
     const accessToken = jwt.sign(
       {
@@ -74,17 +81,20 @@ const register = async (req, res) => {
       message: "Usuario registrado correctamente",
       accessToken,
       user: {
-        id: newUser.id,
-        email: newUser.email,
-        documento: newUser.documento,
-        tipoDocumento: newUser.tipoDocumento,
-        nombres: newUser.nombres,
-        apellidos: newUser.apellidos,
-        ficha: newUser.ficha,
-        celular: newUser.celular,
-        rol: newUser.rol,
-        qrCode: newUser.qrCode
-      }
+  id: newUser.id,
+  email: newUser.email,
+  documento: newUser.documento,
+  tipoDocumento: newUser.tipoDocumento,
+  nombres: newUser.nombres,
+  apellidos: newUser.apellidos,
+  ficha: newUser.ficha,
+  celular: newUser.celular,
+  centroFormacionId: newUser.centroFormacionId,
+  fechaVinculacion: newUser.fechaVinculacion,
+  fechaFinalizacion: newUser.fechaFinalizacion,
+  rol: newUser.rol,
+  qrCode: newUser.qrCode
+}
     });
   } catch (error) {
     console.log(error);
@@ -105,7 +115,15 @@ const login = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({
+      where: { email },
+      include: [
+        {
+          model: CentroFormacion,
+          as: "centroFormacion"
+        }
+      ]
+    });
 
     if (!user) {
       return res.status(404).json({
@@ -142,6 +160,7 @@ const login = async (req, res) => {
       accessToken,
       user
     });
+
   } catch (error) {
     console.log(error);
     return res.status(500).json({

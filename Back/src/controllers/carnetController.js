@@ -90,24 +90,77 @@ const obtenerMiCarnet = async (req, res) => {
   try {
     const carnet = await Carnet.findOne({
       where: { userId: req.user.id },
-      include: [{ model: User, as: "user" }]
+      include: [
+        {
+          model: User,
+          as: "user",
+          include: [
+            {
+              model: require("../models/CentroFormacion"),
+              as: "centroFormacion"
+            }
+          ]
+        }
+      ]
     });
 
     if (!carnet) {
-      return res.status(404).json({ message: "Aún no tiene carnet" });
+      return res.status(404).json({
+        message: "No tiene carnet generado"
+      });
     }
 
     const solicitud = await SolicitudCarnet.findByPk(carnet.solicitudId);
 
+    const vehiculo = await Vehiculo.findOne({
+      where: {
+        userId: req.user.id
+      }
+    });
+
     const qrImage = await QRCode.toDataURL(carnet.codigoQr);
 
-    return res.json({ carnet, solicitud, qrImage });
+    return res.json({
+      // DATOS DEL APRENDIZ
+      nombre: `${carnet.user.nombres} ${carnet.user.apellidos}`,
+      nombres: carnet.user.nombres,
+      apellidos: carnet.user.apellidos,
+      tipoDocumento: carnet.user.tipoDocumento,
+      documento: carnet.user.documento,
+      correo: carnet.user.email,
+      celular: carnet.user.celular,
+      ficha: carnet.user.ficha,
+      centroFormacion:
+        carnet.user.centroFormacion?.nombre || "",
+      fechaVinculacion: carnet.user.fechaVinculacion,
+      fechaFinalizacion: carnet.user.fechaFinalizacion,
+
+      // FOTOS
+      fotoAprendiz: solicitud.fotoAprendiz,
+      fotoVehiculo: solicitud.fotoVehiculo,
+
+      // VEHÍCULO
+      tipoVehiculo: vehiculo?.tipo,
+      marca: vehiculo?.marca,
+      color: vehiculo?.color,
+      serial: vehiculo?.serial,
+      placa: vehiculo?.placa,
+      modelo: vehiculo?.modelo,
+      cilindraje: vehiculo?.cilindraje,
+
+      // CARNET
+      estado: carnet.estado,
+      qr: qrImage
+    });
 
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    console.log(error);
+
+    return res.status(500).json({
+      message: error.message
+    });
   }
 };
-
 module.exports = {
   generarCarnet,
   obtenerCarnetsPendientes,

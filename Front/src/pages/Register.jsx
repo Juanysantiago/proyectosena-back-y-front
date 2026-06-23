@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { axiosClient } from "../api/axiosClient";
+import { obtenerCentros } from "../api/centroFormacionApi";
 import "../styles/register.css";
 
 export default function Register() {
   const [rol, setRol] = useState("aprendiz");
+  const [centros, setCentros] = useState([]);
 
   const [formData, setFormData] = useState({
     nombres: "",
@@ -12,8 +14,11 @@ export default function Register() {
     tipoDocumento: "",
     ficha: "",
     celular: "",
+    centroFormacionId: "",
+    fechaVinculacion: "",
+    fechaFinalizacion: "",
     email: "",
-    password: ""
+    password: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -26,6 +31,19 @@ export default function Register() {
       [e.target.name]: e.target.value
     });
   };
+
+  useEffect(() => {
+  const cargarCentros = async () => {
+    try {
+      const res = await obtenerCentros();
+      setCentros(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  cargarCentros();
+}, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,24 +68,30 @@ export default function Register() {
         rol
       };
 
-      if (rol === "aprendiz") {
-        dataToSend.ficha = formData.ficha;
-      }
+   if (rol === "aprendiz") {
+  dataToSend.ficha = formData.ficha;
+  dataToSend.centroFormacionId = formData.centroFormacionId;
+  dataToSend.fechaVinculacion = formData.fechaVinculacion;
+  dataToSend.fechaFinalizacion = formData.fechaFinalizacion;
+}
 
       await axiosClient.post("/auth/register", dataToSend);
 
       alert(`Registro exitoso. Bienvenido ${formData.nombres}`);
 
-      setFormData({
-        nombres: "",
-        apellidos: "",
-        documento: "",
-        tipoDocumento: "",
-        ficha: "",
-        celular: "",
-        email: "",
-        password: ""
-      });
+     setFormData({
+  nombres: "",
+  apellidos: "",
+  documento: "",
+  tipoDocumento: "",
+  ficha: "",
+  celular: "",
+  centroFormacionId: "",
+  fechaVinculacion: "",
+  fechaFinalizacion: "",
+  email: "",
+  password: ""
+});
 
       setAceptar(false);
       window.location.href = "/";
@@ -148,17 +172,51 @@ export default function Register() {
           />
 
           {rol === "aprendiz" && (
-            <>
-              <label>Ficha :</label>
-              <input
-                type="text"
-                name="ficha"
-                value={formData.ficha}
-                onChange={handleChange}
-                required
-              />
-            </>
-          )}
+  <>
+    <label>Ficha :</label>
+    <input
+      type="text"
+      name="ficha"
+      value={formData.ficha}
+      onChange={handleChange}
+      required
+    />
+
+    <label>Centro de Formación :</label>
+    <select
+      name="centroFormacionId"
+      value={formData.centroFormacionId}
+      onChange={handleChange}
+      required
+    >
+      <option value="">Seleccione...</option>
+
+      {centros.map((centro) => (
+        <option key={centro.id} value={centro.id}>
+          {centro.nombre}
+        </option>
+      ))}
+    </select>
+
+    <label>Fecha de vinculación al SENA :</label>
+    <input
+      type="date"
+      name="fechaVinculacion"
+      value={formData.fechaVinculacion}
+      onChange={handleChange}
+      required
+    />
+
+    <label>Fecha de finalización :</label>
+    <input
+      type="date"
+      name="fechaFinalizacion"
+      value={formData.fechaFinalizacion}
+      onChange={handleChange}
+      required
+    />
+  </>
+)}
 
           <label>Correo electrónico :</label>
           <input
