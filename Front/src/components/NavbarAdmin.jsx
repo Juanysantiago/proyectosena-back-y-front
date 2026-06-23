@@ -16,11 +16,11 @@ export default function NavbarAdmin() {
       <div className="navbar-left">
 
         <div className="logo-admin">
-  <img
-    src={logo}
-    alt="SenaParking"
-  />
-</div>
+          <img
+            src={logo}
+            alt="SenaParking"
+          />
+        </div>
 
         <NavLink
           end
@@ -46,14 +46,25 @@ export default function NavbarAdmin() {
         </NavLink>
 
         <NavLink
-          to="/dashboard-admin/generar-carnet"
+          to="/dashboard-admin/tipo-documentos"
           className={({ isActive }) =>
             isActive
               ? "nav-link-admin active"
               : "nav-link-admin"
           }
         >
-          Generar Carnet
+          Tipo Documentos
+        </NavLink>
+
+        <NavLink
+          to="/dashboard-admin/vehiculos"
+          className={({ isActive }) =>
+            isActive
+              ? "nav-link-admin active"
+              : "nav-link-admin"
+          }
+        >
+          Vehículos
         </NavLink>
 
         <NavLink
@@ -66,68 +77,48 @@ export default function NavbarAdmin() {
         >
           Bloqueos / Reportes
         </NavLink>
+
       </div>
 
-    <div className="menu-hamburguesa">
-  <button
-    className="menu-btn"
-    onClick={() => setMenuOpen(!menuOpen)}
-  >
-    {menuOpen ? "✕" : "☰"}
-  </button>
+      <div className="menu-hamburguesa">
+        <button
+          className="menu-btn"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          {menuOpen ? "✕" : "☰"}
+        </button>
 
-  {menuOpen && (
-    <div className="dropdown-admin">
+        {menuOpen && (
+          <div className="dropdown-admin">
 
-      <NavLink
-        to="/dashboard-admin/tipo-documentos"
-        onClick={() => setMenuOpen(false)}
-      >
-        Tipo Documentos
-      </NavLink>
+            <NavLink
+              to="/dashboard-admin/config-gr"
+              onClick={() => setMenuOpen(false)}
+            >
+              Configuración GR
+            </NavLink>
 
-      <NavLink
-        to="/dashboard-admin/vehiculos"
-        onClick={() => setMenuOpen(false)}
-      >
-        Vehículos
-      </NavLink>
+            <NavLink
+              to="/dashboard-admin/datos-usuarios"
+              onClick={() => setMenuOpen(false)}
+            >
+              Datos Usuarios
+            </NavLink>
 
-      <NavLink
-        to="/dashboard-admin/config-gr"
-        onClick={() => setMenuOpen(false)}
-      >
-        Configuración GR
-      </NavLink>
+            <NavLink
+              to="/dashboard-admin/reportes"
+              onClick={() => setMenuOpen(false)}
+            >
+              Reportes Recibidos
+            </NavLink>
 
-      <NavLink
-        to="/dashboard-admin/entrada-salida"
-        onClick={() => setMenuOpen(false)}
-      >
-        Entrada / Salida
-      </NavLink>
+            <button onClick={logout}>
+              Cerrar Sesión
+            </button>
 
-      <NavLink
-        to="/dashboard-admin/datos-usuarios"
-        onClick={() => setMenuOpen(false)}
-      >
-        Datos Usuarios
-      </NavLink>
-
-      <NavLink
-        to="/dashboard-admin/reportes"
-        onClick={() => setMenuOpen(false)}
-      >
-        Reportes Recibidos
-      </NavLink>
-
-      <button onClick={logout}>
-        Cerrar Sesión
-      </button>
-
-    </div>
-  )}
-</div>
+          </div>
+        )}
+      </div>
     </nav>
   );
 }

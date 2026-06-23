@@ -8,7 +8,6 @@ import Register from "./pages/Register";
 // Administrador
 import DashboardAdmin from "./pages/administrador/DashboardAdmin";
 import VerPeticiones from "./pages/administrador/VerPeticiones";
-import GenerarCarnet from "./pages/administrador/GenerarCarnet";
 import Bloqueos from "./pages/administrador/Bloqueos";
 import DatosUsuarios from "./pages/administrador/DatosUsuarios";
 import ReportesRecibidos from "./pages/administrador/ReportesRecibidos";
@@ -24,6 +23,7 @@ import InicioGuarda from "./pages/guarda/InicioGuarda";
 import EscanearQR from "./pages/guarda/EscanearQR";
 import ManualPlataforma from "./pages/guarda/ManualPlataforma";
 import IngresoSalida from "./pages/guarda/IngresoSalida";
+import EntradaSalidaCrud from "./pages/administrador/EntradaSalidaCrud";
 
 // Aprendiz
 import DashboardAprendiz from "./pages/aprendiz/DashboardAprendiz";
@@ -77,11 +77,6 @@ export default function App() {
   />
 
   <Route
-    path="generar-carnet"
-    element={<GenerarCarnet />}
-  />
-
-  <Route
     path="bloqueos"
     element={<Bloqueos />}
   />
@@ -118,30 +113,35 @@ export default function App() {
 </Route>
 
         {/* ================= GUARDA ================= */}
-        <Route
-          path="/dashboard-guarda"
-          element={<DashboardGuarda />}
-        >
-          <Route
-            index
-            element={<InicioGuarda />}
-          />
+      <Route
+  path="/dashboard-guarda"
+  element={<DashboardGuarda />}
+>
+  <Route
+    index
+    element={<InicioGuarda />}
+  />
 
-          <Route
-            path="escanear-qr"
-            element={<EscanearQR />}
-          />
+  <Route
+    path="escanear-qr"
+    element={<EscanearQR />}
+  />
 
-          <Route
-            path="manual"
-            element={<ManualPlataforma />}
-          />
+  <Route
+    path="manual"
+    element={<ManualPlataforma />}
+  />
 
-          <Route
-            path="ingreso-salida"
-            element={<IngresoSalida />}
-          />
-        </Route>
+  <Route
+    path="ingreso-salida"
+    element={<IngresoSalida />}
+  />
+
+  <Route
+    path="entrada-salida"
+    element={<EntradaSalidaCrud />}
+  />
+</Route>
 
         {/* ================= APRENDIZ ================= */}
         <Route

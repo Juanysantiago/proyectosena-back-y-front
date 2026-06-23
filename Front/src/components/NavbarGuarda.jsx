@@ -14,75 +14,90 @@ export default function NavbarGuarda() {
   return (
     <header className="guarda-header">
 
-  <div className="logo">
- <img src={logo} alt="Logo Sena Parking" />
-  </div>
+      <div className="logo">
+        <img src={logo} alt="Logo Sena Parking" />
+      </div>
 
-  <nav className="menu-principal">
-    <NavLink to="/dashboard-guarda">INICIO</NavLink>
+      <nav className="menu-principal">
 
-    <NavLink to="/dashboard-guarda/escanear-qr">
-      ESCANEAR QR
-    </NavLink>
+        <NavLink to="/dashboard-guarda">
+          INICIO
+        </NavLink>
 
-    <NavLink to="/dashboard-guarda/manual">
-      MANUAL
-    </NavLink>
+        <NavLink to="/dashboard-guarda/escanear-qr">
+          ESCANEAR QR
+        </NavLink>
 
-    <NavLink to="/dashboard-guarda/ingreso-salida">
-      INGRESO Y SALIDA
-    </NavLink>
-  </nav>
+        <NavLink to="/dashboard-guarda/manual">
+          MANUAL
+        </NavLink>
 
-  <div className="menu-hamburguesa">
+        <NavLink to="/dashboard-guarda/ingreso-salida">
+          INGRESO Y SALIDA
+        </NavLink>
 
-  <button
-    className="hamburguesa"
-    onClick={() => setMenuOpen(!menuOpen)}
-  >
-    ☰
-  </button>
+        <NavLink to="/dashboard-guarda/entrada-salida">
+          ENTRADA / SALIDA
+        </NavLink>
 
-  {menuOpen && (
-    <div className="dropdown">
+      </nav>
 
-      <NavLink
-        to="/dashboard-guarda"
-        onClick={() => setMenuOpen(false)}
-      >
-        Inicio
-      </NavLink>
+      <div className="menu-hamburguesa">
 
-      <NavLink
-        to="/dashboard-guarda/escanear-qr"
-        onClick={() => setMenuOpen(false)}
-      >
-        Escanear QR
-      </NavLink>
+        <button
+          className="hamburguesa"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          ☰
+        </button>
 
-      <NavLink
-        to="/dashboard-guarda/manual"
-        onClick={() => setMenuOpen(false)}
-      >
-        Manual
-      </NavLink>
+        {menuOpen && (
+          <div className="dropdown">
 
-      <NavLink
-        to="/dashboard-guarda/ingreso-salida"
-        onClick={() => setMenuOpen(false)}
-      >
-        Ingreso y Salida
-      </NavLink>
+            <NavLink
+              to="/dashboard-guarda"
+              onClick={() => setMenuOpen(false)}
+            >
+              Inicio
+            </NavLink>
 
-      <button onClick={logout}>
-        Cerrar sesión
-      </button>
+            <NavLink
+              to="/dashboard-guarda/escanear-qr"
+              onClick={() => setMenuOpen(false)}
+            >
+              Escanear QR
+            </NavLink>
 
-    </div>
-  )}
+            <NavLink
+              to="/dashboard-guarda/manual"
+              onClick={() => setMenuOpen(false)}
+            >
+              Manual
+            </NavLink>
 
-</div>
+            <NavLink
+              to="/dashboard-guarda/ingreso-salida"
+              onClick={() => setMenuOpen(false)}
+            >
+              Ingreso y Salida
+            </NavLink>
 
-</header>
+            <NavLink
+              to="/dashboard-guarda/entrada-salida"
+              onClick={() => setMenuOpen(false)}
+            >
+              Entrada / Salida
+            </NavLink>
+
+            <button onClick={logout}>
+              Cerrar sesión
+            </button>
+
+          </div>
+        )}
+
+      </div>
+
+    </header>
   );
 }
