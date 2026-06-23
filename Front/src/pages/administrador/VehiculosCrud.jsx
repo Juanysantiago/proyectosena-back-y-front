@@ -154,70 +154,84 @@ export default function VehiculosCrud() {
         </div>
       )}
 
-      <div className="card">
-        {loading ? (
-          <p>Cargando vehículos...</p>
+     <div className="card">
+  {loading ? (
+    <p>Cargando vehículos...</p>
+  ) : (
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Propietario</th>
+          <th>Tipo</th>
+          <th>Marca</th>
+          <th>Color</th>
+          <th>Placa</th>
+          <th>Serial</th>
+          <th>Centro</th>
+          <th>Ficha</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {items.length > 0 ? (
+          items.map((item) => (
+            <tr key={item.id}>
+              <td>{item.id}</td>
+
+              <td>
+                {item.User
+                  ? `${item.User.nombres} ${item.User.apellidos}`
+                  : "-"}
+              </td>
+
+              <td>{item.tipo}</td>
+
+              <td>{item.marca}</td>
+
+              <td>{item.color || "-"}</td>
+
+              <td>{item.placa || "-"}</td>
+
+              <td>{item.serial || "-"}</td>
+
+              <td>
+                {item.User?.centroFormacion?.nombre || "-"}
+              </td>
+
+              <td>
+                {item.User?.ficha || "-"}
+              </td>
+
+              <td>
+                <button
+                  className="btn-warning"
+                  onClick={() => openEditForm(item)}
+                >
+                  Editar
+                </button>{" "}
+
+                <button
+                  className="btn-danger"
+                  onClick={() => handleDelete(item)}
+                >
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+          ))
         ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Tipo</th>
-                <th>Marca</th>
-                <th>Color</th>
-                <th>Placa</th>
-                <th>Serial</th>
-                <th>Centro</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {items.length > 0 ? (
-                items.map((item) => (
-                  <tr key={item.id}>
-                    <td>{item.id}</td>
-                    <td>{item.tipo}</td>
-                    <td>{item.marca}</td>
-                    <td>{item.color}</td>
-                    <td>{item.placa}</td>
-                    <td>{item.serial}</td>
-                    <td>{item.id_centro_de_formacion}</td>
-
-                    <td>
-                      <button
-                        className="btn-warning"
-                        onClick={() =>
-                          openEditForm(item)
-                        }
-                      >
-                        Editar
-                      </button>
-
-                      {" "}
-
-                      <button
-                        className="btn-danger"
-                        onClick={() =>
-                          handleDelete(item)
-                        }
-                      >
-                        Eliminar
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="8">
-                    No hay vehículos registrados
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+          <tr>
+            <td colSpan="10">
+              No hay vehículos registrados
+            </td>
+          </tr>
         )}
-      </div>
+      </tbody>
+    </table>
+  )}
+</div>
 
       {showForm && (
         <div className="modal-overlay">
