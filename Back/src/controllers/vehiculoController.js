@@ -161,10 +161,29 @@ const deleteVehiculo = async (req, res) => {
   }
 };
 
+const getMisVehiculos = async (req, res) => {
+  try {
+    const vehiculos = await Vehiculo.findAll({
+      where: {
+        userId: req.user.id
+      }
+    });
+
+    return res.status(200).json(vehiculos);
+
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error obteniendo vehículos",
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   createVehiculo,
   getVehiculos,
   getVehiculoById,
   updateVehiculo,
   deleteVehiculo,
+  getMisVehiculos
 };

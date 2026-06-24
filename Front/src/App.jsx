@@ -15,6 +15,7 @@ import InicioAdmin from "./pages/administrador/InicioAdmin";
 import TipoDocumentosCrud from "./pages/administrador/TipoDocumentosCrud";
 import VehiculosCrud from "./pages/administrador/VehiculosCrud";
 import ConfigGrCrud from "./pages/administrador/ConfigGrCrud";
+import SolicitudesActualizacionAdmin from "./pages/administrador/SolicitudesActualizacionAdmin";
 
 
 // Guarda
@@ -62,10 +63,15 @@ export default function App() {
         />
 
         {/* ================= ADMINISTRADOR ================= */}
-        <Route
+    <Route
   path="/dashboard-admin"
   element={<DashboardAdmin />}
 >
+  <Route
+    path="solicitudes-actualizacion"
+    element={<SolicitudesActualizacionAdmin />}
+  />
+
   <Route
     index
     element={<InicioAdmin />}

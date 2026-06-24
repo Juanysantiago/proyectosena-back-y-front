@@ -46,6 +46,17 @@ export default function NavbarAdmin() {
         </NavLink>
 
         <NavLink
+          to="/dashboard-admin/solicitudes-actualizacion"
+          className={({ isActive }) =>
+            isActive
+              ? "nav-link-admin active"
+              : "nav-link-admin"
+          }
+        >
+          Solicitudes Actualización
+        </NavLink>
+
+        <NavLink
           to="/dashboard-admin/tipo-documentos"
           className={({ isActive }) =>
             isActive
