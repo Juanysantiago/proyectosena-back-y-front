@@ -75,13 +75,4 @@ const Vehiculo = sequelize.define(
   }
 );
 
-// Relación Usuario -> Vehículos
-User.hasMany(Vehiculo, {
-  foreignKey: "userId",
-});
-
-Vehiculo.belongsTo(User, {
-  foreignKey: "userId",
-});
-
 module.exports = Vehiculo;

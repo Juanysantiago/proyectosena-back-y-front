@@ -8,35 +8,59 @@ const EntradaSalidaAprendiz = require("./EntradaSalidaAprendiz");
 const Carnet = require("./Carnet");
 const CentroFormacion = require("./CentroFormacion");
 
-/* RELACIONES */
+/* SOLICITUDES */
 User.hasMany(SolicitudCarnet, {
   foreignKey: "userId",
-  as: "solicitudes"
+  as: "solicitudes",
 });
 
 SolicitudCarnet.belongsTo(User, {
   foreignKey: "userId",
-  as: "user"
+  as: "user",
 });
 
+/* CARNETS */
 User.hasMany(Carnet, {
   foreignKey: "userId",
-  as: "carnets"
+  as: "carnets",
 });
 
 Carnet.belongsTo(User, {
   foreignKey: "userId",
-  as: "user"
+  as: "user",
 });
 
+/* CENTRO DE FORMACIÓN */
 CentroFormacion.hasMany(User, {
   foreignKey: "centroFormacionId",
-  as: "usuarios"
+  as: "usuarios",
 });
 
 User.belongsTo(CentroFormacion, {
   foreignKey: "centroFormacionId",
-  as: "centroFormacion"
+  as: "centroFormacion",
+});
+
+/* ENTRADA / SALIDA */
+EntradaSalidaAprendiz.belongsTo(User, {
+  foreignKey: "id_aprendiz",
+  as: "aprendiz",
+});
+
+User.hasMany(EntradaSalidaAprendiz, {
+  foreignKey: "id_aprendiz",
+  as: "entradasSalidas",
+});
+
+/* VEHÍCULOS */
+User.hasMany(Vehiculo, {
+  foreignKey: "userId",
+  as: "vehiculos",
+});
+
+Vehiculo.belongsTo(User, {
+  foreignKey: "userId",
+  as: "User",
 });
 
 module.exports = {
@@ -48,5 +72,5 @@ module.exports = {
   ConfigGr,
   EntradaSalidaAprendiz,
   Carnet,
-  CentroFormacion
+  CentroFormacion,
 };

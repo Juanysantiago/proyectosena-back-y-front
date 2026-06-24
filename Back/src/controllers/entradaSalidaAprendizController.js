@@ -1,4 +1,7 @@
 const EntradaSalidaAprendiz = require("../models/EntradaSalidaAprendiz");
+const User = require("../models/User");
+const Vehiculo = require("../models/Vehiculo");
+
 
 // CREAR ENTRADA
 const createRegistro = async (req, res) => {
@@ -33,15 +36,53 @@ const createRegistro = async (req, res) => {
 // LISTAR
 const getRegistros = async (req, res) => {
   try {
-    const data = await EntradaSalidaAprendiz.findAll();
+    const data = await EntradaSalidaAprendiz.findAll({
+      order: [["hora_entrada", "DESC"]],
+      include: [
+        {
+          model: User,
+          as: "aprendiz",
+          attributes: ["nombres", "apellidos"],
+          include: [
+            {
+              model: Vehiculo,
+              as: "vehiculos",
+              attributes: ["tipo", "placa", "serial"],
+            },
+          ],
+        },
+      ],
+    });
+data.forEach((r) => {
+  console.log(r.fecha);
+});
+    const registros = data.map((r) => ({
+      id: r.id,
+      fecha: r.fecha,
+      aprendiz: r.aprendiz
+        ? `${r.aprendiz.nombres} ${r.aprendiz.apellidos}`
+        : "Sin aprendiz",
 
-    return res.status(200).json({
-      data,
+      vehiculo: r.aprendiz?.vehiculos?.[0]?.tipo || "-",
+
+      placaSerial:
+        r.aprendiz?.vehiculos?.[0]?.placa ||
+        r.aprendiz?.vehiculos?.[0]?.serial ||
+        "-",
+
+      hora_entrada: r.hora_entrada,
+      hora_salida: r.hora_salida,
+      estado: r.estado,
+    }));
+
+    res.json({
+      data: registros,
     });
   } catch (error) {
-    return res.status(500).json({
-      message: "Error obteniendo registros",
-      error,
+    console.log(error);
+
+    res.status(500).json({
+      message: error.message,
     });
   }
 };

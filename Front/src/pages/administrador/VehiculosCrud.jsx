@@ -28,6 +28,7 @@ export default function VehiculosCrud() {
       setLoading(true);
 
       const res = await vehiculosApi.list();
+         console.log(res.data.data); 
 
       setItems(res.data?.data || []);
     } catch (err) {

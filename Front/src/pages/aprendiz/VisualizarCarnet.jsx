@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { obtenerMiCarnet } from "../../api/carnetApi";
+import { carnetApi } from "../../api/carnetApi";
 import "../../styles/aprendiz/visualizarCarnet.css";
 
 export default function VisualizarCarnet() {
@@ -8,7 +8,7 @@ export default function VisualizarCarnet() {
   useEffect(() => {
     const cargar = async () => {
       try {
-        const res = await obtenerMiCarnet();
+        const res = await carnetApi.obtenerMiCarnet();
         setCarnet(res.data);
       } catch (error) {
         console.log(error);

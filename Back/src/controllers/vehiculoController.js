@@ -46,27 +46,28 @@ const createVehiculo = async (req, res) => {
 // Obtener todos
 const getVehiculos = async (req, res) => {
   try {
-    const data = await Vehiculo.findAll({
+   const data = await Vehiculo.findAll({
+  include: [
+    {
+      model: User,
+      as: "User",
+      attributes: [
+        "id",
+        "nombres",
+        "apellidos",
+        "ficha",
+        "centroFormacionId",
+      ],
       include: [
         {
-          model: User,
-          attributes: [
-            "id",
-            "nombres",
-            "apellidos",
-            "ficha",
-            "centroFormacionId"
-          ],
-          include: [
-            {
-              model: CentroFormacion,
-              as: "centroFormacion",
-              attributes: ["id", "nombre"]
-            }
-          ]
-        }
-      ]
-    });
+          model: CentroFormacion,
+          as: "centroFormacion",
+          attributes: ["id", "nombre"],
+        },
+      ],
+    },
+  ],
+});
 
     return res.status(200).json({
       success: true,

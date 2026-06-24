@@ -15,7 +15,7 @@ import InicioAdmin from "./pages/administrador/InicioAdmin";
 import TipoDocumentosCrud from "./pages/administrador/TipoDocumentosCrud";
 import VehiculosCrud from "./pages/administrador/VehiculosCrud";
 import ConfigGrCrud from "./pages/administrador/ConfigGrCrud";
-import EntradaSalidaCrud from "./pages/administrador/EntradaSalidaCrud";
+
 
 // Guarda
 import DashboardGuarda from "./pages/guarda/DashboardGuarda";
@@ -23,7 +23,7 @@ import InicioGuarda from "./pages/guarda/InicioGuarda";
 import EscanearQR from "./pages/guarda/EscanearQR";
 import ManualPlataforma from "./pages/guarda/ManualPlataforma";
 import IngresoSalida from "./pages/guarda/IngresoSalida";
-import EntradaSalidaCrud from "./pages/administrador/EntradaSalidaCrud";
+import EntradaSalidaCrud from "./pages/guarda/EntradaSalidaCrud";
 
 // Aprendiz
 import DashboardAprendiz from "./pages/aprendiz/DashboardAprendiz";

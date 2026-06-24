@@ -4,6 +4,8 @@ const Carnet = require("../models/Carnet");
 const Vehiculo = require("../models/Vehiculo");
 const User = require("../models/User");
 const SolicitudCarnet = require("../models/aprendiz/SolicitudCarnet");
+const EntradaSalidaAprendiz = require("../models/EntradaSalidaAprendiz");
+const { Op } = require("sequelize");
 
 const generarCarnet = async (req, res) => {
   try {
@@ -152,6 +154,111 @@ const obtenerMiCarnet = async (req, res) => {
       estado: carnet.estado,
       qr: qrImage
     });
+} catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      message: error.message
+    });
+  }
+};
+
+const escanearQr = async (req, res) => {
+  try {
+    const { codigoQr } = req.body;
+
+    const carnet = await Carnet.findOne({
+      where: { codigoQr },
+      include: [
+        {
+          model: User,
+          as: "user",
+          include: [
+            {
+              model: require("../models/CentroFormacion"),
+              as: "centroFormacion"
+            }
+          ]
+        }
+      ]
+    });
+
+    if (!carnet) {
+      return res.status(404).json({
+        message: "Carnet no encontrado"
+      });
+    }
+
+    if (carnet.estado !== "activo") {
+      return res.status(400).json({
+        message: "Este carnet no está activo"
+      });
+    }
+
+    const solicitud = await SolicitudCarnet.findByPk(carnet.solicitudId);
+
+    const vehiculo = await Vehiculo.findOne({
+      where: {
+        userId: carnet.userId
+      }
+    });
+
+    const hoy = new Date().toISOString().split("T")[0];
+
+    let registro = await EntradaSalidaAprendiz.findOne({
+      where: {
+        id_aprendiz: carnet.userId,
+        fecha: hoy,
+        hora_salida: null
+      }
+    });
+
+    let movimiento = "";
+
+    if (!registro) {
+      registro = await EntradaSalidaAprendiz.create({
+        id_aprendiz: carnet.userId,
+        fecha: hoy,
+        hora_entrada: new Date(),
+        estado: "dentro"
+      });
+
+      movimiento = "entrada";
+    } else {
+      registro.hora_salida = new Date();
+      registro.estado = "fuera";
+
+      await registro.save();
+
+      movimiento = "salida";
+    }
+
+    const qrImage = await QRCode.toDataURL(carnet.codigoQr);
+
+    return res.json({
+      movimiento,
+      registro,
+      carnet: {
+        nombre: `${carnet.user.nombres} ${carnet.user.apellidos}`,
+        documento: carnet.user.documento,
+        ficha: carnet.user.ficha,
+        correo: carnet.user.email,
+        celular: carnet.user.celular,
+        centroFormacion:
+          carnet.user.centroFormacion?.nombre || "",
+
+        fotoAprendiz: solicitud?.fotoAprendiz,
+        fotoVehiculo: solicitud?.fotoVehiculo,
+
+        tipoVehiculo: vehiculo?.tipo,
+        marca: vehiculo?.marca,
+        color: vehiculo?.color,
+        placa: vehiculo?.placa,
+        serial: vehiculo?.serial,
+
+        qr: qrImage
+      }
+    });
 
   } catch (error) {
     console.log(error);
@@ -161,8 +268,10 @@ const obtenerMiCarnet = async (req, res) => {
     });
   }
 };
+
 module.exports = {
   generarCarnet,
   obtenerCarnetsPendientes,
-  obtenerMiCarnet
+  obtenerMiCarnet,
+  escanearQr
 };

@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Html5Qrcode } from "html5-qrcode";
+import { axiosClient } from "../../api/axiosClient";
 import "../../styles/guarda/EscanearQR.css";
 
 export default function EscanearQR() {
   const [escaneando, setEscaneando] = useState(false);
-  const [resultado, setResultado] = useState("");
+  const [carnet, setCarnet] = useState(null);
 
   const iniciarEscaneo = async () => {
     try {
@@ -12,19 +13,39 @@ export default function EscanearQR() {
 
       await html5QrCode.start(
         {
-          facingMode: "environment"
+          facingMode: "environment",
         },
         {
           fps: 10,
-          qrbox: 250
+          qrbox: 250,
         },
         async (decodedText) => {
-          setResultado(decodedText);
-
           await html5QrCode.stop();
           setEscaneando(false);
 
-          alert(`QR detectado:\n${decodedText}`);
+          try {
+            const { data } = await axiosClient.post(
+  "/api/carnet/escanear",
+  {
+    codigoQr: decodedText,
+  }
+);
+
+setCarnet(data);
+
+            setCarnet(data);
+
+            alert(
+              `Registro de ${data.movimiento} realizado correctamente`
+            );
+          } catch (error) {
+            console.error(error);
+
+            alert(
+              error.response?.data?.message ||
+                "Error al consultar el carnet"
+            );
+          }
         },
         () => {}
       );
@@ -71,10 +92,35 @@ export default function EscanearQR() {
 
       <div id="reader"></div>
 
-      {resultado && (
+      {carnet && (
         <div className="resultado-qr">
-          <h3>Resultado:</h3>
-          <p>{resultado}</p>
+          <h3>{carnet.movimiento.toUpperCase()}</h3>
+
+          <img
+            src={carnet.carnet.fotoAprendiz}
+            alt="Aprendiz"
+            width={150}
+          />
+
+          <p><strong>Nombre:</strong> {carnet.carnet.nombre}</p>
+
+          <p><strong>Documento:</strong> {carnet.carnet.documento}</p>
+
+          <p><strong>Ficha:</strong> {carnet.carnet.ficha}</p>
+
+          <p><strong>Correo:</strong> {carnet.carnet.correo}</p>
+
+          <p><strong>Celular:</strong> {carnet.carnet.celular}</p>
+
+          <p><strong>Centro:</strong> {carnet.carnet.centroFormacion}</p>
+
+          <p><strong>Vehículo:</strong> {carnet.carnet.tipoVehiculo}</p>
+
+          <p><strong>Marca:</strong> {carnet.carnet.marca}</p>
+
+          <p><strong>Placa:</strong> {carnet.carnet.placa}</p>
+
+          <p><strong>Serial:</strong> {carnet.carnet.serial}</p>
         </div>
       )}
     </div>

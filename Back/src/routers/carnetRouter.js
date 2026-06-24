@@ -8,10 +8,9 @@ const verifyToken =
 const {
   generarCarnet,
   obtenerCarnetsPendientes,
-  obtenerMiCarnet
-} = require(
-  "../controllers/carnetController"
-);
+  obtenerMiCarnet,
+  escanearQr
+} = require("../controllers/carnetController");
 
 router.get(
   "/pendientes",
@@ -30,5 +29,12 @@ router.get(
   verifyToken,
   obtenerMiCarnet
 );
+
+router.post(
+  "/escanear",
+  verifyToken,
+  escanearQr
+);
+
 
 module.exports = router;

@@ -1,11 +1,10 @@
-import { generarCarnet } from "../../api/carnetApi";
 import { useState } from "react";
+import { carnetApi } from "../../api/carnetApi";
 
 export default function GenerarCarnet({ solicitud }) {
   const [loading, setLoading] = useState(false);
 
   const handleGenerar = async () => {
-    // 🔥 PROTECCIÓN ANTI-ERROR
     if (!solicitud?.id) {
       alert("Solicitud no disponible");
       return;
@@ -14,13 +13,13 @@ export default function GenerarCarnet({ solicitud }) {
     try {
       setLoading(true);
 
-      const res = await generarCarnet(solicitud.id);
+      const res = await carnetApi.generar(solicitud.id);
 
       alert("Carnet generado correctamente");
       console.log(res.data);
 
     } catch (error) {
-      console.log(error);
+      console.error(error);
 
       alert(
         error.response?.data?.message ||
@@ -32,7 +31,6 @@ export default function GenerarCarnet({ solicitud }) {
     }
   };
 
-  // 🔥 EVITA RENDER SI NO HAY DATA
   if (!solicitud?.id) return null;
 
   return (
