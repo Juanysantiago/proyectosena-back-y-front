@@ -102,12 +102,12 @@ export default function NavbarAdmin() {
         {menuOpen && (
           <div className="dropdown-admin">
 
-            <NavLink
-              to="/dashboard-admin/config-gr"
-              onClick={() => setMenuOpen(false)}
-            >
-              Configuración GR
-            </NavLink>
+           <NavLink
+  to="/dashboard-admin/centros-formacion"
+  onClick={() => setMenuOpen(false)}
+>
+  Centros de Formación
+</NavLink>
 
             <NavLink
               to="/dashboard-admin/datos-usuarios"

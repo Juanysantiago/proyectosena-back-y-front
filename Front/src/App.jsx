@@ -14,7 +14,7 @@ import ReportesRecibidos from "./pages/administrador/ReportesRecibidos";
 import InicioAdmin from "./pages/administrador/InicioAdmin";
 import TipoDocumentosCrud from "./pages/administrador/TipoDocumentosCrud";
 import VehiculosCrud from "./pages/administrador/VehiculosCrud";
-import ConfigGrCrud from "./pages/administrador/ConfigGrCrud";
+import ConfigGrCrud from "./pages/administrador/CentroFormacionCrud";
 import SolicitudesActualizacionAdmin from "./pages/administrador/SolicitudesActualizacionAdmin";
 
 
@@ -62,8 +62,8 @@ export default function App() {
           element={<VerificarCodigo />}
         />
 
-        {/* ================= ADMINISTRADOR ================= */}
-    <Route
+       {/* ================= ADMINISTRADOR ================= */}
+<Route
   path="/dashboard-admin"
   element={<DashboardAdmin />}
 >
@@ -108,7 +108,7 @@ export default function App() {
   />
 
   <Route
-    path="config-gr"
+    path="centros-formacion"
     element={<ConfigGrCrud />}
   />
 
