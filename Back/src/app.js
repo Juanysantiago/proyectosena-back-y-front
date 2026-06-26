@@ -75,6 +75,11 @@ app.use(
   require("./routers/aprendiz/solicitudActualizacionRouter")
 );
 
+app.use(
+  "/api",
+  require("./routers/aprendiz/reportesRouter")
+);
+
 /* BASE DE DATOS */
 sequelize
   .authenticate()

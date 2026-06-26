@@ -9,6 +9,7 @@ const Carnet = require("./Carnet");
 const CentroFormacion = require("./CentroFormacion");
 const SolicitudActualizacion = require("./aprendiz/SolicitudActualizacion");
 const Notificacion = require("./Notificacion");
+const Reporte = require("./aprendiz/Reporte");
 
 /* SOLICITUDES */
 User.hasMany(SolicitudCarnet, {
@@ -74,6 +75,16 @@ SolicitudActualizacion.belongsTo(User,{
   as:"user"
 });
 
+User.hasMany(Reporte, {
+  foreignKey: "userId",
+  as: "reportes",
+});
+
+Reporte.belongsTo(User, {
+  foreignKey: "userId",
+  as: "user",
+});
+
 module.exports = {
   User,
   Vehiculo,
@@ -86,4 +97,5 @@ module.exports = {
   Carnet,
   CentroFormacion,
   Notificacion,
+  Reporte,
 };
