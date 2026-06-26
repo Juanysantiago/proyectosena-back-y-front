@@ -1,59 +1,25 @@
-import { useEffect, useState } from "react";
-import { axiosClient } from "../../api/axiosClient";
+import "../../styles/aprendiz/inicioAprendiz.css";
 
 export default function InicioAprendiz() {
-  const [notificaciones, setNotificaciones] = useState([]);
-
-  useEffect(() => {
-    cargarNotificaciones();
-  }, []);
-
-  const cargarNotificaciones = async () => {
-    try {
-      const res = await axiosClient.get(
-        "/api/notificaciones"
-      );
-
-      setNotificaciones(res.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   return (
-    <div>
-      <h2>Inicio</h2>
+    <div className="inicio-aprendiz">
+      <h2>Bienvenido al sistema SENA Parking</h2>
 
       <p>
-        Bienvenido al sistema SENA Parking.
+        Desde este panel puedes gestionar tu carnet, actualizar tus datos,
+        realizar solicitudes y consultar las notificaciones desde la campana.
       </p>
 
-      {notificaciones.length > 0 && (
-        <>
-          <h3>Notificaciones</h3>
+      <div className="inicio-card">
+        <h3>Accesos rápidos</h3>
 
-          {notificaciones.map((n) => (
-            <div
-              key={n.id}
-              style={{
-                background: "#f5f5f5",
-                padding: "12px",
-                marginBottom: "10px",
-                borderRadius: "8px",
-                borderLeft: "4px solid green"
-              }}
-            >
-              <p>{n.mensaje}</p>
-
-              <small>
-                {new Date(
-                  n.createdAt
-                ).toLocaleString()}
-              </small>
-            </div>
-          ))}
-        </>
-      )}
+        <ul>
+          <li>📇 Visualizar tu carnet.</li>
+          <li>📝 Solicitar un nuevo carnet.</li>
+          <li>✏️ Actualizar datos personales o del vehículo.</li>
+          <li>🔔 Revisar las notificaciones desde la campana.</li>
+        </ul>
+      </div>
     </div>
   );
 }

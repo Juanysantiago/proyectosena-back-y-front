@@ -397,6 +397,25 @@ const deleteUser = async (req, res) => {
 };
 
 
+const obtenerMiPerfil = async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.id, {
+      attributes: {
+        exclude: ["password", "pinRecuperacion", "fechaPin"]
+      }
+    });
+
+    return res.json(user);
+
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      message: error.message
+    });
+  }
+};
+
 module.exports = {
   register,
   login,
@@ -407,5 +426,6 @@ module.exports = {
   getCarnet,
   recuperarPassword,
   verificarPin,
-  reenviarPin
+  reenviarPin,
+  obtenerMiPerfil
 };

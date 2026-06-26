@@ -1,23 +1,24 @@
 import { useState, useEffect } from "react";
 import { axiosClient } from "../../api/axiosClient";
 
-export default function ActualizarDatos() {
-  const user = JSON.parse(localStorage.getItem("user"));
 
+export default function ActualizarDatos() {
   const [tipo, setTipo] = useState("datos_personales");
   const [vehiculos, setVehiculos] = useState([]);
   const [nuevaFoto, setNuevaFoto] = useState(null);
+  const [fotoPerfil, setFotoPerfil] = useState(null);
+  const [documentos, setDocumentos] = useState([]);
 
   const [formData, setFormData] = useState({
-    nombres: user?.nombres || "",
-    apellidos: user?.apellidos || "",
-    documento: user?.documento || "",
-    tipoDocumento: user?.tipoDocumento || "",
-    celular: user?.celular || "",
-    ficha: user?.ficha || "",
-    centroFormacionId: user?.centroFormacionId || "",
-    fechaVinculacion: user?.fechaVinculacion || "",
-    fechaFinalizacion: user?.fechaFinalizacion || "",
+    nombres: "",
+    apellidos: "",
+    documento: "",
+    tipoDocumento: "",
+    celular: "",
+    ficha: "",
+    centroFormacionId: "",
+    fechaVinculacion: "",
+    fechaFinalizacion: "",
 
     tipoVehiculo: "",
     marca: "",
@@ -28,8 +29,42 @@ export default function ActualizarDatos() {
   });
 
   useEffect(() => {
+    cargarUsuario();
     cargarVehiculos();
   }, []);
+
+  const cargarUsuario = async () => {
+    try {
+      const usuarioLocal = JSON.parse(localStorage.getItem("user"));
+
+      const res = await axiosClient.get(
+  `/auth/users/${usuarioLocal.id}`
+);
+
+      const usuario = res.data;
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify(usuario)
+      );
+
+      setFormData((prev) => ({
+        ...prev,
+        nombres: usuario.nombres || "",
+        apellidos: usuario.apellidos || "",
+        documento: usuario.documento || "",
+        tipoDocumento: usuario.tipoDocumento || "",
+        celular: usuario.celular || "",
+        ficha: usuario.ficha || "",
+        centroFormacionId: usuario.centroFormacionId || "",
+        fechaVinculacion: usuario.fechaVinculacion || "",
+        fechaFinalizacion: usuario.fechaFinalizacion || ""
+      }));
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const cargarVehiculos = async () => {
     try {
@@ -38,8 +73,9 @@ export default function ActualizarDatos() {
       );
 
       setVehiculos(res.data);
+
     } catch (error) {
-      console.error("Error cargando vehículos:", error);
+      console.log(error);
     }
   };
 
@@ -47,11 +83,14 @@ export default function ActualizarDatos() {
     const { name, value } = e.target;
 
     if (name === "tipoVehiculo") {
+
       const vehiculo = vehiculos.find(
-        (v) => v.tipo?.toLowerCase() === value.toLowerCase()
+        (v) =>
+          v.tipo?.toLowerCase() === value.toLowerCase()
       );
 
       if (vehiculo) {
+
         setFormData((prev) => ({
           ...prev,
           tipoVehiculo: value,
@@ -66,6 +105,7 @@ export default function ActualizarDatos() {
         }));
 
       } else {
+
         setFormData((prev) => ({
           ...prev,
           tipoVehiculo: value,
@@ -75,6 +115,7 @@ export default function ActualizarDatos() {
           cilindraje: "",
           modelo: ""
         }));
+
       }
 
       return;
@@ -90,20 +131,26 @@ export default function ActualizarDatos() {
     e.preventDefault();
 
     try {
+
+      const usuario = JSON.parse(
+        localStorage.getItem("user")
+      );
+
       let datosActuales = {};
       let datosNuevos = {};
 
       if (tipo === "datos_personales") {
+
         datosActuales = {
-          nombres: user.nombres,
-          apellidos: user.apellidos,
-          documento: user.documento,
-          tipoDocumento: user.tipoDocumento,
-          celular: user.celular,
-          ficha: user.ficha,
-          centroFormacionId: user.centroFormacionId,
-          fechaVinculacion: user.fechaVinculacion,
-          fechaFinalizacion: user.fechaFinalizacion
+          nombres: usuario.nombres,
+          apellidos: usuario.apellidos,
+          documento: usuario.documento,
+          tipoDocumento: usuario.tipoDocumento,
+          celular: usuario.celular,
+          ficha: usuario.ficha,
+          centroFormacionId: usuario.centroFormacionId,
+          fechaVinculacion: usuario.fechaVinculacion,
+          fechaFinalizacion: usuario.fechaFinalizacion
         };
 
         datosNuevos = {
@@ -117,7 +164,9 @@ export default function ActualizarDatos() {
           fechaVinculacion: formData.fechaVinculacion,
           fechaFinalizacion: formData.fechaFinalizacion
         };
+
       } else {
+
         datosNuevos = {
           tipoVehiculo: formData.tipoVehiculo,
           marca: formData.marca,
@@ -126,50 +175,64 @@ export default function ActualizarDatos() {
           cilindraje: formData.cilindraje,
           modelo: formData.modelo
         };
+
       }
 
-    const form = new FormData();
+      const form = new FormData();
 
-form.append("tipo", tipo);
+      form.append("tipo", tipo);
 
-form.append(
-  "datosActuales",
-  JSON.stringify(datosActuales)
-);
+      form.append(
+        "datosActuales",
+        JSON.stringify(datosActuales)
+      );
 
-form.append(
-  "datosNuevos",
-  JSON.stringify(datosNuevos)
-);
+      form.append(
+        "datosNuevos",
+        JSON.stringify(datosNuevos)
+      );
 
-if (nuevaFoto) {
-  form.append(
-    "fotoNueva",
-    nuevaFoto
-  );
-}
+      if (tipo === "datos_personales") {
 
-await axiosClient.post(
-  "/api/solicitudes-actualizacion",
-  form,
-  {
-    headers: {
-      "Content-Type":
-        "multipart/form-data"
-    }
-  }
-);
+        if (fotoPerfil) {
+          form.append("fotoNueva", fotoPerfil);
+        }
+
+      } else {
+
+        if (nuevaFoto) {
+          form.append("fotoNueva", nuevaFoto);
+        }
+
+      }
+
+      documentos.forEach((doc) => {
+        form.append("documentos", doc);
+      });
+
+      await axiosClient.post(
+        "/api/solicitudes-actualizacion",
+        form,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        }
+      );
 
       alert(
-        "Solicitud enviada correctamente. El administrador deberá aprobar esta solicitud antes de actualizar el carnet."
+        "Solicitud enviada correctamente."
       );
+
     } catch (error) {
-      console.error(error);
+
+      console.log(error);
 
       alert(
         error.response?.data?.message ||
-          "Error al enviar solicitud"
+        "Error al enviar solicitud"
       );
+
     }
   };
 
@@ -252,6 +315,30 @@ await axiosClient.post(
               value={formData.fechaFinalizacion}
               onChange={handleChange}
             />
+<hr />
+
+<h3>Nueva foto del aprendiz</h3>
+
+<input
+  type="file"
+  accept="image/*"
+  onChange={(e) =>
+    setFotoPerfil(e.target.files[0])
+  }
+/>
+
+<label>Documentos anexos</label>
+
+<input
+  type="file"
+  multiple
+  onChange={(e) =>
+    setDocumentos(
+      Array.from(e.target.files)
+    )
+  }
+/>
+
           </>
         )}
 
@@ -303,6 +390,19 @@ await axiosClient.post(
     setNuevaFoto(e.target.files[0])
   }
 />
+
+<label>Documentos anexos</label>
+
+<input
+  type="file"
+  multiple
+  onChange={(e) =>
+    setDocumentos(
+      Array.from(e.target.files)
+    )
+  }
+/>
+
   </>
 )}
 
@@ -352,6 +452,22 @@ await axiosClient.post(
     setNuevaFoto(e.target.files[0])
   }
 />
+
+<label>Documentos anexos</label>
+
+<input
+  type="file"
+  multiple
+  onChange={(e) =>
+    setDocumentos(
+      Array.from(e.target.files)
+    )
+  }
+/>
+
+
+
+
   </>
 )}
           </>
@@ -364,3 +480,4 @@ await axiosClient.post(
     </div>
   );
 }
+

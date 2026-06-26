@@ -10,7 +10,8 @@ const {
   recuperarPassword,
   verificarPin,
   reenviarPin,
-  getCarnet
+  getCarnet,
+  obtenerMiPerfil
 } = require("../controllers/authController");
 
 const verifyToken = require("../middlewares/verifyToken");
@@ -36,6 +37,12 @@ router.get(
   "/users/:id",
   verifyToken,
   getUserById
+);
+
+router.get(
+  "/me",
+  verifyToken,
+  obtenerMiPerfil
 );
 
 router.put(

@@ -19,7 +19,16 @@ const upload = require("../../middlewares/uploadSolicitud");
 router.post(
   "/solicitudes-actualizacion",
   verifyToken,
-  upload.single("fotoNueva"),
+  upload.fields([
+  {
+    name: "fotoNueva",
+    maxCount: 1
+  },
+  {
+    name: "documentos",
+    maxCount: 10
+  }
+]),
   crearSolicitud
 );
 

@@ -1,0 +1,104 @@
+.crud-container{
+    max-width:1200px;
+    margin:auto;
+    padding:30px;
+}
+
+.solicitud-card{
+    background:white;
+    border-radius:16px;
+    padding:25px;
+    margin-bottom:25px;
+    box-shadow:0 8px 20px rgba(0,0,0,.12);
+}
+
+.cabecera{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.estado{
+    padding:8px 18px;
+    border-radius:30px;
+    color:white;
+    font-weight:bold;
+}
+
+.estado.pendiente{
+    background:#ff9800;
+}
+
+.estado.aprobada{
+    background:#4caf50;
+}
+
+.estado.rechazada{
+    background:#e53935;
+}
+
+.info-general{
+    display:flex;
+    gap:35px;
+    margin-bottom:20px;
+    flex-wrap:wrap;
+}
+
+.comparacion{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:25px;
+    margin-top:20px;
+}
+
+.dato{
+    background:#f7f7f7;
+    padding:10px;
+    margin-bottom:10px;
+    border-radius:8px;
+}
+
+.dato strong{
+    display:block;
+    color:#39b54a;
+}
+
+.foto img{
+    margin-top:10px;
+    width:250px;
+    border-radius:12px;
+}
+
+.documento{
+    display:flex;
+    justify-content:space-between;
+    padding:10px;
+    background:#f5f5f5;
+    border-radius:8px;
+    margin-bottom:10px;
+}
+
+.acciones{
+    display:flex;
+    gap:15px;
+    margin-top:25px;
+}
+
+.aprobar{
+    background:#39b54a;
+    color:white;
+    border:none;
+    padding:12px 28px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.rechazar{
+    background:#e53935;
+    color:white;
+    border:none;
+    padding:12px 28px;
+    border-radius:8px;
+    cursor:pointer;
+}

@@ -1,21 +1,21 @@
-const Notificacion =
-require("../models/Notificacion");
+const Notificacion = require("../models/Notificacion");
 
-const obtenerNotificaciones =
-async (req, res) => {
+const obtenerNotificaciones = async (req, res) => {
   try {
 
-    const data =
-    await Notificacion.findAll({
-      where: {
-        userId: req.user.id
-      },
-      order: [["createdAt", "DESC"]]
-    });
+    const notificaciones =
+      await Notificacion.findAll({
+        where: {
+          userId: req.user.id
+        },
+        order: [["createdAt", "DESC"]]
+      });
 
-    res.json(data);
+    res.json(notificaciones);
 
   } catch (error) {
+
+    console.log(error);
 
     res.status(500).json({
       message: error.message
@@ -24,6 +24,39 @@ async (req, res) => {
   }
 };
 
+const marcarLeidas = async (req, res) => {
+
+  try {
+
+    await Notificacion.update(
+      {
+        leida: true
+      },
+      {
+        where: {
+          userId: req.user.id,
+          leida: false
+        }
+      }
+    );
+
+    res.json({
+      message: "Notificaciones actualizadas"
+    });
+
+  } catch (error) {
+
+    console.log(error);
+
+    res.status(500).json({
+      message: error.message
+    });
+
+  }
+
+};
+
 module.exports = {
-  obtenerNotificaciones
+  obtenerNotificaciones,
+  marcarLeidas
 };

@@ -60,6 +60,11 @@ centroFormacionId: {
   allowNull: true
 },
 
+foto: {
+  type: DataTypes.STRING,
+  allowNull: true
+},
+
 fechaVinculacion: {
   type: DataTypes.DATEONLY,
   allowNull: true
