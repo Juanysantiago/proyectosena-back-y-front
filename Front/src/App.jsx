@@ -5,20 +5,20 @@ import OlvideContraseña from "./pages/OlvideContraseña";
 import VerificarCodigo from "./pages/VerificarCodigo";
 import Register from "./pages/Register";
 
-// Administrador
+// ================= ADMINISTRADOR =================
 import DashboardAdmin from "./pages/administrador/DashboardAdmin";
+import InicioAdmin from "./pages/administrador/InicioAdmin";
 import VerPeticiones from "./pages/administrador/VerPeticiones";
 import Bloqueos from "./pages/administrador/Bloqueos";
 import DatosUsuarios from "./pages/administrador/DatosUsuarios";
 import ReportesRecibidos from "./pages/administrador/ReportesRecibidos";
-import InicioAdmin from "./pages/administrador/InicioAdmin";
 import TipoDocumentosCrud from "./pages/administrador/TipoDocumentosCrud";
 import VehiculosCrud from "./pages/administrador/VehiculosCrud";
 import ConfigGrCrud from "./pages/administrador/CentroFormacionCrud";
 import SolicitudesActualizacionAdmin from "./pages/administrador/SolicitudesActualizacionAdmin";
+import SoporteAdmin from "./pages/administrador/SoporteAdmin";
 
-
-// Guarda
+// ================= GUARDA =================
 import DashboardGuarda from "./pages/guarda/DashboardGuarda";
 import InicioGuarda from "./pages/guarda/InicioGuarda";
 import EscanearQR from "./pages/guarda/EscanearQR";
@@ -26,7 +26,7 @@ import ManualPlataforma from "./pages/guarda/ManualPlataforma";
 import IngresoSalida from "./pages/guarda/IngresoSalida";
 import EntradaSalidaCrud from "./pages/guarda/EntradaSalidaCrud";
 
-// Aprendiz
+// ================= APRENDIZ =================
 import DashboardAprendiz from "./pages/aprendiz/DashboardAprendiz";
 import InicioAprendiz from "./pages/aprendiz/InicioAprendiz";
 import VisualizarCarnet from "./pages/aprendiz/VisualizarCarnet";
@@ -48,9 +48,14 @@ export default function App() {
     <BrowserRouter>
       <Routes>
 
-        {/* Login */}
+        {/* ================= LOGIN ================= */}
+
         <Route path="/" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+
+        <Route
+          path="/register"
+          element={<Register />}
+        />
 
         <Route
           path="/olvide-contraseña"
@@ -62,94 +67,102 @@ export default function App() {
           element={<VerificarCodigo />}
         />
 
-       {/* ================= ADMINISTRADOR ================= */}
-<Route
-  path="/dashboard-admin"
-  element={<DashboardAdmin />}
->
-  <Route
-    path="solicitudes-actualizacion"
-    element={<SolicitudesActualizacionAdmin />}
-  />
+        {/* ================= ADMINISTRADOR ================= */}
 
-  <Route
-    index
-    element={<InicioAdmin />}
-  />
+        <Route
+          path="/dashboard-admin"
+          element={<DashboardAdmin />}
+        >
+          <Route
+            index
+            element={<InicioAdmin />}
+          />
 
-  <Route
-    path="ver-peticiones"
-    element={<VerPeticiones />}
-  />
+          <Route
+            path="ver-peticiones"
+            element={<VerPeticiones />}
+          />
 
-  <Route
-    path="bloqueos"
-    element={<Bloqueos />}
-  />
+          <Route
+            path="bloqueos"
+            element={<Bloqueos />}
+          />
 
-  <Route
-    path="datos-usuarios"
-    element={<DatosUsuarios />}
-  />
+          <Route
+            path="datos-usuarios"
+            element={<DatosUsuarios />}
+          />
 
-  <Route
-    path="reportes"
-    element={<ReportesRecibidos />}
-  />
+          <Route
+            path="reportes"
+            element={<ReportesRecibidos />}
+          />
 
-  <Route
-    path="tipo-documentos"
-    element={<TipoDocumentosCrud />}
-  />
+          <Route
+            path="tipo-documentos"
+            element={<TipoDocumentosCrud />}
+          />
 
-  <Route
-    path="vehiculos"
-    element={<VehiculosCrud />}
-  />
+          <Route
+            path="vehiculos"
+            element={<VehiculosCrud />}
+          />
 
-  <Route
-    path="centros-formacion"
-    element={<ConfigGrCrud />}
-  />
+          <Route
+            path="centros-formacion"
+            element={<ConfigGrCrud />}
+          />
 
-  <Route
-    path="entrada-salida"
-    element={<EntradaSalidaCrud />}
-  />
-</Route>
+          <Route
+            path="entrada-salida"
+            element={<EntradaSalidaCrud />}
+          />
+
+          <Route
+            path="solicitudes-actualizacion"
+            element={<SolicitudesActualizacionAdmin />}
+          />
+
+          <Route
+            path="soporte"
+            element={<SoporteAdmin />}
+          />
+        </Route>
 
         {/* ================= GUARDA ================= */}
-      <Route
-  path="/dashboard-guarda"
-  element={<DashboardGuarda />}
->
-  <Route
-    index
-    element={<InicioGuarda />}
-  />
 
-  <Route
-    path="escanear-qr"
-    element={<EscanearQR />}
-  />
+        <Route
+          path="/dashboard-guarda"
+          element={<DashboardGuarda />}
+        >
+          <Route
+            index
+            element={<InicioGuarda />}
+          />
 
-  <Route
-    path="manual"
-    element={<ManualPlataforma />}
-  />
+          <Route
+            path="escanear-qr"
+            element={<EscanearQR />}
+          />
 
-  <Route
-    path="ingreso-salida"
-    element={<IngresoSalida />}
-  />
+          <Route
+            path="manual"
+            element={<ManualPlataforma />}
+          />
 
-  <Route
-    path="entrada-salida"
-    element={<EntradaSalidaCrud />}
-  />
-</Route>
+          <Route
+            path="ingreso-salida"
+            element={<IngresoSalida />}
+          />
+
+          <Route
+            path="entrada-salida"
+            element={<EntradaSalidaCrud />}
+          />
+        </Route>
 
         {/* ================= APRENDIZ ================= */}
+
         <Route
           path="/dashboard-aprendiz"
           element={<DashboardAprendiz />}
@@ -190,7 +203,8 @@ export default function App() {
           />
         </Route>
 
-        {/* Ruta no encontrada */}
+        {/* ================= RUTA NO ENCONTRADA ================= */}
+
         <Route
           path="*"
           element={<Navigate to="/" replace />}

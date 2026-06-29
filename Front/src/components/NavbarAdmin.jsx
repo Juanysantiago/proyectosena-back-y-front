@@ -89,6 +89,17 @@ export default function NavbarAdmin() {
           Bloqueos / Reportes
         </NavLink>
 
+        <NavLink
+  to="/dashboard-admin/soporte"
+  className={({ isActive }) =>
+    isActive
+      ? "nav-link-admin active"
+      : "nav-link-admin"
+  }
+>
+  Soporte Técnico
+</NavLink>
+
       </div>
 
       <div className="menu-hamburguesa">
@@ -122,6 +133,13 @@ export default function NavbarAdmin() {
             >
               Reportes Recibidos
             </NavLink>
+
+            <NavLink
+  to="/dashboard-admin/soporte"
+  onClick={() => setMenuOpen(false)}
+>
+  Soporte Técnico
+</NavLink>
 
             <button onClick={logout}>
               Cerrar Sesión

@@ -1,14 +1,39 @@
 const router = require("express").Router();
 
 const controller = require("../../controllers/aprendiz/reportesController");
+const verifyToken = require("../../middlewares/verifyToken");
+const authorizeRoles = require("../../middlewares/roles");
 
-// agrega aquí tu middleware de autenticación si ya lo tienes
-// const verifyToken = require("../../middlewares/verifyToken");
+// Crear soporte (Aprendiz)
+router.post(
+  "/reportes",
+  verifyToken,
+  authorizeRoles("aprendiz"),
+  controller.crearReporte
+);
 
-router.post("/reportes", controller.crearReporte);
+// Ver mis soportes (Aprendiz)
+router.get(
+  "/reportes/mios",
+  verifyToken,
+  authorizeRoles("aprendiz"),
+  controller.obtenerMisReportes
+);
 
-router.get("/reportes", controller.obtenerReportes);
+// Ver todos los soportes (Administrador)
+router.get(
+  "/reportes",
+  verifyToken,
+  authorizeRoles("administrador"),
+  controller.obtenerReportes
+);
 
-router.put("/reportes/:id", controller.marcarLeido);
+// Responder soporte (Administrador)
+router.put(
+  "/reportes/:id",
+  verifyToken,
+  authorizeRoles("administrador"),
+  controller.actualizarReporte
+);
 
 module.exports = router;

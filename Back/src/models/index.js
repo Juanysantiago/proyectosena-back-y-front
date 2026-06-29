@@ -10,6 +10,7 @@ const CentroFormacion = require("./CentroFormacion");
 const SolicitudActualizacion = require("./aprendiz/SolicitudActualizacion");
 const Notificacion = require("./Notificacion");
 const Reporte = require("./aprendiz/Reporte");
+const Soporte = require("./Soporte");
 
 /* SOLICITUDES */
 User.hasMany(SolicitudCarnet, {
@@ -85,6 +86,18 @@ Reporte.belongsTo(User, {
   as: "user",
 });
 
+/* SOPORTE TÉCNICO */
+
+User.hasMany(Soporte, {
+  foreignKey: "userId",
+  as: "soportes"
+});
+
+Soporte.belongsTo(User, {
+  foreignKey: "userId",
+  as: "user"
+});
+
 module.exports = {
   User,
   Vehiculo,
@@ -98,4 +111,5 @@ module.exports = {
   CentroFormacion,
   Notificacion,
   Reporte,
+  Soporte,
 };

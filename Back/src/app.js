@@ -54,6 +54,8 @@ app.use("/api", require("./routers/entradaSalidaAprendizRouter"));
 app.use("/api", require("./routers/configGrRouter"));
 app.use("/api", require("./routers/centroFormacionRouter"));
 app.use("/api",require("./routers/notificacionRouter"));
+app.use("/api",require("./routers/soporteRouter"));
+
 
 app.use(
   "/api/carnet",
@@ -86,12 +88,12 @@ sequelize
   .then(async () => {
     console.log("✅ DB conectada");
 
-    await sequelize.sync();
+    await sequelize.sync({ alter: true });
 
     console.log("✅ Tablas sincronizadas");
   })
   .catch((err) => {
-    console.error("❌ Error DB:", err);
+    console.error(err);
   });
 
 const PORT = process.env.PORT || 3000;
