@@ -39,12 +39,21 @@ export default function SoporteTecnico() {
       await cargar();
 
       alert("Solicitud enviada correctamente.");
-
     } catch (error) {
       console.error(error);
       alert("Error al enviar la solicitud.");
     }
   };
+
+  // Soportes pendientes
+  const solicitudes = soportes.filter(
+    (s) => s.estado !== "Resuelto"
+  );
+
+  // Soportes respondidos
+  const reportesRecibidos = soportes.filter(
+    (s) => s.estado === "Resuelto"
+  );
 
   return (
     <div className="soporte-container">
@@ -74,12 +83,14 @@ export default function SoporteTecnico() {
         </button>
       </form>
 
+      <hr />
+
       <h3>Mis solicitudes</h3>
 
-      {soportes.length === 0 ? (
-        <p>No has enviado solicitudes de soporte.</p>
+      {solicitudes.length === 0 ? (
+        <p>No tienes solicitudes pendientes.</p>
       ) : (
-        soportes.map((item) => (
+        solicitudes.map((item) => (
           <div
             key={item.id}
             className="ticket"
@@ -91,14 +102,35 @@ export default function SoporteTecnico() {
             <h4>{item.asunto}</h4>
 
             <p>{item.descripcion}</p>
+          </div>
+        ))
+      )}
 
-            {item.respuesta && (
-              <div className="respuesta">
-                <strong>Respuesta del administrador:</strong>
-                <br />
-                {item.respuesta}
-              </div>
-            )}
+      <hr />
+
+      <h3>Reportes recibidos</h3>
+
+      {reportesRecibidos.length === 0 ? (
+        <p>No tienes respuestas del administrador.</p>
+      ) : (
+        reportesRecibidos.map((item) => (
+          <div
+            key={item.id}
+            className="ticket"
+          >
+            <div className="estado Resuelto">
+              Resuelto
+            </div>
+
+            <h4>{item.asunto}</h4>
+
+            <p>{item.descripcion}</p>
+
+            <div className="respuesta">
+              <strong>Respuesta del administrador:</strong>
+              <br />
+              {item.respuesta}
+            </div>
           </div>
         ))
       )}

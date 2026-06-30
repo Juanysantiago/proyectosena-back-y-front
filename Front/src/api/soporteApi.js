@@ -1,28 +1,36 @@
 import { axiosClient } from "./axiosClient";
 
-// Crear reporte
+// Crear soporte
 export const crearSoporte = async (data) => {
-  const res = await axiosClient.post("/api/reportes", data);
+  const res = await axiosClient.post("/api/soportes", data);
   return res.data;
 };
 
-// Obtener mis reportes
+// Mis soportes
 export const obtenerMisSoportes = async () => {
-  const res = await axiosClient.get("/api/reportes/mios");
+  const res = await axiosClient.get("/api/soportes/mios");
   return res.data;
 };
 
-// Obtener todos
+// Todos los soportes
 export const obtenerTodosSoportes = async () => {
-  const res = await axiosClient.get("/api/reportes");
+  const res = await axiosClient.get("/api/soportes");
   return res.data;
 };
 
-// Actualizar reporte
+// Responder soporte
 export const responderSoporte = async (id, data) => {
   const res = await axiosClient.put(
-    `/api/reportes/${id}`,
+    `/api/soportes/${id}`,
     data
+  );
+
+  return res.data;
+};
+
+export const obtenerReportesRecibidos = async () => {
+  const res = await axiosClient.get(
+    "/api/soportes/reportes-recibidos"
   );
 
   return res.data;

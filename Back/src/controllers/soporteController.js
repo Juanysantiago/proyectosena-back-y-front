@@ -55,72 +55,110 @@ exports.obtenerMisSoportes = async (req, res) => {
 
 };
 
-exports.obtenerTodos = async (req,res)=>{
-
-  try{
+exports.obtenerTodos = async (req, res) => {
+  try {
 
     const soportes = await Soporte.findAll({
 
-      include:[
+      where: {
+        estado: "Pendiente"
+      },
 
+      include: [
         {
-          model:User,
-          as:"user",
-          attributes:[
+          model: User,
+          as: "user",
+          attributes: [
             "id",
             "nombres",
             "apellidos",
             "email"
           ]
         }
-
       ],
 
-      order:[
-        ["createdAt","DESC"]
-      ]
+      order: [["createdAt", "DESC"]]
 
     });
 
     res.json(soportes);
 
-  }catch(error){
+  } catch (error) {
+
+    console.error(error);
 
     res.status(500).json({
-      message:error.message
+      message: error.message
+    });
+
+  }
+};
+exports.obtenerReportesRecibidos = async (req, res) => {
+
+  try {
+
+    const reportes = await Soporte.findAll({
+
+      where: {
+        estado: "Resuelto"
+      },
+
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: [
+            "id",
+            "nombres",
+            "apellidos",
+            "email"
+          ]
+        }
+      ],
+
+      order: [["updatedAt", "DESC"]]
+
+    });
+
+    res.json(reportes);
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: error.message
     });
 
   }
 
 };
 
-exports.responderSoporte = async(req,res)=>{
-
-  try{
+exports.responderSoporte = async (req, res) => {
+  try {
 
     const soporte = await Soporte.findByPk(req.params.id);
 
-    if(!soporte){
-
+    if (!soporte) {
       return res.status(404).json({
-        message:"No existe"
+        message: "Soporte no encontrado"
       });
-
     }
 
-    soporte.respuesta=req.body.respuesta;
-    soporte.estado=req.body.estado;
+    soporte.respuesta = req.body.respuesta;
+
+    // Al responder cambia automáticamente a Resuelto
+    soporte.estado = "Resuelto";
 
     await soporte.save();
 
     res.json(soporte);
 
-  }catch(error){
+  } catch (error) {
+
+    console.error(error);
 
     res.status(500).json({
-      message:error.message
+      message: error.message
     });
 
   }
-
 };
