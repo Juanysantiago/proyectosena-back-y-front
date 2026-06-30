@@ -1,4 +1,4 @@
-import "../../Styles/aprendiz/ManualUso.css";
+import "../../Styles/ManualUso.css";
 
 export default function ManualUso() {
   return (
