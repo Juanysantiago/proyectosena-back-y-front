@@ -11,12 +11,20 @@ const EntradaSalidaAprendiz = require("../models/EntradaSalidaAprendiz");
 ========================= */
 const generarCarnet = async (req, res) => {
   try {
+
     const solicitud = await SolicitudCarnet.findByPk(req.params.id, {
-      include: [{ model: User, as: "user" }]
+      include: [
+        {
+          model: User,
+          as: "user"
+        }
+      ]
     });
 
     if (!solicitud) {
-      return res.status(404).json({ message: "Solicitud no encontrada" });
+      return res.status(404).json({
+        message: "Solicitud no encontrada"
+      });
     }
 
     if (solicitud.estado !== "aprobada") {
@@ -26,7 +34,9 @@ const generarCarnet = async (req, res) => {
     }
 
     const yaExiste = await Carnet.findOne({
-      where: { userId: solicitud.userId }
+      where: {
+        userId: solicitud.userId
+      }
     });
 
     if (yaExiste) {
@@ -38,6 +48,13 @@ const generarCarnet = async (req, res) => {
     const codigoQr = `SENA-${solicitud.userId}-${Date.now()}`;
     const qrImage = await QRCode.toDataURL(codigoQr);
 
+    // ================================
+    // GUARDAR FOTO DEL APRENDIZ
+    // ================================
+    await solicitud.user.update({
+      foto: solicitud.fotoAprendiz
+    });
+
     const carnet = await Carnet.create({
       userId: solicitud.userId,
       solicitudId: solicitud.id,
@@ -46,49 +63,77 @@ const generarCarnet = async (req, res) => {
     });
 
     /* VEHÍCULO */
+
     const vehiculoExistente = await Vehiculo.findOne({
-      where: { userId: solicitud.userId }
+      where: {
+        userId: solicitud.userId
+      }
     });
 
     if (!vehiculoExistente && solicitud.tipoVehiculo) {
+
       await Vehiculo.create({
+
         userId: solicitud.userId,
+
         tipo: solicitud.tipoVehiculo,
+
         id_centro_de_formacion: solicitud.user?.ficha || null,
+
         marca: solicitud.marca,
+
         color: solicitud.color,
+
         serial:
           solicitud.tipoVehiculo === "bicicleta"
             ? solicitud.serialPlaca
             : null,
+
         placa:
           solicitud.tipoVehiculo === "moto"
             ? solicitud.serialPlaca
             : null,
+
         cilindraje: solicitud.cilindraje,
+
         modelo: solicitud.modelo,
+
         foto_principal: solicitud.fotoVehiculo,
+
         foto_secundaria: solicitud.fotoVehiculo
+
       });
+
     }
 
     solicitud.estado = "carnet_generado";
+
     await solicitud.save();
 
     return res.json({
+
       message: "Carnet generado correctamente",
+
       carnet,
+
       qrImage
+
     });
 
   } catch (error) {
+
+    console.error(error);
+
     return res.status(500).json({
+
       message: "Error generando carnet",
+
       error: error.message
+
     });
+
   }
 };
-
 /* =========================
    MI CARNET
 ========================= */

@@ -90,15 +90,15 @@ export default function NavbarAdmin() {
         </NavLink>
 
         <NavLink
-  to="/dashboard-admin/soporte"
-  className={({ isActive }) =>
-    isActive
-      ? "nav-link-admin active"
-      : "nav-link-admin"
-  }
->
-  Soporte Técnico
-</NavLink>
+          to="/dashboard-admin/soporte"
+          className={({ isActive }) =>
+            isActive
+              ? "nav-link-admin active"
+              : "nav-link-admin"
+          }
+        >
+          Soporte Técnico
+        </NavLink>
 
       </div>
 
@@ -113,12 +113,12 @@ export default function NavbarAdmin() {
         {menuOpen && (
           <div className="dropdown-admin">
 
-           <NavLink
-  to="/dashboard-admin/centros-formacion"
-  onClick={() => setMenuOpen(false)}
->
-  Centros de Formación
-</NavLink>
+            <NavLink
+              to="/dashboard-admin/centros-formacion"
+              onClick={() => setMenuOpen(false)}
+            >
+              Centros de Formación
+            </NavLink>
 
             <NavLink
               to="/dashboard-admin/datos-usuarios"
@@ -133,13 +133,6 @@ export default function NavbarAdmin() {
             >
               Reportes Recibidos
             </NavLink>
-
-            <NavLink
-  to="/dashboard-admin/soporte"
-  onClick={() => setMenuOpen(false)}
->
-  Soporte Técnico
-</NavLink>
 
             <button onClick={logout}>
               Cerrar Sesión
