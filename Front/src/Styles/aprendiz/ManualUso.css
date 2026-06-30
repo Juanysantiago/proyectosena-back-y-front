@@ -1,0 +1,92 @@
+.manual-container{
+    max-width:900px;
+    margin:40px auto;
+    padding:35px;
+    background:#ffffff;
+    border-radius:18px;
+    box-shadow:0 8px 25px rgba(0,0,0,.12);
+    font-family:'Segoe UI',sans-serif;
+    line-height:1.8;
+}
+
+.manual-header{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+.manual-header h2{
+    color:#0B7A3B;
+    font-size:32px;
+    margin-bottom:10px;
+}
+
+.manual-header p{
+    color:#555;
+    font-size:17px;
+}
+
+.manual-card{
+    background:#f8faf8;
+    border-left:6px solid #0B7A3B;
+    padding:25px;
+    border-radius:12px;
+    margin-top:25px;
+}
+
+.manual-card h3{
+    color:#0B7A3B;
+    margin-bottom:15px;
+    font-size:23px;
+}
+
+.manual-card p{
+    color:#444;
+    text-align:justify;
+    font-size:16px;
+}
+
+.manual-card ul{
+    margin-top:18px;
+    padding-left:25px;
+}
+
+.manual-card li{
+    margin-bottom:12px;
+    color:#333;
+    font-size:16px;
+}
+
+.manual-tip{
+    margin-top:30px;
+    background:#eaf7ef;
+    border:1px solid #7bc98d;
+    border-radius:12px;
+    padding:20px;
+}
+
+.manual-tip h4{
+    color:#0B7A3B;
+    margin-bottom:10px;
+}
+
+.manual-tip p{
+    margin:0;
+    color:#444;
+}
+
+@media(max-width:768px){
+
+.manual-container{
+    margin:15px;
+    padding:20px;
+}
+
+.manual-header h2{
+    font-size:26px;
+}
+
+.manual-card h3{
+    font-size:20px;
+}
+
+}
