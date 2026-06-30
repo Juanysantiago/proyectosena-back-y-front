@@ -1,56 +1,119 @@
-.escanear-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 30px;
+.escanear-container{
+  max-width: 900px;
+  margin: auto;
+  padding: 40px 20px;
+  font-family: 'Segoe UI', sans-serif;
+  background: #f4f6f9;
 }
 
-.titulo-qr {
-  color: #2e7d32;
-  margin-bottom: 25px;
+/* ===== BANNER ===== */
+.titulo-qr{
+  background: linear-gradient(135deg, #0b7a3b, #22c55e);
+  color: white;
+  padding: 45px 25px;
+  border-radius: 20px;
+  text-align: center;
+  font-size: 26px;
+  font-weight: bold;
+  box-shadow: 0 12px 30px rgba(0,0,0,.18);
+  margin-bottom: 30px;
+  animation: fadeIn 0.5s ease-in-out;
 }
 
-.camara-imagen {
-  width: 220px;
-  margin-bottom: 25px;
+/* ===== CARD PRINCIPAL (CONTENEDOR ESCANER) ===== */
+.scanner-card{
+  background: white;
+  border-radius: 18px;
+  padding: 35px;
+  text-align: center;
+  box-shadow: 0 8px 22px rgba(0,0,0,.10);
+  border-left: 8px solid #22c55e;
+  transition: 0.3s ease;
 }
 
-.btn-escanear {
-  background: #4caf50;
+.scanner-card:hover{
+  transform: translateY(-6px);
+  box-shadow: 0 14px 35px rgba(0,0,0,.15);
+}
+
+/* ===== ICONO CAMARA ===== */
+.camara-imagen{
+  width: 200px;
+  margin-bottom: 20px;
+  transition: 0.3s ease;
+}
+
+.camara-imagen:hover{
+  transform: scale(1.05);
+}
+
+/* ===== BOTON ===== */
+.btn-escanear{
+  background: #22c55e;
   color: white;
   border: none;
-  padding: 12px 35px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 17px;
-  font-weight: bold;
-}
-
-.btn-escanear:hover {
-  background: #2e7d32;
-}
-
-#reader {
-  width: 450px;
-  max-width: 100%;
-  margin-top: 20px;
-}
-
-.resultado-qr {
-  margin-top: 20px;
-  background: #e8f5e9;
-  border: 1px solid #4caf50;
-  padding: 15px;
+  padding: 14px 45px;
   border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,.15);
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.btn-escanear:hover{
+  background: #0b7a3b;
+  transform: translateY(-3px);
+}
+
+/* ===== CAMARA QR ===== */
+#reader{
   width: 100%;
   max-width: 500px;
+  margin: 25px auto 0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0,0,0,.12);
+  background: white;
+  padding: 10px;
 }
 
-.resultado-qr h3 {
-  color: #2e7d32;
+/* ===== RESULTADO ===== */
+.resultado-qr{
+  margin-top: 25px;
+  background: #ffffff;
+  border-left: 8px solid #22c55e;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.08);
+  text-align: left;
+}
+
+.resultado-qr h3{
+  color: #0b7a3b;
   margin-bottom: 10px;
 }
 
-.resultado-qr p {
+.resultado-qr p{
+  color: #444;
   word-break: break-word;
+}
+
+/* ===== ANIMACION ===== */
+@keyframes fadeIn{
+  from{opacity:0; transform: translateY(-10px);}
+  to{opacity:1; transform: translateY(0);}
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px){
+  .titulo-qr{
+    font-size: 20px;
+    padding: 30px 15px;
+  }
+
+  .scanner-card{
+    padding: 20px;
+  }
 }
