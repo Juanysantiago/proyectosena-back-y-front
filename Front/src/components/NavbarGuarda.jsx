@@ -32,9 +32,7 @@ export default function NavbarGuarda() {
           MANUAL
         </NavLink>
 
-        <NavLink to="/dashboard-guarda/ingreso-salida">
-          INGRESO Y SALIDA
-        </NavLink>
+      
 
         <NavLink to="/dashboard-guarda/entrada-salida">
           ENTRADA / SALIDA
@@ -53,41 +51,6 @@ export default function NavbarGuarda() {
 
         {menuOpen && (
           <div className="dropdown">
-
-            <NavLink
-              to="/dashboard-guarda"
-              onClick={() => setMenuOpen(false)}
-            >
-              Inicio
-            </NavLink>
-
-            <NavLink
-              to="/dashboard-guarda/escanear-qr"
-              onClick={() => setMenuOpen(false)}
-            >
-              Escanear QR
-            </NavLink>
-
-            <NavLink
-              to="/dashboard-guarda/manual"
-              onClick={() => setMenuOpen(false)}
-            >
-              Manual
-            </NavLink>
-
-            <NavLink
-              to="/dashboard-guarda/ingreso-salida"
-              onClick={() => setMenuOpen(false)}
-            >
-              Ingreso y Salida
-            </NavLink>
-
-            <NavLink
-              to="/dashboard-guarda/entrada-salida"
-              onClick={() => setMenuOpen(false)}
-            >
-              Entrada / Salida
-            </NavLink>
 
             <button onClick={logout}>
               Cerrar sesión
