@@ -82,6 +82,8 @@ app.use(
   require("./routers/aprendiz/reportesRouter")
 );
 
+app.use("/api", require("./routers/reportesRouter"));
+
 /* BASE DE DATOS */
 sequelize
   .authenticate()

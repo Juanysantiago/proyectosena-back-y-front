@@ -85,6 +85,11 @@ fechaPin: {
   allowNull: true
 },
 
+estado: {
+  type: DataTypes.STRING,
+  defaultValue: "activo"
+},
+
 });
 
 module.exports = User;

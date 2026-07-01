@@ -145,6 +145,12 @@ const login = async (req, res) => {
       });
     }
 
+if (user.estado === "bloqueado") {
+  return res.status(403).json({
+    message: "Usuario bloqueado. Comuníquese al soporte."
+  });
+}
+
     const accessToken = jwt.sign(
       {
         id: user.id,
@@ -307,9 +313,18 @@ const reenviarPin = async (req, res) => {
 };
 
 // OBTENER TODOS LOS USUARIOS
+const { Op } = require("sequelize");
+
 const getUsers = async (req, res) => {
   try {
+    const { nombre = "" } = req.query;
+
     const users = await User.findAll({
+      where: {
+        nombres: {
+          [Op.like]: `%${nombre}%`
+        }
+      },
       attributes: {
         exclude: ["password", "pinRecuperacion", "fechaPin"]
       }
@@ -317,12 +332,11 @@ const getUsers = async (req, res) => {
 
     return res.status(200).json(users);
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       message: "Error obteniendo usuarios"
     });
   }
-};
+}; 
 
 // OBTENER USUARIO POR ID
 const getUserById = async (req, res) => {
