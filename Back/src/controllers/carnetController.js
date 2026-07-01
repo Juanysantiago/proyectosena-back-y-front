@@ -62,6 +62,8 @@ const generarCarnet = async (req, res) => {
       estado: "activo"
     });
 
+    
+
     /* VEHÍCULO */
 
     const vehiculoExistente = await Vehiculo.findOne({

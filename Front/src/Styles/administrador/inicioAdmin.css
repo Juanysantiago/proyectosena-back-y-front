@@ -1,0 +1,138 @@
+.inicio-admin{
+    max-width:1200px;
+    margin:auto;
+    padding:35px;
+    font-family:'Segoe UI',sans-serif;
+    background:#f4f7fb;
+    min-height:100vh;
+}
+
+/* Banner */
+
+.admin-banner{
+    background:linear-gradient(135deg,#0b7a3b,#39b54a);
+    color:#fff;
+    padding:40px;
+    border-radius:20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow:0 15px 35px rgba(0,0,0,.15);
+    margin-bottom:35px;
+}
+
+.admin-banner h1{
+    font-size:38px;
+    margin-bottom:12px;
+}
+
+.admin-banner p{
+    font-size:17px;
+    max-width:650px;
+    opacity:.95;
+    line-height:1.7;
+}
+
+.banner-icon{
+    font-size:90px;
+    opacity:.2;
+}
+
+/* Grid */
+
+.admin-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:25px;
+    margin-bottom:35px;
+}
+
+/* Cards */
+
+.admin-card{
+    background:#fff;
+    border-radius:18px;
+    padding:30px;
+    text-align:center;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+    transition:.3s;
+    border-top:5px solid #39b54a;
+}
+
+.admin-card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 20px 40px rgba(0,0,0,.15);
+}
+
+.admin-icon{
+    font-size:48px;
+    color:#39b54a;
+    margin-bottom:18px;
+}
+
+.admin-card h3{
+    color:#222;
+    font-size:23px;
+    margin-bottom:12px;
+}
+
+.admin-card p{
+    color:#666;
+    line-height:1.6;
+}
+
+/* Información */
+
+.admin-info{
+    background:#fff;
+    border-radius:20px;
+    padding:30px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+.admin-info h2{
+    color:#0b7a3b;
+    margin-bottom:20px;
+}
+
+.admin-info ul{
+    list-style:none;
+    padding:0;
+}
+
+.admin-info li{
+    padding:16px;
+    margin-bottom:12px;
+    background:#f8fafc;
+    border-radius:12px;
+    transition:.3s;
+}
+
+.admin-info li:hover{
+    background:#e8f8ec;
+    transform:translateX(8px);
+}
+
+/* Responsive */
+
+@media(max-width:768px){
+
+    .inicio-admin{
+        padding:20px;
+    }
+
+    .admin-banner{
+        flex-direction:column;
+        text-align:center;
+        gap:20px;
+    }
+
+    .admin-banner h1{
+        font-size:30px;
+    }
+
+    .banner-icon{
+        font-size:70px;
+    }
+
+}

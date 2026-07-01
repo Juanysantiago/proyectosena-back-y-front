@@ -1,61 +1,139 @@
 .adminSoporte{
-
-    max-width:1000px;
-
+    max-width:1200px;
     margin:auto;
-
-    padding:30px;
-
+    padding:40px 25px;
+    background:#f4f7fb;
+    min-height:100vh;
+    font-family:'Segoe UI',sans-serif;
 }
+
+.adminSoporte h2{
+    font-size:34px;
+    color:#0b7a3b;
+    margin-bottom:30px;
+}
+
+/* ================= TARJETA ================= */
 
 .cardSoporte{
-
-    background:white;
-
-    border-radius:12px;
-
-    padding:20px;
-
-    margin-bottom:25px;
-
-    box-shadow:0 2px 8px rgba(0,0,0,.1);
-
+    background:#fff;
+    border-radius:20px;
+    padding:30px;
+    margin-bottom:30px;
+    border-left:6px solid #39b54a;
+    box-shadow:0 12px 30px rgba(0,0,0,.08);
+    transition:.3s;
 }
 
-.cardSoporte textarea{
-
-    width:100%;
-
-    height:120px;
-
-    margin-top:15px;
-
-    margin-bottom:15px;
-
+.cardSoporte:hover{
+    transform:translateY(-5px);
+    box-shadow:0 18px 40px rgba(0,0,0,.12);
 }
+
+.cardSoporte h3{
+    color:#222;
+    margin-bottom:12px;
+    font-size:24px;
+}
+
+.cardSoporte p{
+    color:#555;
+    line-height:1.7;
+    margin-bottom:12px;
+}
+
+.cardSoporte strong{
+    color:#0b7a3b;
+}
+
+/* ================= SELECT ================= */
 
 .cardSoporte select{
-
-    margin-top:10px;
-
-    margin-bottom:15px;
-
-    width:200px;
-
+    width:240px;
+    padding:12px 15px;
+    margin:18px 0;
+    border:1px solid #d9dee7;
+    border-radius:12px;
+    background:#fafafa;
+    font-size:15px;
+    transition:.3s;
 }
 
+.cardSoporte select:focus{
+    outline:none;
+    border-color:#39b54a;
+    box-shadow:0 0 0 4px rgba(57,181,74,.15);
+    background:#fff;
+}
+
+/* ================= TEXTAREA ================= */
+
+.cardSoporte textarea{
+    width:100%;
+    min-height:160px;
+    padding:15px;
+    margin:15px 0 20px;
+    border:1px solid #d9dee7;
+    border-radius:12px;
+    font-size:15px;
+    resize:vertical;
+    transition:.3s;
+    background:#fafafa;
+    box-sizing:border-box;
+}
+
+.cardSoporte textarea:focus{
+    outline:none;
+    border-color:#39b54a;
+    background:#fff;
+    box-shadow:0 0 0 4px rgba(57,181,74,.15);
+}
+
+/* ================= BOTÓN ================= */
+
 .cardSoporte button{
-
-    background:#0d6efd;
-
-    color:white;
-
+    background:linear-gradient(135deg,#0b7a3b,#39b54a);
+    color:#fff;
     border:none;
-
-    padding:12px 20px;
-
-    border-radius:8px;
-
+    padding:14px 30px;
+    border-radius:12px;
+    font-size:15px;
+    font-weight:600;
     cursor:pointer;
+    transition:.3s;
+}
+
+.cardSoporte button:hover{
+    transform:translateY(-3px);
+    box-shadow:0 10px 25px rgba(57,181,74,.35);
+}
+
+.cardSoporte button:active{
+    transform:scale(.98);
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:768px){
+
+    .adminSoporte{
+        padding:20px;
+    }
+
+    .adminSoporte h2{
+        font-size:28px;
+    }
+
+    .cardSoporte{
+        padding:22px;
+    }
+
+    .cardSoporte select{
+        width:100%;
+    }
+
+    .cardSoporte button{
+        width:100%;
+    }
 
 }

@@ -67,6 +67,8 @@ setCarnet(data);
     };
   }, []);
 
+  console.log(carnet);
+
   return (
     <div className="escanear-container">
       <h2 className="titulo-qr">
@@ -95,12 +97,19 @@ setCarnet(data);
       {carnet && (
         <div className="resultado-qr">
           <h3>{carnet.movimiento.toUpperCase()}</h3>
+<div className="imagenes-qr">
+  <img
+    src={`http://localhost:3000/uploads/${carnet.carnet.fotoAprendiz}`}
+    alt="Aprendiz"
+    className="foto-aprendiz"
+  />
 
-          <img
-            src={carnet.carnet.fotoAprendiz}
-            alt="Aprendiz"
-            width={150}
-          />
+  <img
+    src={`http://localhost:3000/uploads/${carnet.carnet.fotoVehiculo}`}
+    alt="Vehículo"
+    className="foto-vehiculo"
+  />
+</div>
 
           <p><strong>Nombre:</strong> {carnet.carnet.nombre}</p>
 

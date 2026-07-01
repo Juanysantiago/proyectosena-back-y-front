@@ -117,3 +117,20 @@
     padding: 20px;
   }
 }
+
+.imagenes-qr{
+  display: flex;
+  align-items: center;
+  gap: 60px; /* Aumenta este valor si quieres más separación */
+  margin-bottom: 20px;
+}
+
+.foto-aprendiz{
+  width: 150px;
+  border-radius: 10px;
+}
+
+.foto-vehiculo{
+  width: 180px;
+  border-radius: 10px;
+}

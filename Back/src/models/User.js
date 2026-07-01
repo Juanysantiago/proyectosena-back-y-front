@@ -75,6 +75,16 @@ fechaFinalizacion: {
   allowNull: true
 },
 
+pinRecuperacion: {
+  type: DataTypes.STRING(6),
+  allowNull: true
+},
+
+fechaPin: {
+  type: DataTypes.DATE,
+  allowNull: true
+},
+
 });
 
 module.exports = User;

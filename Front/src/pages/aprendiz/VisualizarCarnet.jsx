@@ -23,15 +23,10 @@ export default function VisualizarCarnet() {
     }
   };
 
-  useEffect(() => {
-    cargarCarnet();
+useEffect(() => {
+  cargarCarnet();
+}, []);
 
-    const interval = setInterval(() => {
-      cargarCarnet();
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, []);
 
   if (loading) {
     return (

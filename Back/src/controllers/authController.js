@@ -220,6 +220,10 @@ const recuperarPassword = async (req, res) => {
 
     await user.save();
 
+    const usuarioActualizado = await User.findByPk(user.id);
+
+console.log(usuarioActualizado.pinRecuperacion);
+
     console.log(`PIN: ${pin}`);
 
     return res.json({ message: "PIN enviado" });
