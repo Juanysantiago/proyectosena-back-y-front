@@ -1,49 +1,73 @@
-import "../../Styles/guarda/InicioGuarda.css"
+import {
+  FaShieldAlt,
+  FaQrcode,
+  FaCar,
+  FaClipboardList,
+  FaLock,
+} from "react-icons/fa";
+
+import "../../Styles/guarda/InicioGuarda.css";
 
 export default function InicioGuarda() {
   return (
     <div className="inicio-guarda">
 
-      <div className="banner-guarda">
-        <h1>🛡️ Bienvenido, Guarda de Seguridad</h1>
-        <p>
-          Desde este panel podrás controlar el ingreso y salida de los aprendices y sus vehículos de manera rápida y segura mediante el sistema SENA Parking.
-        </p>
+      <div className="hero-guarda">
+
+        <div className="hero-texto">
+          <h1>¡Bienvenido a SENA Parking!</h1>
+
+          <p>
+            Administra el control de ingreso y salida de aprendices y vehículos
+            de forma rápida, segura y eficiente desde un solo lugar.
+          </p>
+        </div>
+
+        <div className="hero-icono">
+          <FaShieldAlt />
+        </div>
+
       </div>
 
       <div className="cards-guarda">
 
         <div className="card-guarda">
-          <div className="icono">📷</div>
+          <FaQrcode className="icono-card"/>
           <h3>Escanear QR</h3>
-          <p>Escanea el carnet del aprendiz para validar su información y registrar automáticamente su ingreso o salida.</p>
+          <p>Escanea el carnet del aprendiz para registrar el ingreso o salida.</p>
         </div>
 
         <div className="card-guarda">
-          <div className="icono">🚗</div>
+          <FaCar className="icono-card"/>
           <h3>Control Vehicular</h3>
-          <p>Verifica que la información del vehículo coincida con el registro almacenado en el sistema.</p>
+          <p>Verifica que el vehículo coincida con el registrado en el sistema.</p>
         </div>
 
         <div className="card-guarda">
-          <div className="icono">📋</div>
+          <FaClipboardList className="icono-card"/>
           <h3>Historial</h3>
-          <p>Consulta los movimientos registrados de entrada y salida de los aprendices.</p>
+          <p>Consulta el historial de ingresos y salidas registrados.</p>
         </div>
 
         <div className="card-guarda">
-          <div className="icono">🔒</div>
+          <FaLock className="icono-card"/>
           <h3>Seguridad</h3>
-          <p>Garantiza que únicamente los vehículos autorizados puedan ingresar al Centro de Formación.</p>
+          <p>Permite únicamente el acceso a vehículos autorizados.</p>
         </div>
 
       </div>
 
       <div className="mensaje-final">
-        <h2>✅ Recuerda</h2>
-        <p>
-          Antes de permitir el ingreso o la salida de un vehículo, verifica que el carnet se encuentre activo y que la información coincida con el aprendiz y el vehículo presente.
-        </p>
+
+        <h2>Accesos rápidos</h2>
+
+        <ul>
+          <li>📷 Escanear carnet.</li>
+          <li>🚗 Verificar vehículo.</li>
+          <li>📋 Consultar historial.</li>
+          <li>🔒 Validar carnet activo.</li>
+        </ul>
+
       </div>
 
     </div>

@@ -1,127 +1,200 @@
 .inicio-guarda{
-    max-width: 1100px;
-    margin: auto;
-    padding: 40px 20px;
-    font-family: 'Segoe UI', sans-serif;
-    background: #f4f6f9;
+    max-width:1200px;
+    margin:auto;
+    padding:35px;
+    font-family:'Segoe UI',sans-serif;
 }
 
-/* ===== BANNER ===== */
-.banner-guarda{
-    background: linear-gradient(135deg, #0b7a3b, #22c55e);
-    color: white;
-    padding: 50px 30px;
-    border-radius: 22px;
-    text-align: center;
-    box-shadow: 0 12px 30px rgba(0,0,0,.18);
-    margin-bottom: 30px;
-    animation: fadeIn 0.6s ease-in-out;
+/*=========================
+        HERO
+=========================*/
+
+.hero-guarda{
+    width:100%;
+    background:#28a745;
+    background:linear-gradient(135deg,#13863b,#32b44a);
+    color:#fff;
+
+    border-radius:22px;
+
+    padding:45px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:40px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.15);
 }
 
-.banner-guarda h1{
-    font-size: 28px;
-    margin-bottom: 10px;
+.hero-texto{
+    flex:1;
 }
 
-.banner-guarda p{
-    font-size: 16px;
-    opacity: 0.95;
-    line-height: 1.6;
+.hero-texto h1{
+    font-size:48px;
+    margin-bottom:15px;
 }
 
-/* ===== GRID CARDS ===== */
+.hero-texto p{
+    font-size:20px;
+    line-height:1.7;
+    max-width:650px;
+}
+
+.hero-icono{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-size:110px;
+
+    color:rgba(255,255,255,.25);
+
+    margin-left:40px;
+}
+
+/*=========================
+        CARDS
+=========================*/
+
 .cards-guarda{
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 22px;
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+
+    gap:25px;
+
+    margin-bottom:40px;
+
 }
 
-/* ===== CARD ===== */
 .card-guarda{
-    background: white;
-    padding: 25px;
-    border-radius: 18px;
-    text-align: center;
-    border: 1px solid #e9e9e9;
-    box-shadow: 0 6px 18px rgba(0,0,0,.08);
-    transition: all 0.3s ease;
-    cursor: pointer;
+
+    background:#fff;
+
+    border-radius:18px;
+
+    padding:35px 25px;
+
+    text-align:center;
+
+    border-top:5px solid #32b44a;
+
+    box-shadow:0 8px 18px rgba(0,0,0,.08);
+
+    transition:.3s;
+
 }
 
 .card-guarda:hover{
-    transform: translateY(-10px);
-    box-shadow: 0 16px 35px rgba(0,0,0,.15);
-    border-color: #22c55e;
+
+    transform:translateY(-8px);
+
 }
 
-/* ICONOS */
-.icono{
-    font-size: 45px;
-    margin-bottom: 12px;
-    transition: transform 0.3s ease;
+.icono-card{
+
+    font-size:55px;
+
+    color:#32b44a;
+
+    margin-bottom:18px;
+
 }
 
-.card-guarda:hover .icono{
-    transform: scale(1.2);
-}
-
-/* TITULO */
 .card-guarda h3{
-    color: #0b7a3b;
-    margin-bottom: 10px;
-    font-size: 18px;
+
+    color:#13863b;
+
+    margin-bottom:15px;
+
+    font-size:30px;
+
 }
 
-/* TEXTO */
 .card-guarda p{
-    color: #555;
-    line-height: 1.6;
-    font-size: 14px;
+
+    color:#666;
+
+    line-height:1.7;
+
 }
 
-/* ===== MENSAJE FINAL ===== */
+/*=========================
+      MENSAJE
+=========================*/
+
 .mensaje-final{
-    margin-top: 35px;
-    background: white;
-    border-left: 8px solid #22c55e;
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 6px 18px rgba(0,0,0,.08);
+
+    background:#fff;
+
+    border-left:6px solid #32b44a;
+
+    padding:30px;
+
+    border-radius:18px;
+
+    box-shadow:0 8px 18px rgba(0,0,0,.08);
+
 }
 
 .mensaje-final h2{
-    color: #0b7a3b;
-    margin-bottom: 10px;
+
+    color:#13863b;
+
+    margin-bottom:15px;
+
 }
 
-.mensaje-final p{
-    color: #555;
-    line-height: 1.6;
+.mensaje-final ul{
+
+    padding-left:20px;
+
 }
 
-/* ===== ANIMACIÓN ===== */
-@keyframes fadeIn{
-    from{
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to{
-        opacity: 1;
-        transform: translateY(0);
-    }
+.mensaje-final li{
+
+    margin:10px 0;
+
 }
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 600px){
-    .banner-guarda{
-        padding: 35px 20px;
-    }
+/*=========================
+      RESPONSIVE
+=========================*/
 
-    .banner-guarda h1{
-        font-size: 22px;
-    }
+@media(max-width:768px){
 
-    .card-guarda{
-        padding: 20px;
-    }
+.hero-guarda{
+
+    flex-direction:column;
+
+    text-align:center;
+
+}
+
+.hero-icono{
+
+    margin-top:25px;
+
+    margin-left:0;
+
+    font-size:80px;
+
+}
+
+.hero-texto h1{
+
+    font-size:34px;
+
+}
+
+.hero-texto p{
+
+    font-size:17px;
+
+}
+
 }
