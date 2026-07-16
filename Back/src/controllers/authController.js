@@ -67,35 +67,27 @@ const register = async (req, res) => {
   qrCode
 });
 
-    const accessToken = jwt.sign(
-      {
-        id: newUser.id,
-        email: newUser.email,
-        rol: newUser.rol
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: "24h" }
-    );
-
+    
     return res.status(201).json({
-      message: "Usuario registrado correctamente",
-      accessToken,
-      user: {
-  id: newUser.id,
-  email: newUser.email,
-  documento: newUser.documento,
-  tipoDocumento: newUser.tipoDocumento,
-  nombres: newUser.nombres,
-  apellidos: newUser.apellidos,
-  ficha: newUser.ficha,
-  celular: newUser.celular,
-  centroFormacionId: newUser.centroFormacionId,
-  fechaVinculacion: newUser.fechaVinculacion,
-  fechaFinalizacion: newUser.fechaFinalizacion,
-  rol: newUser.rol,
-  qrCode: newUser.qrCode
-}
-    });
+  message: "Usuario registrado correctamente",
+  user: {
+    id: newUser.id,
+    email: newUser.email,
+    documento: newUser.documento,
+    tipoDocumento: newUser.tipoDocumento,
+    nombres: newUser.nombres,
+    apellidos: newUser.apellidos,
+    ficha: newUser.ficha,
+    celular: newUser.celular,
+    centroFormacionId: newUser.centroFormacionId,
+    fechaVinculacion: newUser.fechaVinculacion,
+    fechaFinalizacion: newUser.fechaFinalizacion,
+    rol: newUser.rol,
+    qrCode: newUser.qrCode
+  }
+});
+    
+
   } catch (error) {
     console.log(error);
     return res.status(500).json({
@@ -151,21 +143,39 @@ if (user.estado === "bloqueado") {
   });
 }
 
-    const accessToken = jwt.sign(
-      {
-        id: user.id,
-        email: user.email,
-        rol: user.rol
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: "24h" }
-    );
+   const accessToken = jwt.sign(
+  {
+    id: user.id,
+    email: user.email,
+    rol: user.rol,
+  },
+  process.env.JWT_SECRET,
+  {
+    expiresIn: "24h",
+  }
+);
 
-    return res.status(200).json({
-      message: "Login exitoso",
-      accessToken,
-      user
-    });
+res.cookie("accessToken", accessToken, {
+  httpOnly: true,
+  secure: false, // true cuando uses HTTPS
+  sameSite: "lax",
+  path: "/",
+  maxAge: 24 * 60 * 60 * 1000,
+});
+
+return res.status(200).json({
+  message: "Login exitoso",
+  user: {
+    id: user.id,
+    email: user.email,
+    nombres: user.nombres,
+    apellidos: user.apellidos,
+    rol: user.rol,
+    documento: user.documento,
+    ficha: user.ficha,
+    centroFormacionId: user.centroFormacionId
+  }
+});
 
   } catch (error) {
     console.log(error);
@@ -266,11 +276,17 @@ const verificarPin = async (req, res) => {
       { expiresIn: "24h" }
     );
 
-    return res.json({
-      message: "Código correcto",
-      accessToken: token,
-      user
-    });
+    res.cookie("accessToken", token, {
+  httpOnly: true,
+  secure: false,
+  sameSite: "lax",
+  maxAge: 24 * 60 * 60 * 1000,
+});
+
+return res.json({
+  message: "Código correcto",
+  user
+});
 
   } catch (error) {
     console.log(error);
@@ -417,11 +433,16 @@ const deleteUser = async (req, res) => {
 
 const obtenerMiPerfil = async (req, res) => {
   try {
+
+    console.log("Usuario del token:", req.user);
+
     const user = await User.findByPk(req.user.id, {
       attributes: {
         exclude: ["password", "pinRecuperacion", "fechaPin"]
       }
     });
+
+    console.log("Usuario encontrado:", user);
 
     return res.json(user);
 
@@ -432,6 +453,19 @@ const obtenerMiPerfil = async (req, res) => {
       message: error.message
     });
   }
+};
+
+const logout = (req, res) => {
+  res.clearCookie("accessToken", {
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+    path: "/",
+  });
+
+  return res.status(200).json({
+    message: "Sesión cerrada",
+  });
 };
 
 module.exports = {
@@ -445,5 +479,6 @@ module.exports = {
   recuperarPassword,
   verificarPin,
   reenviarPin,
-  obtenerMiPerfil
+  obtenerMiPerfil,
+  logout
 };

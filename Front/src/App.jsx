@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import OlvideContraseña from "./pages/OlvideContraseña";
 import VerificarCodigo from "./pages/VerificarCodigo";
 import Register from "./pages/Register";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 // ================= ADMINISTRADOR =================
 import DashboardAdmin from "./pages/administrador/DashboardAdmin";
@@ -70,9 +71,13 @@ export default function App() {
         {/* ================= ADMINISTRADOR ================= */}
 
         <Route
-          path="/dashboard-admin"
-          element={<DashboardAdmin />}
-        >
+  path="/dashboard-admin"
+  element={
+    <ProtectedRoute rol="administrador">
+      <DashboardAdmin />
+    </ProtectedRoute>
+  }
+>
           <Route
             index
             element={<InicioAdmin />}
@@ -132,9 +137,13 @@ export default function App() {
         {/* ================= GUARDA ================= */}
 
         <Route
-          path="/dashboard-guarda"
-          element={<DashboardGuarda />}
-        >
+  path="/dashboard-guarda"
+  element={
+    <ProtectedRoute rol="guarda">
+      <DashboardGuarda />
+    </ProtectedRoute>
+  }
+>
           <Route
             index
             element={<InicioGuarda />}
@@ -163,45 +172,50 @@ export default function App() {
 
         {/* ================= APRENDIZ ================= */}
 
-        <Route
-          path="/dashboard-aprendiz"
-          element={<DashboardAprendiz />}
-        >
-          <Route
-            index
-            element={<InicioAprendiz />}
-          />
+       <Route
+  path="/dashboard-aprendiz"
+  element={
+    <ProtectedRoute rol="aprendiz">
+      <DashboardAprendiz />
+    </ProtectedRoute>
+  }
+>
+  <Route
+    index
+    element={<InicioAprendiz />}
+  />
 
-          <Route
-            path="visualizar-carnet"
-            element={<VisualizarCarnet />}
-          />
+  <Route
+    path="visualizar-carnet"
+    element={<VisualizarCarnet />}
+  />
 
-          <Route
-            path="actualizar-datos"
-            element={<ActualizarDatos />}
-          />
+  <Route
+    path="actualizar-datos"
+    element={<ActualizarDatos />}
+  />
 
-          <Route
-            path="peticion-carnet"
-            element={<PeticionCarnet />}
-          />
+  <Route
+    path="peticion-carnet"
+    element={<PeticionCarnet />}
+  />
 
-          <Route
-            path="manual"
-            element={<ManualUso />}
-          />
+  <Route
+    path="manual"
+    element={<ManualUso />}
+  />
 
-          <Route
-            path="soporte"
-            element={<SoporteTecnico />}
-          />
+  <Route
+    path="soporte"
+    element={<SoporteTecnico />}
+  />
 
-          <Route
-            path="vencimiento"
-            element={<VencimientoCarnet />}
-          />
-        </Route>
+  <Route
+    path="vencimiento"
+    element={<VencimientoCarnet />}
+  />
+
+</Route>
 
         {/* ================= RUTA NO ENCONTRADA ================= */}
 

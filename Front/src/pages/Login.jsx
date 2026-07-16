@@ -22,28 +22,20 @@ export default function Login() {
   rol
 });
 
-      const { accessToken, user } = res.data;
+      const { user } = res.data;
 
-     localStorage.setItem("accessToken", accessToken);
 localStorage.setItem("user", JSON.stringify(user));
 
-switch (user.rol) {
-  case "administrador":
-    window.location.href = "/dashboard-admin";
-    break;
+if (user.rol === "administrador") {
+  window.location.replace("/dashboard-admin");
+}
 
-  case "guarda":
-    window.location.href = "/dashboard-guarda";
-    break;
+if (user.rol === "guarda") {
+  window.location.replace("/dashboard-guarda");
+}
 
-  case "aprendiz":
-    window.location.href = "/dashboard-aprendiz";
-    break;
-
-  default:
-    alert("Rol no reconocido");
-    localStorage.clear();
-    window.location.href = "/";
+if (user.rol === "aprendiz") {
+  window.location.replace("/dashboard-aprendiz");
 }
 
       alert(`Bienvenido ${user.email} - Rol: ${rol}`);

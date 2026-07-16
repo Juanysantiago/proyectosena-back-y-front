@@ -1,15 +1,22 @@
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
+import { axiosClient } from "../api/axiosClient";
 import logo from "../Styles/logo/logo sena parking.png";
 import "../Styles/administrador/navbarAdmin.css";
 
 export default function NavbarAdmin() {
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const logout = () => {
-    localStorage.clear();
-    window.location.href = "/";
-  };
+  const logout = async () => {
+  try {
+    await axiosClient.post("/auth/logout");
+  } catch (error) {
+    console.error(error);
+  }
+
+  localStorage.removeItem("user");
+  window.location.href = "/";
+};
 
   return (
     <nav className="navbar-admin">

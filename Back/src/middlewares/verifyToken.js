@@ -2,15 +2,13 @@ const jwt = require("jsonwebtoken");
 
 const verifyToken = (req, res, next) => {
   try {
-    const authHeader = req.headers.authorization;
+    const token = req.cookies.accessToken;
 
-    if (!authHeader) {
+    if (!token) {
       return res.status(401).json({
-        message: "Token requerido"
+        message: "Token requerido",
       });
     }
-
-    const token = authHeader.split(" ")[1];
 
     const decoded = jwt.verify(
       token,
@@ -22,7 +20,7 @@ const verifyToken = (req, res, next) => {
     next();
   } catch (error) {
     return res.status(401).json({
-      message: "Token inválido"
+      message: "Token inválido",
     });
   }
 };

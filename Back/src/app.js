@@ -2,6 +2,8 @@ require("dotenv").config();
 
 const express = require("express");
 const path = require("path");
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
 const sequelize = require("./config/database");
 
 const app = express();
@@ -10,28 +12,15 @@ const app = express();
 require("./models");
 
 /* CORS */
-app.use((req, res, next) => {
-  res.setHeader(
-    "Access-Control-Allow-Origin",
-    "http://localhost:5173"
-  );
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET,POST,PUT,DELETE,OPTIONS"
-  );
-
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Content-Type, Authorization"
-  );
-
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-
-  next();
-});
+/* COOKIES */
+app.use(cookieParser());
 
 /* BODY PARSER */
 app.use(express.json());
@@ -40,9 +29,7 @@ app.use(express.urlencoded({ extended: true }));
 /* ARCHIVOS ESTÁTICOS */
 app.use(
   "/uploads",
-  express.static(
-    path.resolve(__dirname, "../uploads")
-  )
+  express.static(path.resolve(__dirname, "../uploads"))
 );
 
 /* RUTAS */
@@ -53,9 +40,8 @@ app.use("/api", require("./routers/jornadaRouter"));
 app.use("/api", require("./routers/entradaSalidaAprendizRouter"));
 app.use("/api", require("./routers/configGrRouter"));
 app.use("/api", require("./routers/centroFormacionRouter"));
-app.use("/api",require("./routers/notificacionRouter"));
-app.use("/api",require("./routers/soporteRouter"));
-
+app.use("/api", require("./routers/notificacionRouter"));
+app.use("/api", require("./routers/soporteRouter"));
 
 app.use(
   "/api/carnet",
@@ -101,7 +87,5 @@ sequelize
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(
-    `🚀 Servidor ejecutándose en puerto ${PORT}`
-  );
+  console.log(`🚀 Servidor ejecutándose en puerto ${PORT}`);
 });

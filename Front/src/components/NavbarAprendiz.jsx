@@ -46,10 +46,17 @@ export default function NavbarAprendiz() {
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
+  try {
+    await axiosClient.post("/auth/logout");
+  } catch (error) {
+    console.error(error);
+  } finally {
     localStorage.clear();
-    navigate("/");
-  };
+    sessionStorage.clear();
+    navigate("/", { replace: true });
+  }
+};
 
   const cerrarMenu = () => {
     setMenuOpen(false);

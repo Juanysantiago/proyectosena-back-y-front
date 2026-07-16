@@ -2,14 +2,22 @@ import { NavLink } from "react-router-dom";
 import { useState } from "react";
 import logo from "../styles/logo/logo sena parking.png";
 import "../styles/guarda/NavbarGuarda.css";
+import { axiosClient } from "../api/axiosClient";
 
 export default function NavbarGuarda() {
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const logout = () => {
+ const logout = async () => {
+  try {
+    await axiosClient.post("/auth/logout");
+  } catch (error) {
+    console.error(error);
+  } finally {
     localStorage.clear();
+    sessionStorage.clear();
     window.location.href = "/";
-  };
+  }
+};
 
   return (
     <header className="guarda-header">

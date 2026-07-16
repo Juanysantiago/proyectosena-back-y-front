@@ -11,7 +11,8 @@ const {
   verificarPin,
   reenviarPin,
   getCarnet,
-  obtenerMiPerfil
+  obtenerMiPerfil,
+  logout
 } = require("../controllers/authController");
 
 const verifyToken = require("../middlewares/verifyToken");
@@ -62,5 +63,7 @@ console.log("verifyToken:", verifyToken);
 console.log("authorizeRoles:", authorizeRoles);
 // CARNET
 router.get("/carnet/:id", verifyToken, getCarnet);
+
+router.post("/logout", logout);
 
 module.exports = router;
