@@ -1,30 +1,107 @@
 const QRCode = require("qrcode");
 const Carnet = require("../models/Carnet");
 
-const generarOCrearCarnet = async (userId, solicitudId) => {
-  const codigoQr = `SENA-${userId}-${Date.now()}`;
-  const qrImage = await QRCode.toDataURL(codigoQr);
+/* =========================================================
+   GENERAR O ACTUALIZAR CARNET
+========================================================= */
 
-  let carnet = await Carnet.findOne({ where: { userId } });
+const generarOCrearCarnet = async (
+  userId,
+  solicitudId = null
+) => {
 
-  if (!carnet) {
-    carnet = await Carnet.create({
-      userId,
-      solicitudId,
-      codigoQr,
-      estado: "activo"
+  /* =========================
+     VALIDAR USER ID
+  ========================= */
+  if (
+    !Number.isInteger(Number(userId)) ||
+    Number(userId) <= 0
+  ) {
+    throw new Error(
+      "El ID del usuario no es válido"
+    );
+  }
+
+  const idUsuario = Number(userId);
+
+  /* =========================
+     GENERAR QR
+  ========================= */
+  const codigoQr =
+    `SENA-${idUsuario}-${Date.now()}`;
+
+  const qrImage =
+    await QRCode.toDataURL(codigoQr);
+
+  /* =========================
+     BUSCAR CARNET
+  ========================= */
+  let carnet =
+    await Carnet.findOne({
+      where: {
+        userId: idUsuario
+      }
     });
-  } else {
+
+  /* =====================================================
+     SI EL CARNET NO EXISTE
+  ===================================================== */
+  if (!carnet) {
+
+    /* =========================
+       SOLICITUD OBLIGATORIA
+    ========================= */
+    if (
+      !Number.isInteger(Number(solicitudId)) ||
+      Number(solicitudId) <= 0
+    ) {
+      throw new Error(
+        "Se necesita una solicitud válida para crear el carnet"
+      );
+    }
+
+    carnet =
+      await Carnet.create({
+        userId: idUsuario,
+
+        solicitudId:
+          Number(solicitudId),
+
+        codigoQr,
+
+        estado: "activo"
+      });
+
+  }
+
+  /* =====================================================
+     SI EL CARNET YA EXISTE
+     
+     IMPORTANTE:
+     NO modificar solicitudId.
+     
+     El carnet conserva la solicitud original
+     con la que fue generado.
+  ===================================================== */
+  else {
+
     await carnet.update({
       codigoQr,
-      solicitudId,
+
       estado: "activo"
     });
 
     await carnet.reload();
   }
 
-  return { carnet, qrImage };
+  /* =========================
+     RESULTADO
+  ========================= */
+  return {
+    carnet,
+    qrImage
+  };
 };
 
-module.exports = generarOCrearCarnet;
+module.exports =
+  generarOCrearCarnet;

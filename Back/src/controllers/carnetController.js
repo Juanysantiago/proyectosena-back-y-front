@@ -1,5 +1,5 @@
-const QRCode = require("qrcode");
 
+const QRCode = require("qrcode");
 const Carnet = require("../models/Carnet");
 const Vehiculo = require("../models/Vehiculo");
 const User = require("../models/User");
@@ -7,44 +7,27 @@ const CentroFormacion = require("../models/CentroFormacion");
 const SolicitudCarnet = require("../models/aprendiz/SolicitudCarnet");
 const EntradaSalidaAprendiz = require("../models/EntradaSalidaAprendiz");
 
-
 /* =========================================================
    GENERAR CARNET
 ========================================================= */
 const generarCarnet = async (req, res) => {
   try {
-    /* =========================
-       VALIDAR ID DE SOLICITUD
-    ========================= */
-
     const solicitudId = Number(req.params.id);
 
-    if (
-      !Number.isInteger(solicitudId) ||
-      solicitudId <= 0
-    ) {
+    if (!Number.isInteger(solicitudId) || solicitudId <= 0) {
       return res.status(400).json({
         message: "El ID de la solicitud no es válido"
       });
     }
 
-
-    /* =========================
-       BUSCAR SOLICITUD
-    ========================= */
-
-    const solicitud = await SolicitudCarnet.findByPk(
-      solicitudId,
-      {
-        include: [
-          {
-            model: User,
-            as: "user"
-          }
-        ]
-      }
-    );
-
+    const solicitud = await SolicitudCarnet.findByPk(solicitudId, {
+      include: [
+        {
+          model: User,
+          as: "user"
+        }
+      ]
+    });
 
     if (!solicitud) {
       return res.status(404).json({
@@ -52,249 +35,153 @@ const generarCarnet = async (req, res) => {
       });
     }
 
-
-    /* =========================
-       VALIDAR ESTADO
-    ========================= */
-
     if (solicitud.estado !== "aprobada") {
       return res.status(400).json({
-        message:
-          "La solicitud debe estar aprobada para generar el carnet"
+        message: "La solicitud debe estar aprobada para generar el carnet"
       });
     }
-
-
-    /* =========================
-       VALIDAR USUARIO
-    ========================= */
 
     if (!solicitud.user) {
-      return res.status(400).json({
-        message:
-          "La solicitud no tiene un usuario asociado"
+      return res.status(404).json({
+        message: "El usuario asociado a la solicitud no existe"
       });
     }
 
-
-    if (
-      !solicitud.userId ||
-      !Number.isInteger(Number(solicitud.userId)) ||
-      Number(solicitud.userId) <= 0
-    ) {
+    if (!solicitud.user.centroFormacionId) {
       return res.status(400).json({
-        message:
-          "El usuario asociado a la solicitud no es válido"
+        message: "El usuario no tiene un centro de formación asociado"
       });
     }
 
+    const {
+      tipoVehiculo,
+      marca,
+      color,
+      serialPlaca,
+      cilindraje,
+      modelo,
+      fotoVehiculo
+    } = solicitud;
 
-    /* =========================
-       VALIDAR CENTRO DE FORMACIÓN
-    ========================= */
-
-    const centroFormacionId = Number(
-      solicitud.user.centroFormacionId
-    );
-
-
-    if (
-      !Number.isInteger(centroFormacionId) ||
-      centroFormacionId <= 0
-    ) {
+    if (!tipoVehiculo) {
       return res.status(400).json({
-        message:
-          "El usuario no tiene un centro de formación válido"
+        message: "El tipo de vehículo es obligatorio"
       });
     }
 
-
-    /* =========================
-       VALIDAR TIPO DE VEHÍCULO
-    ========================= */
-
-    if (!solicitud.tipoVehiculo) {
+    if (!marca) {
       return res.status(400).json({
-        message:
-          "El tipo de vehículo es obligatorio"
+        message: "La marca del vehículo es obligatoria"
       });
     }
 
-
-    const tipoVehiculo =
-      String(solicitud.tipoVehiculo)
-        .trim()
-        .toLowerCase();
-
-
-    if (
-      !["bicicleta", "moto"].includes(
-        tipoVehiculo
-      )
-    ) {
+    if (!color) {
       return res.status(400).json({
-        message:
-          "El tipo de vehículo debe ser bicicleta o moto"
+        message: "El color del vehículo es obligatorio"
       });
     }
 
-
-    /* =========================
-       VALIDAR MARCA
-    ========================= */
-
-    if (
-      !solicitud.marca ||
-      !String(solicitud.marca).trim()
-    ) {
+    if (!serialPlaca) {
       return res.status(400).json({
-        message:
-          "La marca del vehículo es obligatoria"
+        message: "La placa o serial del vehículo es obligatorio"
       });
     }
 
-
-    /* =========================
-       VALIDAR COLOR
-    ========================= */
-
-    if (
-      !solicitud.color ||
-      !String(solicitud.color).trim()
-    ) {
+    if (!fotoVehiculo) {
       return res.status(400).json({
-        message:
-          "El color del vehículo es obligatorio"
+        message: "La foto del vehículo es obligatoria"
       });
     }
 
-
-    /* =========================
-       VALIDAR SERIAL / PLACA
-    ========================= */
-
-    if (
-      !solicitud.serialPlaca ||
-      !String(solicitud.serialPlaca).trim()
-    ) {
-      return res.status(400).json({
-        message:
-          "El serial o placa es obligatorio"
-      });
-    }
-
-
-    const serialPlaca =
-      String(solicitud.serialPlaca)
-        .trim()
-        .toUpperCase();
-
-
-    if (
-      !/^[A-Z0-9-]+$/.test(serialPlaca)
-    ) {
-      return res.status(400).json({
-        message:
-          "El serial o placa solo puede contener letras, números y guiones"
-      });
-    }
-
-
-    /* =========================
-       VALIDAR FOTOS
-    ========================= */
-
-    if (
-      !solicitud.fotoAprendiz ||
-      !String(solicitud.fotoAprendiz).trim()
-    ) {
-      return res.status(400).json({
-        message:
-          "La foto del aprendiz es obligatoria"
-      });
-    }
-
-
-    if (
-      !solicitud.fotoVehiculo ||
-      !String(solicitud.fotoVehiculo).trim()
-    ) {
-      return res.status(400).json({
-        message:
-          "La foto del vehículo es obligatoria"
-      });
-    }
-
-
-    if (
-      !solicitud.formatoDiligenciado ||
-      !String(solicitud.formatoDiligenciado).trim()
-    ) {
-      return res.status(400).json({
-        message:
-          "El formato diligenciado es obligatorio"
-      });
-    }
-
-
-    /* =========================
-       VERIFICAR CARNET EXISTENTE
-    ========================= */
-
-    const yaExiste = await Carnet.findOne({
+    const carnetExistente = await Carnet.findOne({
       where: {
         userId: solicitud.userId
       }
     });
 
-
-    if (yaExiste) {
-      return res.status(409).json({
-        message:
-          "El carnet ya existe para este usuario"
-      });
-    }
-
-
-    /* =========================
-       GENERAR CÓDIGO QR
-    ========================= */
-
     const codigoQr =
       `SENA-${solicitud.userId}-${Date.now()}`;
-
 
     const qrImage =
       await QRCode.toDataURL(codigoQr);
 
-
     /* =========================
-       ACTUALIZAR FOTO DEL USUARIO
+       ACTUALIZAR FOTO USUARIO
     ========================= */
 
     await solicitud.user.update({
       foto: solicitud.fotoAprendiz
     });
 
-
     /* =========================
-       CREAR CARNET
+       CARNET
     ========================= */
 
-    const carnet = await Carnet.create({
+    let carnet;
+
+    if (carnetExistente) {
+
+      await carnetExistente.update({
+        solicitudId: solicitud.id,
+        codigoQr,
+        estado: "activo"
+      });
+
+      await carnetExistente.reload();
+
+      carnet = carnetExistente;
+
+    } else {
+
+      carnet = await Carnet.create({
+        userId: solicitud.userId,
+        solicitudId: solicitud.id,
+        codigoQr,
+        estado: "activo"
+      });
+
+    }
+
+    /* =========================
+       VEHÍCULO
+    ========================= */
+
+    const datosVehiculo = {
       userId: solicitud.userId,
 
-      solicitudId: solicitud.id,
+      tipo: tipoVehiculo,
 
-      codigoQr: codigoQr,
+      id_centro_de_formacion:
+        solicitud.user.centroFormacionId,
 
-      estado: "activo"
-    });
+      marca: String(marca).trim(),
 
+      color: String(color).trim(),
 
-    /* =========================
-       BUSCAR VEHÍCULO EXISTENTE
-    ========================= */
+      serial:
+        tipoVehiculo === "bicicleta"
+          ? String(serialPlaca).trim()
+          : null,
+
+      placa:
+        tipoVehiculo === "moto"
+          ? String(serialPlaca).trim()
+          : null,
+
+      cilindraje:
+        cilindraje
+          ? String(cilindraje).trim()
+          : null,
+
+      modelo:
+        modelo
+          ? String(modelo).trim()
+          : null,
+
+      foto_principal: fotoVehiculo,
+
+      foto_secundaria: fotoVehiculo
+    };
 
     const vehiculoExistente =
       await Vehiculo.findOne({
@@ -303,149 +190,64 @@ const generarCarnet = async (req, res) => {
         }
       });
 
+    let vehiculo;
 
-    /* =========================
-       CREAR VEHÍCULO
-    ========================= */
+    if (vehiculoExistente) {
 
-    if (!vehiculoExistente) {
-
-      const datosVehiculo = {
-        userId: solicitud.userId,
-
-        tipo: tipoVehiculo,
-
-        /*
-          IMPORTANTE:
-          Aquí debe ir el ID del centro
-          de formación.
-
-          NO debe ir la ficha.
-        */
-        id_centro_de_formacion:
-          centroFormacionId,
-
-        marca:
-          String(solicitud.marca).trim(),
-
-        color:
-          String(solicitud.color).trim(),
-
-        serial:
-          tipoVehiculo === "bicicleta"
-            ? serialPlaca
-            : null,
-
-        placa:
-          tipoVehiculo === "moto"
-            ? serialPlaca
-            : null,
-
-        cilindraje:
-          solicitud.cilindraje
-            ? String(solicitud.cilindraje).trim()
-            : null,
-
-        modelo:
-          solicitud.modelo
-            ? String(solicitud.modelo).trim()
-            : null,
-
-        foto_principal:
-          solicitud.fotoVehiculo,
-
-        foto_secundaria:
-          solicitud.fotoVehiculo
-      };
-
-
-      await Vehiculo.create(
+      await vehiculoExistente.update(
         datosVehiculo
       );
+
+      await vehiculoExistente.reload();
+
+      vehiculo = vehiculoExistente;
+
+    } else {
+
+      vehiculo =
+        await Vehiculo.create(
+          datosVehiculo
+        );
+
     }
 
-
     /* =========================
-       CAMBIAR ESTADO SOLICITUD
+       ESTADO SOLICITUD
     ========================= */
 
     solicitud.estado =
       "carnet_generado";
 
-
     await solicitud.save();
-
 
     /* =========================
        RESPUESTA
     ========================= */
 
     return res.status(200).json({
-      message:
-        "Carnet generado correctamente",
+      message: carnetExistente
+        ? "Carnet actualizado correctamente"
+        : "Carnet generado correctamente",
 
       carnet,
+
+      vehiculo,
 
       qrImage
     });
 
-
   } catch (error) {
 
     console.error(
-      "ERROR GENERANDO CARNET:",
+      "ERROR GENERAR CARNET:",
       error
     );
 
-
-    /* =========================
-       ERROR DE VALIDACIÓN
-    ========================= */
-
-    if (
-      error.name ===
-      "SequelizeValidationError"
-    ) {
-
-      return res.status(400).json({
-
-        message:
-          "Los datos enviados no son válidos",
-
-        errores:
-          error.errors.map((err) => ({
-            campo: err.path,
-
-            mensaje: err.message
-          }))
-      });
-    }
-
-
-    /* =========================
-       ERROR DE VALOR ÚNICO
-    ========================= */
-
-    if (
-      error.name ===
-      "SequelizeUniqueConstraintError"
-    ) {
-
-      return res.status(409).json({
-        message:
-          "Ya existe un registro con uno de los datos enviados"
-      });
-    }
-
-
-    /* =========================
-       ERROR GENERAL
-    ========================= */
-
     return res.status(500).json({
-      message:
-        "Error generando carnet"
+      message: "Error al generar el carnet",
+      error: error.message
     });
+
   }
 };
 
@@ -454,215 +256,156 @@ const generarCarnet = async (req, res) => {
    OBTENER MI CARNET
 ========================================================= */
 const obtenerMiCarnet = async (req, res) => {
-
   try {
 
-    /* =========================
-       VALIDAR USUARIO AUTENTICADO
-    ========================= */
-
-    if (
-      !req.user ||
-      !req.user.id
-    ) {
+    if (!req.user?.id) {
       return res.status(401).json({
-        message:
-          "Usuario no autenticado"
+        message: "Usuario no autenticado"
       });
     }
 
+    const userId = req.user.id;
 
-    const userId = Number(req.user.id);
+    const carnet = await Carnet.findOne({
+      where: {
+        userId
+      },
 
+      include: [
+        {
+          model: User,
+          as: "user",
 
-    if (
-      !Number.isInteger(userId) ||
-      userId <= 0
-    ) {
-      return res.status(400).json({
-        message:
-          "El ID del usuario no es válido"
-      });
-    }
+          attributes: [
+            "id",
+            "nombres",
+            "apellidos",
+            "tipoDocumento",
+            "documento",
+            "email",
+            "celular",
+            "ficha",
+            "centroFormacionId",
+            "fechaVinculacion",
+            "fechaFinalizacion",
+            "foto"
+          ],
 
-
-    /* =========================
-       BUSCAR CARNET
-    ========================= */
-
-    const carnet =
-      await Carnet.findOne({
-
-        where: {
-          userId: userId
-        },
-
-        include: [
-
-          {
-            model: User,
-
-            as: "user",
-
-            include: [
-
-              {
-                model: CentroFormacion,
-
-                as: "centroFormacion"
-              }
-
-            ]
-          }
-
-        ]
-
-      });
-
+          include: [
+            {
+              model: CentroFormacion,
+              as: "centroFormacion"
+            }
+          ]
+        }
+      ]
+    });
 
     if (!carnet) {
-
       return res.status(404).json({
         message:
-          "No tiene carnet generado"
+          "El usuario no tiene un carnet generado"
       });
-
     }
-
-
-    /* =========================
-       VALIDAR RELACIÓN USUARIO
-    ========================= */
-
-    if (!carnet.user) {
-
-      return res.status(500).json({
-        message:
-          "No fue posible obtener la información del usuario"
-      });
-
-    }
-
-
-    /* =========================
-       BUSCAR VEHÍCULO
-    ========================= */
 
     const vehiculo =
       await Vehiculo.findOne({
-
         where: {
-          userId: userId
+          userId
         }
-
       });
-
-
-    /* =========================
-       GENERAR QR
-    ========================= */
-
-    if (!carnet.codigoQr) {
-
-      return res.status(500).json({
-        message:
-          "El carnet no tiene un código QR válido"
-      });
-
-    }
-
 
     const qrImage =
       await QRCode.toDataURL(
         carnet.codigoQr
       );
 
-
-    /* =========================
-       RESPUESTA
-    ========================= */
-
     return res.status(200).json({
 
-      nombre:
-        `${carnet.user.nombres} ${carnet.user.apellidos}`,
+      id: carnet.id,
 
-      nombres:
-        carnet.user.nombres,
+      estado: carnet.estado,
 
-      apellidos:
-        carnet.user.apellidos,
+      codigoQr: carnet.codigoQr,
 
-      tipoDocumento:
-        carnet.user.tipoDocumento,
+      qrImage,
 
-      documento:
-        carnet.user.documento,
+      user: carnet.user
+        ? {
+            id: carnet.user.id,
+            nombres: carnet.user.nombres,
+            apellidos: carnet.user.apellidos,
+            tipoDocumento:
+              carnet.user.tipoDocumento,
+            documento:
+              carnet.user.documento,
+            email:
+              carnet.user.email,
+            celular:
+              carnet.user.celular,
+            ficha:
+              carnet.user.ficha,
+            centroFormacionId:
+              carnet.user.centroFormacionId,
+            centroFormacion:
+              carnet.user.centroFormacion,
+            fechaVinculacion:
+              carnet.user.fechaVinculacion,
+            fechaFinalizacion:
+              carnet.user.fechaFinalizacion,
+            foto:
+              carnet.user.foto
+          }
+        : null,
 
-      correo:
-        carnet.user.email,
+      vehiculo: vehiculo
+        ? {
+            id: vehiculo.id,
 
-      celular:
-        carnet.user.celular,
+            foto_principal:
+              vehiculo.foto_principal,
 
-      ficha:
-        carnet.user.ficha,
+            foto_secundaria:
+              vehiculo.foto_secundaria,
 
-      centroFormacion:
-        carnet.user.centroFormacion?.nombre || "",
+            tipo:
+              vehiculo.tipo,
 
-      fechaVinculacion:
-        carnet.user.fechaVinculacion,
+            marca:
+              vehiculo.marca,
 
-      fechaFinalizacion:
-        carnet.user.fechaFinalizacion,
+            color:
+              vehiculo.color,
 
-      fotoAprendiz:
-        carnet.user.foto || null,
+            serial:
+              vehiculo.serial,
 
-      fotoVehiculo:
-        vehiculo?.foto_principal || null,
+            placa:
+              vehiculo.placa,
 
-      tipoVehiculo:
-        vehiculo?.tipo || null,
+            modelo:
+              vehiculo.modelo,
 
-      marca:
-        vehiculo?.marca || null,
+            cilindraje:
+              vehiculo.cilindraje
+          }
+        : null
 
-      color:
-        vehiculo?.color || null,
-
-      serial:
-        vehiculo?.serial || null,
-
-      placa:
-        vehiculo?.placa || null,
-
-      modelo:
-        vehiculo?.modelo || null,
-
-      cilindraje:
-        vehiculo?.cilindraje || null,
-
-      estado:
-        carnet.estado,
-
-      qr:
-        qrImage
     });
-
 
   } catch (error) {
 
     console.error(
-      "ERROR OBTENIENDO CARNET:",
+      "ERROR OBTENER MI CARNET:",
       error
     );
 
-
     return res.status(500).json({
       message:
-        "Error obteniendo el carnet"
+        "Error al obtener el carnet",
+
+      error:
+        error.message
     });
 
   }
@@ -670,56 +413,112 @@ const obtenerMiCarnet = async (req, res) => {
 
 
 /* =========================================================
-   ESCANEAR QR
+   OBTENER CARNETS PENDIENTES
 ========================================================= */
-const escanearQr = async (req, res) => {
+const obtenerPendientes = async (req, res) => {
+  try {
+
+    const solicitudes =
+      await SolicitudCarnet.findAll({
+
+        where: {
+          estado: "aprobada"
+        },
+
+        include: [
+          {
+            model: User,
+            as: "user",
+
+            attributes: [
+              "id",
+              "nombres",
+              "apellidos",
+              "documento",
+              "ficha",
+              "centroFormacionId",
+              "foto"
+            ],
+
+            include: [
+              {
+                model: CentroFormacion,
+                as: "centroFormacion"
+              }
+            ]
+          }
+        ],
+
+        order: [
+          ["createdAt", "DESC"]
+        ]
+
+      });
+
+    return res.status(200).json(
+      solicitudes
+    );
+
+  } catch (error) {
+
+    console.error(
+      "ERROR OBTENER PENDIENTES:",
+      error
+    );
+
+    return res.status(500).json({
+      message:
+        "Error al obtener solicitudes pendientes",
+
+      error:
+        error.message
+    });
+
+  }
+};
+
+
+/* =========================================================
+   ESCANEAR CARNET
+========================================================= */
+const escanearCarnet = async (req, res) => {
 
   try {
 
     /* =========================
-       OBTENER QR
+       RECIBIR QR
     ========================= */
 
-    const { codigoQr } =
-      req.body || {};
-
-
-    /* =========================
-       VALIDAR QR
-    ========================= */
+    const { codigoQr } = req.body;
 
     if (
-      typeof codigoQr !== "string" ||
-      !codigoQr.trim()
+      !codigoQr ||
+      typeof codigoQr !== "string"
     ) {
 
       return res.status(400).json({
         message:
-          "Debe enviar un código QR válido"
+          "El código QR es obligatorio"
       });
 
     }
 
-
-    const codigoLimpio =
+    const codigo =
       codigoQr.trim();
 
-
-    /* =========================
-       VALIDAR LONGITUD
-    ========================= */
-
-    if (
-      codigoLimpio.length < 5 ||
-      codigoLimpio.length > 255
-    ) {
+    if (!codigo) {
 
       return res.status(400).json({
         message:
-          "El código QR no tiene un formato válido"
+          "El código QR no puede estar vacío"
       });
 
     }
+
+    console.log(
+      "🔎 ESCANEANDO QR:",
+      codigo
+    );
 
 
     /* =========================
@@ -730,29 +529,36 @@ const escanearQr = async (req, res) => {
       await Carnet.findOne({
 
         where: {
-          codigoQr:
-            codigoLimpio
+          codigoQr: codigo
         },
 
         include: [
-
           {
             model: User,
-
             as: "user",
 
-            include: [
+            attributes: [
+              "id",
+              "nombres",
+              "apellidos",
+              "tipoDocumento",
+              "documento",
+              "email",
+              "celular",
+              "ficha",
+              "centroFormacionId",
+              "fechaVinculacion",
+              "fechaFinalizacion",
+              "foto"
+            ],
 
+            include: [
               {
                 model: CentroFormacion,
-
                 as: "centroFormacion"
               }
-
             ]
-
           }
-
         ]
 
       });
@@ -773,94 +579,109 @@ const escanearQr = async (req, res) => {
 
 
     /* =========================
-       USUARIO NO EXISTE
-    ========================= */
-
-    if (!carnet.user) {
-
-      return res.status(404).json({
-        message:
-          "El usuario asociado al carnet no existe"
-      });
-
-    }
-
-
-    /* =========================
-       USUARIO BLOQUEADO
+       VALIDAR ESTADO
     ========================= */
 
     if (
-      carnet.user.estado ===
-      "bloqueado"
+      carnet.estado !== "activo"
     ) {
 
       return res.status(403).json({
         message:
-          "Usuario bloqueado. No puede ingresar."
+          `El carnet está ${carnet.estado}`
       });
 
     }
 
 
     /* =========================
-       CARNET INACTIVO
+       BUSCAR VEHÍCULO ACTUAL
     ========================= */
 
-    if (
-      carnet.estado !==
-      "activo"
-    ) {
-
-      return res.status(403).json({
-        message:
-          "El carnet no está activo"
-      });
-
-    }
-
-
-    /* =========================
-       FECHA ACTUAL
-    ========================= */
-
-    const hoy =
-      new Date()
-        .toISOString()
-        .split("T")[0];
-
-
-    /* =========================
-       BUSCAR REGISTRO ACTUAL
-    ========================= */
-
-    let registro =
-      await EntradaSalidaAprendiz.findOne({
+    const vehiculo =
+      await Vehiculo.findOne({
 
         where: {
-
-          id_aprendiz:
-            carnet.userId,
-
-          fecha:
-            hoy,
-
-          hora_salida:
-            null
-
+          userId: carnet.userId
         }
 
       });
 
 
-    let movimiento;
+    /* =====================================================
+       BUSCAR ÚLTIMO REGISTRO
+       
+       IMPORTANTE:
+       La tabla utiliza id_aprendiz,
+       NO userId.
+    ===================================================== */
+
+    const ultimoRegistro =
+      await EntradaSalidaAprendiz.findOne({
+
+        where: {
+          id_aprendiz: carnet.userId
+        },
+
+        order: [
+          ["createdAt", "DESC"]
+        ]
+
+      });
 
 
     /* =====================================================
-       ENTRADA
+       DETERMINAR SI ENTRA O SALE
+       
+       estado:
+       "dentro" = actualmente está dentro
+       "fuera"  = actualmente está fuera
     ===================================================== */
 
-    if (!registro) {
+    let nuevoEstado;
+
+    if (
+      ultimoRegistro &&
+      ultimoRegistro.estado === "dentro"
+    ) {
+
+      nuevoEstado = "fuera";
+
+    } else {
+
+      nuevoEstado = "dentro";
+
+    }
+
+
+    /* =====================================================
+       FECHA Y HORA ACTUAL
+    ===================================================== */
+
+    const ahora =
+      new Date();
+
+    const fecha =
+      ahora.toISOString()
+        .split("T")[0];
+
+
+    /* =====================================================
+       CREAR REGISTRO
+    ===================================================== */
+
+    let registro;
+
+    if (
+      nuevoEstado === "dentro"
+    ) {
+
+      /*
+        Cuando entra:
+
+        Se crea un nuevo registro
+        con hora de entrada.
+      */
 
       registro =
         await EntradaSalidaAprendiz.create({
@@ -868,230 +689,205 @@ const escanearQr = async (req, res) => {
           id_aprendiz:
             carnet.userId,
 
+          id_codigo_gr:
+            null,
+
           fecha:
-            hoy,
+
+            fecha,
 
           hora_entrada:
-            new Date(),
+            ahora,
+
+          hora_salida:
+            null,
 
           estado:
             "dentro"
 
         });
 
+    } else {
 
-      movimiento =
-        "entrada";
+      /*
+        Cuando sale:
+
+        Cerramos el último registro
+        que estaba en estado "dentro".
+      */
+
+      await ultimoRegistro.update({
+
+        hora_salida:
+          ahora,
+
+        estado:
+          "fuera"
+
+      });
+
+      await ultimoRegistro.reload();
+
+      registro =
+        ultimoRegistro;
 
     }
 
 
     /* =====================================================
-       SALIDA
-    ===================================================== */
-
-    else {
-
-      registro.hora_salida =
-        new Date();
-
-
-      registro.estado =
-        "fuera";
-
-
-      await registro.save();
-
-
-      movimiento =
-        "salida";
-
-    }
-
-
-    /* =========================
-       BUSCAR VEHÍCULO
-    ========================= */
-
-    const vehiculo =
-      await Vehiculo.findOne({
-
-        where: {
-          userId:
-            carnet.userId
-        }
-
-      });
-
-
-    /* =========================
-       GENERAR QR
-    ========================= */
-
-    const qrImage =
-      await QRCode.toDataURL(
-        carnet.codigoQr
-      );
-
-
-    /* =========================
        RESPUESTA
-    ========================= */
+    ===================================================== */
 
     return res.status(200).json({
 
-      movimiento,
+      message:
+        nuevoEstado === "dentro"
+          ? "Entrada registrada correctamente"
+          : "Salida registrada correctamente",
 
-      registro,
+      tipo:
+        nuevoEstado === "dentro"
+          ? "entrada"
+          : "salida",
+
+      estado:
+        nuevoEstado,
+
+      registro: {
+        id:
+          registro.id,
+
+        id_aprendiz:
+          registro.id_aprendiz,
+
+        fecha:
+          registro.fecha,
+
+        hora_entrada:
+          registro.hora_entrada,
+
+        hora_salida:
+          registro.hora_salida,
+
+        estado:
+          registro.estado
+      },
 
       carnet: {
 
-        nombre:
-          `${carnet.user.nombres} ${carnet.user.apellidos}`,
+        id:
+          carnet.id,
 
-        documento:
-          carnet.user.documento,
+        estado:
+          carnet.estado,
 
-        ficha:
-          carnet.user.ficha,
+        codigoQr:
+          carnet.codigoQr
 
-        correo:
-          carnet.user.email,
+      },
 
-        celular:
-          carnet.user.celular,
+      user:
+        carnet.user
+          ? {
 
-        centroFormacion:
-          carnet.user.centroFormacion?.nombre || "",
+              id:
+                carnet.user.id,
 
-        fotoAprendiz:
-          carnet.user.foto || null,
+              nombres:
+                carnet.user.nombres,
 
-        fotoVehiculo:
-          vehiculo?.foto_principal || null,
+              apellidos:
+                carnet.user.apellidos,
 
-        tipoVehiculo:
-          vehiculo?.tipo || null,
+              tipoDocumento:
+                carnet.user.tipoDocumento,
 
-        marca:
-          vehiculo?.marca || null,
+              documento:
+                carnet.user.documento,
 
-        color:
-          vehiculo?.color || null,
+              email:
+                carnet.user.email,
 
-        placa:
-          vehiculo?.placa || null,
+              celular:
+                carnet.user.celular,
 
-        serial:
-          vehiculo?.serial || null,
+              ficha:
+                carnet.user.ficha,
 
-        modelo:
-          vehiculo?.modelo || null,
+              centroFormacionId:
+                carnet.user.centroFormacionId,
 
-        cilindraje:
-          vehiculo?.cilindraje || null,
+              centroFormacion:
+                carnet.user.centroFormacion,
 
-        qr:
-          qrImage
+              fechaVinculacion:
+                carnet.user.fechaVinculacion,
 
-      }
+              fechaFinalizacion:
+                carnet.user.fechaFinalizacion,
+
+              foto:
+                carnet.user.foto
+
+            }
+
+          : null,
+
+      vehiculo:
+        vehiculo
+          ? {
+
+              id:
+                vehiculo.id,
+
+              foto_principal:
+                vehiculo.foto_principal,
+
+              foto_secundaria:
+                vehiculo.foto_secundaria,
+
+              tipo:
+                vehiculo.tipo,
+
+              marca:
+                vehiculo.marca,
+
+              color:
+                vehiculo.color,
+
+              serial:
+                vehiculo.serial,
+
+              placa:
+                vehiculo.placa,
+
+              modelo:
+                vehiculo.modelo,
+
+              cilindraje:
+                vehiculo.cilindraje
+
+            }
+
+          : null
 
     });
-
 
   } catch (error) {
 
     console.error(
-      "ERROR ESCANEANDO QR:",
+      "ERROR ESCANEAR CARNET:",
       error
     );
 
-
-    /* =========================
-       ERROR DE VALIDACIÓN
-    ========================= */
-
-    if (
-      error.name ===
-      "SequelizeValidationError"
-    ) {
-
-      return res.status(400).json({
-
-        message:
-          "Los datos del registro no son válidos",
-
-        errores:
-          error.errors.map((err) => ({
-            campo: err.path,
-            mensaje: err.message
-          }))
-
-      });
-
-    }
-
-
-    /* =========================
-       ERROR GENERAL
-    ========================= */
-
     return res.status(500).json({
+
       message:
-        "Error procesando el código QR"
-    });
+        "Error al escanear el carnet",
 
-  }
-};
+      error:
+        error.message
 
-
-/* =========================================================
-   CARNETS PENDIENTES
-========================================================= */
-const obtenerCarnetsPendientes = async (
-  req,
-  res
-) => {
-
-  try {
-
-    const solicitudes =
-      await SolicitudCarnet.findAll({
-
-        where: {
-          estado: "aprobada"
-        },
-
-        include: [
-
-          {
-            model: User,
-
-            as: "user"
-
-          }
-
-        ]
-
-      });
-
-
-    return res.status(200).json(
-      solicitudes
-    );
-
-
-  } catch (error) {
-
-    console.error(
-      "ERROR OBTENIENDO PENDIENTES:",
-      error
-    );
-
-
-    return res.status(500).json({
-      message:
-        "Error obteniendo las solicitudes pendientes"
     });
 
   }
@@ -1107,10 +903,11 @@ module.exports = {
 
   generarCarnet,
 
-  obtenerCarnetsPendientes,
-
   obtenerMiCarnet,
 
-  escanearQr
+  obtenerPendientes,
+
+  escanearCarnet
 
 };
+
