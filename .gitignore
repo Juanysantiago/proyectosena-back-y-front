@@ -1,3 +1,13 @@
 node_modules
 dist
 build
+
+# Variables de entorno
+.env
+.env.*
+
+# Archivos ZIP
+*.zip
+
+# Archivos subidos por usuarios
+Back/uploads/*

@@ -2,8 +2,7 @@ const express = require("express");
 
 const router = express.Router();
 
-const verifyToken =
-  require("../middlewares/verifyToken");
+const verifyToken = require("../middlewares/verifyToken");
 
 const {
   generarCarnet,
@@ -30,11 +29,11 @@ router.get(
   obtenerMiCarnet
 );
 
+// Escanear QR
 router.post(
   "/escanear",
   verifyToken,
   escanearQr
 );
-
 
 module.exports = router;

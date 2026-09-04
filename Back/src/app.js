@@ -68,7 +68,10 @@ app.use(
   require("./routers/aprendiz/reportesRouter")
 );
 
-app.use("/api", require("./routers/reportesRouter"));
+app.use(
+  "/api",
+  require("./routers/reportesRouter")
+);
 
 /* BASE DE DATOS */
 sequelize
@@ -76,12 +79,14 @@ sequelize
   .then(async () => {
     console.log("✅ DB conectada");
 
-    await sequelize.sync({ alter: true });
+    // IMPORTANTE:
+    // No usar alter: true porque estaba creando índices duplicados.
+    await sequelize.sync();
 
     console.log("✅ Tablas sincronizadas");
   })
   .catch((err) => {
-    console.error(err);
+    console.error("❌ Error de base de datos:", err);
   });
 
 const PORT = process.env.PORT || 3000;

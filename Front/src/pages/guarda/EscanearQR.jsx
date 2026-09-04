@@ -3,6 +3,8 @@ import { Html5Qrcode } from "html5-qrcode";
 import { axiosClient } from "../../api/axiosClient";
 import "../../styles/guarda/EscanearQR.css";
 
+
+
 export default function EscanearQR() {
   const [escaneando, setEscaneando] = useState(false);
   const [carnet, setCarnet] = useState(null);
@@ -24,14 +26,16 @@ export default function EscanearQR() {
           setEscaneando(false);
 
           try {
-            const { data } = await axiosClient.post(
-  "/api/carnet/escanear",
-  {
-    codigoQr: decodedText,
-  }
-);
+            console.log("QR ESCANEADO:", decodedText);
 
-setCarnet(data);
+            const { data } = await axiosClient.post(
+              "/api/carnet/escanear",
+              {
+                codigoQr: decodedText,
+              }
+            );
+
+            console.log("RESPUESTA DEL SERVIDOR:", data);
 
             setCarnet(data);
 
@@ -39,7 +43,8 @@ setCarnet(data);
               `Registro de ${data.movimiento} realizado correctamente`
             );
           } catch (error) {
-            console.error(error);
+            console.error("ERROR AL VALIDAR QR:", error);
+            console.error("RESPUESTA:", error.response?.data);
 
             alert(
               error.response?.data?.message ||
@@ -67,7 +72,7 @@ setCarnet(data);
     };
   }, []);
 
-  console.log(carnet);
+  console.log("CARNET:", carnet);
 
   return (
     <div className="escanear-container">
@@ -97,39 +102,60 @@ setCarnet(data);
       {carnet && (
         <div className="resultado-qr">
           <h3>{carnet.movimiento.toUpperCase()}</h3>
-<div className="imagenes-qr">
-  <img
-    src={`http://localhost:3000/uploads/${carnet.carnet.fotoAprendiz}`}
-    alt="Aprendiz"
-    className="foto-aprendiz"
-  />
 
-  <img
-    src={`http://localhost:3000/uploads/${carnet.carnet.fotoVehiculo}`}
-    alt="Vehículo"
-    className="foto-vehiculo"
-  />
-</div>
+          <div className="imagenes-qr">
+            <img
+              src={`http://localhost:3000/uploads/${carnet.carnet.fotoAprendiz}`}
+              alt="Aprendiz"
+              className="foto-aprendiz"
+            />
 
-          <p><strong>Nombre:</strong> {carnet.carnet.nombre}</p>
+            <img
+              src={`http://localhost:3000/uploads/${carnet.carnet.fotoVehiculo}`}
+              alt="Vehículo"
+              className="foto-vehiculo"
+            />
+          </div>
 
-          <p><strong>Documento:</strong> {carnet.carnet.documento}</p>
+          <p>
+            <strong>Nombre:</strong> {carnet.carnet.nombre}
+          </p>
 
-          <p><strong>Ficha:</strong> {carnet.carnet.ficha}</p>
+          <p>
+            <strong>Documento:</strong> {carnet.carnet.documento}
+          </p>
 
-          <p><strong>Correo:</strong> {carnet.carnet.correo}</p>
+          <p>
+            <strong>Ficha:</strong> {carnet.carnet.ficha}
+          </p>
 
-          <p><strong>Celular:</strong> {carnet.carnet.celular}</p>
+          <p>
+            <strong>Correo:</strong> {carnet.carnet.correo}
+          </p>
 
-          <p><strong>Centro:</strong> {carnet.carnet.centroFormacion}</p>
+          <p>
+            <strong>Celular:</strong> {carnet.carnet.celular}
+          </p>
 
-          <p><strong>Vehículo:</strong> {carnet.carnet.tipoVehiculo}</p>
+          <p>
+            <strong>Centro:</strong> {carnet.carnet.centroFormacion}
+          </p>
 
-          <p><strong>Marca:</strong> {carnet.carnet.marca}</p>
+          <p>
+            <strong>Vehículo:</strong> {carnet.carnet.tipoVehiculo}
+          </p>
 
-          <p><strong>Placa:</strong> {carnet.carnet.placa}</p>
+          <p>
+            <strong>Marca:</strong> {carnet.carnet.marca}
+          </p>
 
-          <p><strong>Serial:</strong> {carnet.carnet.serial}</p>
+          <p>
+            <strong>Placa:</strong> {carnet.carnet.placa}
+          </p>
+
+          <p>
+            <strong>Serial:</strong> {carnet.carnet.serial}
+          </p>
         </div>
       )}
     </div>
