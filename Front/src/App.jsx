@@ -1,12 +1,14 @@
 import "./App.css";
 
+import Home from "./pages/Home";
 import Login from "./pages/Login";
 import OlvideContraseña from "./pages/OlvideContraseña";
 import VerificarCodigo from "./pages/VerificarCodigo";
+import CambiarContraseña from "./pages/CambiarContraseña";
 import Register from "./pages/Register";
+
 import ProtectedRoute from "./components/ProtectedRoute";
 
-// ================= ADMINISTRADOR =================
 import DashboardAdmin from "./pages/administrador/DashboardAdmin";
 import InicioAdmin from "./pages/administrador/InicioAdmin";
 import VerPeticiones from "./pages/administrador/VerPeticiones";
@@ -19,7 +21,6 @@ import ConfigGrCrud from "./pages/administrador/CentroFormacionCrud";
 import SolicitudesActualizacionAdmin from "./pages/administrador/SolicitudesActualizacionAdmin";
 import SoporteAdmin from "./pages/administrador/SoporteAdmin";
 
-// ================= GUARDA =================
 import DashboardGuarda from "./pages/guarda/DashboardGuarda";
 import InicioGuarda from "./pages/guarda/InicioGuarda";
 import EscanearQR from "./pages/guarda/EscanearQR";
@@ -27,7 +28,6 @@ import ManualPlataforma from "./pages/guarda/ManualPlataforma";
 import IngresoSalida from "./pages/guarda/IngresoSalida";
 import EntradaSalidaCrud from "./pages/guarda/EntradaSalidaCrud";
 
-// ================= APRENDIZ =================
 import DashboardAprendiz from "./pages/aprendiz/DashboardAprendiz";
 import InicioAprendiz from "./pages/aprendiz/InicioAprendiz";
 import VisualizarCarnet from "./pages/aprendiz/VisualizarCarnet";
@@ -47,11 +47,22 @@ import {
 export default function App() {
   return (
     <BrowserRouter>
+
       <Routes>
+
+        {/* ================= INICIO ================= */}
+
+        <Route
+          path="/"
+          element={<Home />}
+        />
 
         {/* ================= LOGIN ================= */}
 
-        <Route path="/" element={<Login />} />
+        <Route
+          path="/login"
+          element={<Login />}
+        />
 
         <Route
           path="/register"
@@ -68,16 +79,22 @@ export default function App() {
           element={<VerificarCodigo />}
         />
 
-        {/* ================= ADMINISTRADOR ================= */}
+        <Route
+          path="/cambiar-contraseña"
+          element={<CambiarContraseña />}
+        />
+
+        {/* ================= ADMIN ================= */}
 
         <Route
-  path="/dashboard-admin"
-  element={
-    <ProtectedRoute rol="administrador">
-      <DashboardAdmin />
-    </ProtectedRoute>
-  }
->
+          path="/dashboard-admin"
+          element={
+            <ProtectedRoute rol="administrador">
+              <DashboardAdmin />
+            </ProtectedRoute>
+          }
+        >
+
           <Route
             index
             element={<InicioAdmin />}
@@ -125,25 +142,29 @@ export default function App() {
 
           <Route
             path="solicitudes-actualizacion"
-            element={<SolicitudesActualizacionAdmin />}
+            element={
+              <SolicitudesActualizacionAdmin />
+            }
           />
 
           <Route
             path="soporte"
             element={<SoporteAdmin />}
           />
+
         </Route>
 
         {/* ================= GUARDA ================= */}
 
         <Route
-  path="/dashboard-guarda"
-  element={
-    <ProtectedRoute rol="guarda">
-      <DashboardGuarda />
-    </ProtectedRoute>
-  }
->
+          path="/dashboard-guarda"
+          element={
+            <ProtectedRoute rol="guarda">
+              <DashboardGuarda />
+            </ProtectedRoute>
+          }
+        >
+
           <Route
             index
             element={<InicioGuarda />}
@@ -168,63 +189,71 @@ export default function App() {
             path="entrada-salida"
             element={<EntradaSalidaCrud />}
           />
+
         </Route>
 
         {/* ================= APRENDIZ ================= */}
 
-       <Route
-  path="/dashboard-aprendiz"
-  element={
-    <ProtectedRoute rol="aprendiz">
-      <DashboardAprendiz />
-    </ProtectedRoute>
-  }
->
-  <Route
-    index
-    element={<InicioAprendiz />}
-  />
+        <Route
+          path="/dashboard-aprendiz"
+          element={
+            <ProtectedRoute rol="aprendiz">
+              <DashboardAprendiz />
+            </ProtectedRoute>
+          }
+        >
 
-  <Route
-    path="visualizar-carnet"
-    element={<VisualizarCarnet />}
-  />
+          <Route
+            index
+            element={<InicioAprendiz />}
+          />
 
-  <Route
-    path="actualizar-datos"
-    element={<ActualizarDatos />}
-  />
+          <Route
+            path="visualizar-carnet"
+            element={<VisualizarCarnet />}
+          />
 
-  <Route
-    path="peticion-carnet"
-    element={<PeticionCarnet />}
-  />
+          <Route
+            path="actualizar-datos"
+            element={<ActualizarDatos />}
+          />
 
-  <Route
-    path="manual"
-    element={<ManualUso />}
-  />
+          <Route
+            path="peticion-carnet"
+            element={<PeticionCarnet />}
+          />
 
-  <Route
-    path="soporte"
-    element={<SoporteTecnico />}
-  />
+          <Route
+            path="manual"
+            element={<ManualUso />}
+          />
 
-  <Route
-    path="vencimiento"
-    element={<VencimientoCarnet />}
-  />
+          <Route
+            path="soporte"
+            element={<SoporteTecnico />}
+          />
 
-</Route>
+          <Route
+            path="vencimiento"
+            element={<VencimientoCarnet />}
+          />
 
-        {/* ================= RUTA NO ENCONTRADA ================= */}
+        </Route>
+
+        {/* ================= NO ENCONTRADA ================= */}
 
         <Route
           path="*"
-          element={<Navigate to="/" replace />}
+          element={
+            <Navigate
+              to="/"
+              replace
+            />
+          }
         />
 
       </Routes>
+
     </BrowserRouter>
   );
 }

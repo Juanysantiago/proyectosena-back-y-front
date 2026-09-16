@@ -6,106 +6,184 @@ export default function VerificarCodigo() {
   const [pin, setPin] = useState("");
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const email = localStorage.getItem("emailRecuperacion");
 
   const verificarCodigo = async (e) => {
     e.preventDefault();
 
+    setError("");
+    setMensaje("");
+
+    if (!email) {
+      setError("No se encontró el correo de recuperación.");
+      return;
+    }
+
+    if (!/^\d{6}$/.test(pin)) {
+      setError("El PIN debe contener 6 números.");
+      return;
+    }
+
     try {
+      setLoading(true);
+
       const res = await axiosClient.post(
         "/auth/verificar-pin",
         {
-          email,
-          pin
+          email: email.trim().toLowerCase(),
+          pin: pin,
         }
       );
 
-      const { accessToken, user } = res.data;
+      console.log("RESPUESTA VERIFICAR PIN:", res.data);
 
-      localStorage.setItem(
-        "accessToken",
-        accessToken
-      );
+      /*
+       * EL BACKEND DEVUELVE:
+       *
+       * {
+       *   message: "Código correcto",
+       *   resetToken: "..."
+       * }
+       */
 
-      localStorage.setItem(
-        "user",
-        JSON.stringify(user)
-      );
+      const resetToken = res.data?.resetToken;
 
-      switch (user.rol) {
-        case "administrador":
-          window.location.href =
-            "/dashboard-admin";
-          break;
-
-        case "guarda":
-          window.location.href =
-            "/dashboard-guarda";
-          break;
-
-        case "aprendiz":
-          window.location.href =
-            "/dashboard-aprendiz";
-          break;
-
-        default:
-          setError("Rol no reconocido");
+      if (!resetToken) {
+        setError(
+          "No se recibió el token de recuperación."
+        );
+        return;
       }
 
+      // Guardar el token temporal
+      localStorage.setItem(
+        "tokenRecuperacion",
+        resetToken
+      );
+
+      // Guardar correo
+      localStorage.setItem(
+        "emailRecuperacion",
+        email.trim().toLowerCase()
+      );
+
+      localStorage.setItem(
+        "pinVerificado",
+        "true"
+      );
+
+      setMensaje(
+        "Código verificado correctamente."
+      );
+
+      setTimeout(() => {
+        window.location.href = "/cambiar-contraseña";
+      }, 800);
+
     } catch (err) {
+      console.error(
+        "ERROR VERIFICANDO PIN:",
+        err
+      );
+
       setError(
         err?.response?.data?.message ||
-        "Código incorrecto"
+        "Código incorrecto."
       );
+    } finally {
+      setLoading(false);
     }
   };
 
   const reenviarCodigo = async () => {
+    setError("");
+    setMensaje("");
+
+    if (!email) {
+      setError(
+        "No se encontró el correo de recuperación."
+      );
+      return;
+    }
+
     try {
+      setLoading(true);
+
       await axiosClient.post(
         "/auth/reenviar-pin",
         {
-          email
+          email: email.trim().toLowerCase(),
         }
       );
+
+      // El PIN anterior deja de ser válido
+      localStorage.removeItem(
+        "tokenRecuperacion"
+      );
+
+      localStorage.removeItem(
+        "pinVerificado"
+      );
+
+      setPin("");
 
       setMensaje(
         "Se ha enviado un nuevo código."
       );
 
-    } catch (error) {
+    } catch (err) {
+      console.error(
+        "ERROR REENVIANDO PIN:",
+        err
+      );
+
       setError(
+        err?.response?.data?.message ||
         "No fue posible reenviar el código."
       );
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="verificar-container">
       <div className="verificar-card">
+
         <h2>Código de verificación</h2>
 
         <p>
-          Ingrese el PIN de 6 dígitos enviado a
-          su correo electrónico.
+          Ingrese el PIN de 6 dígitos enviado
+          a su correo electrónico.
         </p>
 
         <form onSubmit={verificarCodigo}>
+
           <input
             type="text"
-            maxLength="6"
+            inputMode="numeric"
+            maxLength={6}
             value={pin}
             onChange={(e) =>
-              setPin(e.target.value)
+              setPin(
+                e.target.value.replace(/\D/g, "")
+              )
             }
-            placeholder="000000"
+            placeholder="Código de 6 dígitos"
             required
           />
 
-          <button type="submit">
-            Verificar
+          <button
+            type="submit"
+            disabled={loading}
+          >
+            {loading
+              ? "Verificando..."
+              : "Verificar"}
           </button>
+
         </form>
 
         {mensaje && (
@@ -121,11 +199,14 @@ export default function VerificarCodigo() {
         )}
 
         <button
+          type="button"
           className="reenviar-btn"
           onClick={reenviarCodigo}
+          disabled={loading}
         >
           Reenviar código
         </button>
+
       </div>
     </div>
   );

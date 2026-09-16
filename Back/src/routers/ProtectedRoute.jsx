@@ -1,23 +1,53 @@
-const express = require("express");
-const router = express.Router();
+import { Navigate } from "react-router-dom";
 
-const verifyToken = require("../middlewares/verifyToken");
+export default function ProtectedRoute({ children, rol }) {
 
-const {
-  obtenerNotificaciones,
-  marcarLeidas
-} = require("../controllers/notificacionController");
+  const usuarioGuardado = localStorage.getItem("user");
 
-router.get(
-  "/notificaciones",
-  verifyToken,
-  obtenerNotificaciones
-);
+  console.log("ProtectedRoute");
+  console.log("Usuario:", usuarioGuardado);
+  console.log("Rol requerido:", rol);
 
-router.put(
-  "/notificaciones/leidas",
-  verifyToken,
-  marcarLeidas
-);
+  if (!usuarioGuardado) {
+    return <Navigate to="/login" replace />;
+  }
 
-module.exports = router;
+  let usuario;
+
+  try {
+    usuario = JSON.parse(usuarioGuardado);
+  } catch (error) {
+    console.error("Error leyendo usuario:", error);
+
+    localStorage.removeItem("user");
+
+    return <Navigate to="/login" replace />;
+  }
+
+  if (!usuario?.id || !usuario?.rol) {
+    localStorage.removeItem("user");
+
+    return <Navigate to="/login" replace />;
+  }
+
+  if (usuario.rol !== rol) {
+
+    if (usuario.rol === "administrador") {
+      return <Navigate to="/dashboard-admin" replace />;
+    }
+
+    if (usuario.rol === "guarda") {
+      return <Navigate to="/dashboard-guarda" replace />;
+    }
+
+    if (usuario.rol === "aprendiz") {
+      return <Navigate to="/dashboard-aprendiz" replace />;
+    }
+
+    localStorage.removeItem("user");
+
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+}

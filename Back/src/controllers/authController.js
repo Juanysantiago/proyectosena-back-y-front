@@ -1,6 +1,8 @@
 const { Op } = require("sequelize");
+
 const User = require("../models/User");
 const CentroFormacion = require("../models/CentroFormacion");
+
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
@@ -10,7 +12,6 @@ const QRCode = require("qrcode");
 // FUNCIONES DE VALIDACIÓN
 // ==========================================
 
-// Validar que sea un texto y no esté vacío
 const esTextoValido = (valor) => {
   return (
     typeof valor === "string" &&
@@ -18,16 +19,15 @@ const esTextoValido = (valor) => {
   );
 };
 
-// Validar correo electrónico
 const esEmailValido = (email) => {
   return (
     typeof email === "string" &&
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+      email.trim()
+    )
   );
 };
 
-// Validar documento
-// Entre 6 y 15 números
 const esDocumentoValido = (documento) => {
   return (
     typeof documento === "string" &&
@@ -35,8 +35,6 @@ const esDocumentoValido = (documento) => {
   );
 };
 
-// Validar celular colombiano
-// 10 números y comienza por 3
 const esCelularValido = (celular) => {
   return (
     typeof celular === "string" &&
@@ -44,8 +42,6 @@ const esCelularValido = (celular) => {
   );
 };
 
-// Validar contraseña
-// Mínimo 8 caracteres
 const esPasswordValida = (password) => {
   return (
     typeof password === "string" &&
@@ -53,16 +49,14 @@ const esPasswordValida = (password) => {
   );
 };
 
-// Validar roles permitidos
 const esRolValido = (rol) => {
   return [
     "administrador",
     "guarda",
-    "aprendiz"
+    "aprendiz",
   ].includes(rol);
 };
 
-// Validar fecha
 const esFechaValida = (fecha) => {
   if (!fecha) {
     return true;
@@ -73,15 +67,14 @@ const esFechaValida = (fecha) => {
   return !isNaN(fechaObj.getTime());
 };
 
-// Validar ID numérico
 const esIdValido = (id) => {
   return /^\d+$/.test(String(id));
 };
 
-
 // ==========================================
 // REGISTRAR USUARIO
 // ==========================================
+
 const register = async (req, res) => {
   try {
     const {
@@ -96,61 +89,66 @@ const register = async (req, res) => {
       centroFormacionId,
       fechaVinculacion,
       fechaFinalizacion,
-      rol
+      rol,
     } = req.body;
 
-
-    // ==========================================
-    // VALIDAR CAMPOS OBLIGATORIOS
-    // ==========================================
-
+    // EMAIL
     if (!esEmailValido(email)) {
       return res.status(400).json({
-        message: "El correo electrónico no es válido"
+        message:
+          "El correo electrónico no es válido",
       });
     }
 
+    // PASSWORD
     if (!esPasswordValida(password)) {
       return res.status(400).json({
-        message: "La contraseña debe tener mínimo 8 caracteres"
+        message:
+          "La contraseña debe tener mínimo 8 caracteres",
       });
     }
 
+    // DOCUMENTO
     if (!esDocumentoValido(documento)) {
       return res.status(400).json({
-        message: "El documento debe contener entre 6 y 15 números"
+        message:
+          "El documento debe contener entre 6 y 15 números",
       });
     }
 
+    // TIPO DOCUMENTO
     if (!esTextoValido(tipoDocumento)) {
       return res.status(400).json({
-        message: "El tipo de documento es obligatorio"
+        message:
+          "El tipo de documento es obligatorio",
       });
     }
 
+    // NOMBRES
     if (!esTextoValido(nombres)) {
       return res.status(400).json({
-        message: "Los nombres son obligatorios"
+        message:
+          "Los nombres son obligatorios",
       });
     }
 
+    // APELLIDOS
     if (!esTextoValido(apellidos)) {
       return res.status(400).json({
-        message: "Los apellidos son obligatorios"
+        message:
+          "Los apellidos son obligatorios",
       });
     }
 
+    // ROL
     if (!esRolValido(rol)) {
       return res.status(400).json({
-        message: "El rol seleccionado no es válido"
+        message:
+          "El rol seleccionado no es válido",
       });
     }
 
-
-    // ==========================================
-    // VALIDAR CELULAR
-    // ==========================================
-
+    // CELULAR
     if (
       celular !== undefined &&
       celular !== null &&
@@ -158,48 +156,39 @@ const register = async (req, res) => {
       !esCelularValido(celular)
     ) {
       return res.status(400).json({
-        message: "El celular debe tener 10 números y comenzar por 3"
+        message:
+          "El celular debe tener 10 números y comenzar por 3",
       });
     }
 
-
-    // ==========================================
-    // VALIDAR FECHAS
-    // ==========================================
-
+    // FECHAS
     if (!esFechaValida(fechaVinculacion)) {
       return res.status(400).json({
-        message: "La fecha de vinculación no es válida"
+        message:
+          "La fecha de vinculación no es válida",
       });
     }
 
     if (!esFechaValida(fechaFinalizacion)) {
       return res.status(400).json({
-        message: "La fecha de finalización no es válida"
+        message:
+          "La fecha de finalización no es válida",
       });
     }
-
-
-    // ==========================================
-    // VALIDAR ORDEN DE FECHAS
-    // ==========================================
 
     if (
       fechaVinculacion &&
       fechaFinalizacion &&
-      new Date(fechaFinalizacion) < new Date(fechaVinculacion)
+      new Date(fechaFinalizacion) <
+        new Date(fechaVinculacion)
     ) {
       return res.status(400).json({
         message:
-          "La fecha de finalización no puede ser anterior a la fecha de vinculación"
+          "La fecha de finalización no puede ser anterior a la fecha de vinculación",
       });
     }
 
-
-    // ==========================================
-    // VALIDAR CENTRO DE FORMACIÓN
-    // ==========================================
-
+    // CENTRO
     if (
       centroFormacionId !== undefined &&
       centroFormacionId !== null &&
@@ -207,26 +196,25 @@ const register = async (req, res) => {
     ) {
       if (!esIdValido(centroFormacionId)) {
         return res.status(400).json({
-          message: "El centro de formación no es válido"
+          message:
+            "El centro de formación no es válido",
         });
       }
 
-      const centro = await CentroFormacion.findByPk(
-        centroFormacionId
-      );
+      const centro =
+        await CentroFormacion.findByPk(
+          centroFormacionId
+        );
 
       if (!centro) {
         return res.status(404).json({
-          message: "El centro de formación no existe"
+          message:
+            "El centro de formación no existe",
         });
       }
     }
 
-
-    // ==========================================
-    // NORMALIZAR DATOS
-    // ==========================================
-
+    // NORMALIZAR
     const emailNormalizado =
       email.trim().toLowerCase();
 
@@ -242,67 +230,57 @@ const register = async (req, res) => {
     const tipoDocumentoNormalizado =
       tipoDocumento.trim();
 
-    const celularNormalizado =
-      celular ? celular.trim() : null;
+    const celularNormalizado = celular
+      ? celular.trim()
+      : null;
 
-
-    // ==========================================
-    // VALIDAR LONGITUD DE NOMBRES
-    // ==========================================
-
+    // LONGITUD NOMBRES
     if (
       nombresNormalizados.length < 2 ||
       nombresNormalizados.length > 100
     ) {
       return res.status(400).json({
         message:
-          "Los nombres deben tener entre 2 y 100 caracteres"
+          "Los nombres deben tener entre 2 y 100 caracteres",
       });
     }
 
-
-    // ==========================================
-    // VALIDAR LONGITUD DE APELLIDOS
-    // ==========================================
-
+    // LONGITUD APELLIDOS
     if (
       apellidosNormalizados.length < 2 ||
       apellidosNormalizados.length > 100
     ) {
       return res.status(400).json({
         message:
-          "Los apellidos deben tener entre 2 y 100 caracteres"
+          "Los apellidos deben tener entre 2 y 100 caracteres",
       });
     }
 
-
-    // ==========================================
-    // BUSCAR USUARIO POR EMAIL O DOCUMENTO
-    // ==========================================
-
-    const userExists = await User.findOne({
-      where: {
-        [Op.or]: [
-          {
-            email: emailNormalizado
-          },
-          {
-            documento: documentoNormalizado
-          }
-        ]
-      }
-    });
-
+    // BUSCAR USUARIO
+    const userExists =
+      await User.findOne({
+        where: {
+          [Op.or]: [
+            {
+              email:
+                emailNormalizado,
+            },
+            {
+              documento:
+                documentoNormalizado,
+            },
+          ],
+        },
+      });
 
     if (userExists) {
-
       if (
         userExists.email.toLowerCase() ===
         emailNormalizado
       ) {
         return res.status(409).json({
           message:
-            "El correo electrónico ya está registrado"
+            "El correo electrónico ya está registrado",
         });
       }
 
@@ -312,56 +290,45 @@ const register = async (req, res) => {
       ) {
         return res.status(409).json({
           message:
-            "El documento ya está registrado"
+            "El documento ya está registrado",
         });
       }
     }
 
-
-    // ==========================================
-    // ENCRIPTAR CONTRASEÑA
-    // ==========================================
-
+    // ENCRIPTAR PASSWORD
     const hashedPassword =
       await bcrypt.hash(password, 10);
 
-
-    // ==========================================
     // GENERAR QR
-    // ==========================================
-
     const qrCode = uuidv4();
 
-
-    // ==========================================
     // CREAR USUARIO
-    // ==========================================
-
-    const newUser = await User.create({
-      email: emailNormalizado,
-      password: hashedPassword,
-      documento: documentoNormalizado,
-      tipoDocumento: tipoDocumentoNormalizado,
-      nombres: nombresNormalizados,
-      apellidos: apellidosNormalizados,
-      ficha: ficha
-        ? String(ficha).trim()
-        : null,
-      celular: celularNormalizado,
-      centroFormacionId:
-        centroFormacionId || null,
-      fechaVinculacion:
-        fechaVinculacion || null,
-      fechaFinalizacion:
-        fechaFinalizacion || null,
-      rol,
-      qrCode
-    });
-
-
-    // ==========================================
-    // RESPUESTA
-    // ==========================================
+    const newUser =
+      await User.create({
+        email: emailNormalizado,
+        password: hashedPassword,
+        documento:
+          documentoNormalizado,
+        tipoDocumento:
+          tipoDocumentoNormalizado,
+        nombres:
+          nombresNormalizados,
+        apellidos:
+          apellidosNormalizados,
+        ficha: ficha
+          ? String(ficha).trim()
+          : null,
+        celular:
+          celularNormalizado,
+        centroFormacionId:
+          centroFormacionId || null,
+        fechaVinculacion:
+          fechaVinculacion || null,
+        fechaFinalizacion:
+          fechaFinalizacion || null,
+        rol,
+        qrCode,
+      });
 
     return res.status(201).json({
       message:
@@ -370,124 +337,107 @@ const register = async (req, res) => {
       user: {
         id: newUser.id,
         email: newUser.email,
-        documento: newUser.documento,
-        tipoDocumento: newUser.tipoDocumento,
-        nombres: newUser.nombres,
-        apellidos: newUser.apellidos,
-        ficha: newUser.ficha,
-        celular: newUser.celular,
+        documento:
+          newUser.documento,
+        tipoDocumento:
+          newUser.tipoDocumento,
+        nombres:
+          newUser.nombres,
+        apellidos:
+          newUser.apellidos,
+        ficha:
+          newUser.ficha,
+        celular:
+          newUser.celular,
         centroFormacionId:
           newUser.centroFormacionId,
         fechaVinculacion:
           newUser.fechaVinculacion,
         fechaFinalizacion:
           newUser.fechaFinalizacion,
-        rol: newUser.rol,
-        qrCode: newUser.qrCode
-      }
+        rol:
+          newUser.rol,
+        qrCode:
+          newUser.qrCode,
+      },
     });
 
   } catch (error) {
-
     console.log(error);
 
-    // Error de campo único de Sequelize
-    if (error.name === "SequelizeUniqueConstraintError") {
+    if (
+      error.name ===
+      "SequelizeUniqueConstraintError"
+    ) {
       return res.status(409).json({
         message:
-          "El correo o documento ya se encuentra registrado"
+          "El correo o documento ya se encuentra registrado",
       });
     }
 
     return res.status(500).json({
-      message: "Error en el servidor"
+      message:
+        "Error en el servidor",
     });
   }
 };
 
-
 // ==========================================
 // LOGIN
 // ==========================================
+
 const login = async (req, res) => {
   try {
-
     const {
       email,
       password,
-      rol
+      rol,
     } = req.body;
-
-
-    // ==========================================
-    // VALIDAR EMAIL
-    // ==========================================
 
     if (!esEmailValido(email)) {
       return res.status(400).json({
         message:
-          "Ingrese un correo electrónico válido"
+          "Ingrese un correo electrónico válido",
       });
     }
-
-
-    // ==========================================
-    // VALIDAR PASSWORD
-    // ==========================================
 
     if (!esTextoValido(password)) {
       return res.status(400).json({
         message:
-          "La contraseña es obligatoria"
+          "La contraseña es obligatoria",
       });
     }
-
-
-    // ==========================================
-    // VALIDAR ROL
-    // ==========================================
 
     if (!esRolValido(rol)) {
       return res.status(400).json({
         message:
-          "El rol seleccionado no es válido"
+          "El rol seleccionado no es válido",
       });
     }
-
 
     const emailNormalizado =
       email.trim().toLowerCase();
 
-
-    // ==========================================
-    // BUSCAR USUARIO
-    // ==========================================
-
-    const user = await User.findOne({
-      where: {
-        email: emailNormalizado
-      },
-
-      include: [
-        {
-          model: CentroFormacion,
-          as: "centroFormacion"
-        }
-      ]
-    });
-
+    const user =
+      await User.findOne({
+        where: {
+          email:
+            emailNormalizado,
+        },
+        include: [
+          {
+            model: CentroFormacion,
+            as: "centroFormacion",
+          },
+        ],
+      });
 
     if (!user) {
       return res.status(404).json({
         message:
-          "Usuario no encontrado"
+          "Usuario no encontrado",
       });
     }
-
-
-    // ==========================================
-    // COMPARAR PASSWORD
-    // ==========================================
 
     const validPassword =
       await bcrypt.compare(
@@ -495,61 +445,39 @@ const login = async (req, res) => {
         user.password
       );
 
-
     if (!validPassword) {
       return res.status(401).json({
         message:
-          "Contraseña incorrecta"
+          "Contraseña incorrecta",
       });
     }
-
-
-    // ==========================================
-    // VALIDAR ROL
-    // ==========================================
 
     if (user.rol !== rol) {
       return res.status(401).json({
         message:
-          "Rol incorrecto"
+          "Rol incorrecto",
       });
     }
-
-
-    // ==========================================
-    // VALIDAR ESTADO
-    // ==========================================
 
     if (user.estado === "bloqueado") {
       return res.status(403).json({
         message:
-          "Usuario bloqueado. Comuníquese al soporte."
+          "Usuario bloqueado. Comuníquese al soporte.",
       });
     }
 
-
-    // ==========================================
-    // CREAR JWT
-    // ==========================================
-
-    const accessToken = jwt.sign(
-      {
-        id: user.id,
-        email: user.email,
-        rol: user.rol
-      },
-
-      process.env.JWT_SECRET,
-
-      {
-        expiresIn: "24h"
-      }
-    );
-
-
-    // ==========================================
-    // CREAR COOKIE
-    // ==========================================
+    const accessToken =
+      jwt.sign(
+        {
+          id: user.id,
+          email: user.email,
+          rol: user.rol,
+        },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "24h",
+        }
+      );
 
     res.cookie(
       "accessToken",
@@ -560,254 +488,188 @@ const login = async (req, res) => {
         sameSite: "lax",
         path: "/",
         maxAge:
-          24 * 60 * 60 * 1000
+          24 * 60 * 60 * 1000,
       }
     );
 
-
-    // ==========================================
-    // RESPUESTA
-    // ==========================================
-
     return res.status(200).json({
-
       message:
         "Login exitoso",
 
       user: {
         id: user.id,
         email: user.email,
-        nombres: user.nombres,
-        apellidos: user.apellidos,
-        rol: user.rol,
-        documento: user.documento,
-        ficha: user.ficha,
+        nombres:
+          user.nombres,
+        apellidos:
+          user.apellidos,
+        rol:
+          user.rol,
+        documento:
+          user.documento,
+        ficha:
+          user.ficha,
         centroFormacionId:
-          user.centroFormacionId
-      }
+          user.centroFormacionId,
+      },
     });
 
   } catch (error) {
-
     console.log(error);
 
     return res.status(500).json({
       message:
-        "Error en el servidor"
+        "Error en el servidor",
     });
   }
 };
 
-
 // ==========================================
 // GET CARNET
 // ==========================================
+
 const getCarnet = async (req, res) => {
   try {
-
     const { id } = req.params;
-
-
-    // ==========================================
-    // VALIDAR ID
-    // ==========================================
 
     if (!esIdValido(id)) {
       return res.status(400).json({
         message:
-          "El ID del usuario no es válido"
+          "El ID del usuario no es válido",
       });
     }
-
 
     const user =
       await User.findByPk(id);
 
-
     if (!user) {
       return res.status(404).json({
         message:
-          "Usuario no encontrado"
+          "Usuario no encontrado",
       });
     }
-
-
-    // ==========================================
-    // VALIDAR QR
-    // ==========================================
 
     if (!user.qrCode) {
       return res.status(404).json({
         message:
-          "El usuario no tiene un código QR"
+          "El usuario no tiene un código QR",
       });
     }
-
 
     const qrImage =
       await QRCode.toDataURL(
         user.qrCode
       );
 
-
     return res.json({
-
       id: user.id,
-
       nombres:
         user.nombres,
-
       apellidos:
         user.apellidos,
-
       documento:
         user.documento,
-
       ficha:
         user.ficha,
-
       rol:
         user.rol,
-
-      qrImage
+      qrImage,
     });
 
   } catch (error) {
-
     console.log(error);
 
     return res.status(500).json({
       message:
-        "Error generando carnet"
+        "Error generando carnet",
     });
   }
 };
-
 
 // ==========================================
 // RECUPERAR PASSWORD
 // ==========================================
+
 const recuperarPassword = async (
   req,
   res
 ) => {
-
   try {
-
-    const { email } =
-      req.body;
-
-
-    // ==========================================
-    // VALIDAR EMAIL
-    // ==========================================
+    const { email } = req.body;
 
     if (!esEmailValido(email)) {
       return res.status(400).json({
         message:
-          "Ingrese un correo electrónico válido"
+          "Ingrese un correo electrónico válido",
       });
     }
-
 
     const emailNormalizado =
       email.trim().toLowerCase();
 
-
-    // ==========================================
-    // BUSCAR USUARIO
-    // ==========================================
-
     const user =
       await User.findOne({
         where: {
-          email: emailNormalizado
-        }
+          email:
+            emailNormalizado,
+        },
       });
-
 
     if (!user) {
       return res.status(404).json({
         message:
-          "No existe usuario con ese correo"
+          "No existe usuario con ese correo",
       });
     }
-
-
-    // ==========================================
-    // GENERAR PIN
-    // ==========================================
 
     const pin =
       Math.floor(
         100000 +
-        Math.random() * 900000
+          Math.random() * 900000
       ).toString();
 
-
-    user.pinRecuperacion =
-      pin;
-
-    user.fechaPin =
-      new Date();
-
+    user.pinRecuperacion = pin;
+    user.fechaPin = new Date();
 
     await user.save();
 
-
-    console.log(
-      `PIN: ${pin}`
-    );
-
+    console.log(`PIN: ${pin}`);
 
     return res.json({
       message:
-        "PIN enviado"
+        "PIN enviado",
     });
 
   } catch (error) {
-
     console.log(error);
 
     return res.status(500).json({
       message:
-        "Error en servidor"
+        "Error en servidor",
     });
   }
 };
 
-
 // ==========================================
 // VERIFICAR PIN
 // ==========================================
+
 const verificarPin = async (
   req,
   res
 ) => {
-
   try {
-
     const {
       email,
-      pin
+      pin,
     } = req.body;
-
-
-    // ==========================================
-    // VALIDAR EMAIL
-    // ==========================================
 
     if (!esEmailValido(email)) {
       return res.status(400).json({
         message:
-          "El correo electrónico no es válido"
+          "El correo electrónico no es válido",
       });
     }
-
-
-    // ==========================================
-    // VALIDAR PIN
-    // ==========================================
 
     if (
       typeof pin !== "string" ||
@@ -815,54 +677,41 @@ const verificarPin = async (
     ) {
       return res.status(400).json({
         message:
-          "El PIN debe contener exactamente 6 números"
+          "El PIN debe contener exactamente 6 números",
       });
     }
-
 
     const emailNormalizado =
       email.trim().toLowerCase();
 
-
     const user =
       await User.findOne({
         where: {
-          email: emailNormalizado
-        }
+          email:
+            emailNormalizado,
+        },
       });
-
 
     if (!user) {
       return res.status(404).json({
         message:
-          "Usuario no encontrado"
+          "Usuario no encontrado",
       });
     }
-
-
-    // ==========================================
-    // COMPROBAR QUE EXISTE PIN
-    // ==========================================
 
     if (!user.pinRecuperacion) {
       return res.status(400).json({
         message:
-          "No existe un PIN activo. Solicite uno nuevo."
+          "No existe un PIN activo. Solicite uno nuevo.",
       });
     }
-
-
-    // ==========================================
-    // VALIDAR FECHA DEL PIN
-    // ==========================================
 
     if (!user.fechaPin) {
       return res.status(400).json({
         message:
-          "El PIN no es válido. Solicite uno nuevo."
+          "El PIN no es válido. Solicite uno nuevo.",
       });
     }
-
 
     const ahora =
       new Date();
@@ -870,40 +719,24 @@ const verificarPin = async (
     const fechaPin =
       new Date(user.fechaPin);
 
-
     const diferencia =
       ahora.getTime() -
       fechaPin.getTime();
 
-
     const diezMinutos =
       10 * 60 * 1000;
 
-
-    if (
-      diferencia >
-      diezMinutos
-    ) {
-
-      user.pinRecuperacion =
-        null;
-
-      user.fechaPin =
-        null;
+    if (diferencia > diezMinutos) {
+      user.pinRecuperacion = null;
+      user.fechaPin = null;
 
       await user.save();
 
-
       return res.status(400).json({
         message:
-          "El PIN ha expirado. Solicite uno nuevo."
+          "El PIN ha expirado. Solicite uno nuevo.",
       });
     }
-
-
-    // ==========================================
-    // COMPARAR PIN
-    // ==========================================
 
     if (
       String(user.pinRecuperacion) !==
@@ -911,267 +744,314 @@ const verificarPin = async (
     ) {
       return res.status(400).json({
         message:
-          "Código incorrecto"
+          "Código incorrecto",
       });
     }
 
-
     // ==========================================
-    // GENERAR TOKEN
+    // TOKEN TEMPORAL
     // ==========================================
 
-    const token =
+    const resetToken =
       jwt.sign(
         {
           id: user.id,
           email: user.email,
-          rol: user.rol
+          tipo: "recuperacion",
         },
-
         process.env.JWT_SECRET,
-
         {
-          expiresIn: "24h"
+          expiresIn: "10m",
         }
       );
 
-
-    res.cookie(
-      "accessToken",
-      token,
-      {
-        httpOnly: true,
-        secure: false,
-        sameSite: "lax",
-        path: "/",
-        maxAge:
-          24 * 60 * 60 * 1000
-      }
-    );
-
-
     // ==========================================
-    // ELIMINAR PIN DESPUÉS DE USARLO
+    // ELIMINAR PIN
     // ==========================================
 
-    user.pinRecuperacion =
-      null;
-
-    user.fechaPin =
-      null;
+    user.pinRecuperacion = null;
+    user.fechaPin = null;
 
     await user.save();
 
-
-    return res.json({
-
+    return res.status(200).json({
       message:
         "Código correcto",
-
-      user: {
-        id: user.id,
-        email: user.email,
-        nombres: user.nombres,
-        apellidos: user.apellidos,
-        rol: user.rol,
-        documento: user.documento,
-        ficha: user.ficha,
-        centroFormacionId:
-          user.centroFormacionId
-      }
+      resetToken,
     });
 
   } catch (error) {
-
-    console.log(error);
+    console.log(
+      "Error verificando PIN:",
+      error
+    );
 
     return res.status(500).json({
       message:
-        "Error en servidor"
+        "Error en servidor",
     });
   }
 };
 
+// ==========================================
+// CAMBIAR PASSWORD
+// ==========================================
 
-// ==========================================
-// REENVIAR PIN
-// ==========================================
-const reenviarPin = async (
+const cambiarPassword = async (
   req,
   res
 ) => {
-
   try {
-
-    const { email } =
-      req.body;
-
+    const {
+      resetToken,
+      password,
+    } = req.body;
 
     // ==========================================
-    // VALIDAR EMAIL
+    // VALIDAR TOKEN
     // ==========================================
 
-    if (!esEmailValido(email)) {
-      return res.status(400).json({
+    if (!resetToken) {
+      return res.status(401).json({
         message:
-          "El correo electrónico no es válido"
+          "Token de recuperación requerido",
       });
     }
 
+    // ==========================================
+    // VERIFICAR TOKEN
+    // ==========================================
 
-    const emailNormalizado =
-      email.trim().toLowerCase();
+    let datosToken;
 
+    try {
+      datosToken =
+        jwt.verify(
+          resetToken,
+          process.env.JWT_SECRET
+        );
+    } catch (error) {
+      return res.status(401).json({
+        message:
+          "El código de recuperación ha expirado",
+      });
+    }
+
+    // ==========================================
+    // VERIFICAR TIPO
+    // ==========================================
+
+    if (
+      datosToken.tipo !==
+      "recuperacion"
+    ) {
+      return res.status(401).json({
+        message:
+          "Token de recuperación no válido",
+      });
+    }
+
+    // ==========================================
+    // VALIDAR PASSWORD
+    // ==========================================
+
+    if (!esPasswordValida(password)) {
+      return res.status(400).json({
+        message:
+          "La contraseña debe tener mínimo 8 caracteres",
+      });
+    }
+
+    // ==========================================
+    // BUSCAR USUARIO
+    // ==========================================
 
     const user =
-      await User.findOne({
-        where: {
-          email: emailNormalizado
-        }
-      });
-
+      await User.findByPk(
+        datosToken.id
+      );
 
     if (!user) {
       return res.status(404).json({
         message:
-          "Usuario no encontrado"
+          "Usuario no encontrado",
       });
     }
 
+    // ==========================================
+    // ENCRIPTAR PASSWORD
+    // ==========================================
+
+    const hashedPassword =
+      await bcrypt.hash(
+        password,
+        10
+      );
 
     // ==========================================
-    // GENERAR NUEVO PIN
+    // ACTUALIZAR PASSWORD
     // ==========================================
+
+    user.password =
+      hashedPassword;
+
+    await user.save();
+
+    return res.status(200).json({
+      message:
+        "Contraseña actualizada correctamente",
+    });
+
+  } catch (error) {
+    console.log(
+      "Error cambiando contraseña:",
+      error
+    );
+
+    return res.status(500).json({
+      message:
+        "Error actualizando contraseña",
+    });
+  }
+};
+
+// ==========================================
+// REENVIAR PIN
+// ==========================================
+
+const reenviarPin = async (
+  req,
+  res
+) => {
+  try {
+    const { email } = req.body;
+
+    if (!esEmailValido(email)) {
+      return res.status(400).json({
+        message:
+          "El correo electrónico no es válido",
+      });
+    }
+
+    const emailNormalizado =
+      email.trim().toLowerCase();
+
+    const user =
+      await User.findOne({
+        where: {
+          email:
+            emailNormalizado,
+        },
+      });
+
+    if (!user) {
+      return res.status(404).json({
+        message:
+          "Usuario no encontrado",
+      });
+    }
 
     const pin =
       Math.floor(
         100000 +
-        Math.random() * 900000
+          Math.random() * 900000
       ).toString();
 
-
-    user.pinRecuperacion =
-      pin;
-
-    user.fechaPin =
-      new Date();
-
+    user.pinRecuperacion = pin;
+    user.fechaPin = new Date();
 
     await user.save();
-
 
     console.log(
       `Nuevo PIN: ${pin}`
     );
 
-
     return res.json({
       message:
-        "PIN reenviado"
+        "PIN reenviado",
     });
 
   } catch (error) {
-
     console.log(error);
 
     return res.status(500).json({
       message:
-        "Error en servidor"
+        "Error en servidor",
     });
   }
 };
 
-
 // ==========================================
 // OBTENER TODOS LOS USUARIOS
 // ==========================================
+
 const getUsers = async (
   req,
   res
 ) => {
-
   try {
-
     const {
-      nombre = ""
+      nombre = "",
     } = req.query;
-
-
-    // ==========================================
-    // VALIDAR BÚSQUEDA
-    // ==========================================
 
     if (
       typeof nombre !== "string"
     ) {
       return res.status(400).json({
         message:
-          "El nombre de búsqueda no es válido"
+          "El nombre de búsqueda no es válido",
       });
     }
 
-
     const users =
       await User.findAll({
-
         where: {
           nombres: {
             [Op.like]:
-              `%${nombre.trim()}%`
-          }
+              `%${nombre.trim()}%`,
+          },
         },
 
         attributes: {
           exclude: [
             "password",
             "pinRecuperacion",
-            "fechaPin"
-          ]
-        }
+            "fechaPin",
+          ],
+        },
       });
-
 
     return res.status(200).json(
       users
     );
 
   } catch (error) {
-
     console.log(error);
 
     return res.status(500).json({
       message:
-        "Error obteniendo usuarios"
+        "Error obteniendo usuarios",
     });
   }
 };
 
-
 // ==========================================
 // OBTENER USUARIO POR ID
 // ==========================================
+
 const getUserById = async (
   req,
   res
 ) => {
-
   try {
-
-    const { id } =
-      req.params;
-
-
-    // ==========================================
-    // VALIDAR ID
-    // ==========================================
+    const { id } = req.params;
 
     if (!esIdValido(id)) {
       return res.status(400).json({
         message:
-          "El ID del usuario no es válido"
+          "El ID del usuario no es válido",
       });
     }
-
 
     const user =
       await User.findByPk(
@@ -1181,78 +1061,60 @@ const getUserById = async (
             exclude: [
               "password",
               "pinRecuperacion",
-              "fechaPin"
-            ]
-          }
+              "fechaPin",
+            ],
+          },
         }
       );
-
 
     if (!user) {
       return res.status(404).json({
         message:
-          "Usuario no encontrado"
+          "Usuario no encontrado",
       });
     }
-
 
     return res.status(200).json(
       user
     );
 
   } catch (error) {
-
     console.log(error);
 
     return res.status(500).json({
       message:
-        "Error obteniendo usuario"
+        "Error obteniendo usuario",
     });
   }
 };
 
-
 // ==========================================
 // ACTUALIZAR USUARIO
 // ==========================================
+
 const updateUser = async (
   req,
   res
 ) => {
-
   try {
-
-    const { id } =
-      req.params;
-
-
-    // ==========================================
-    // VALIDAR ID
-    // ==========================================
+    const { id } = req.params;
 
     if (!esIdValido(id)) {
       return res.status(400).json({
         message:
-          "El ID del usuario no es válido"
+          "El ID del usuario no es válido",
       });
     }
-
 
     const user =
       await User.findByPk(id);
 
-
     if (!user) {
       return res.status(404).json({
         message:
-          "Usuario no encontrado"
+          "Usuario no encontrado",
       });
     }
-
-
-    // ==========================================
-    // CAMPOS PERMITIDOS
-    // ==========================================
 
     const camposPermitidos = [
       "nombres",
@@ -1265,31 +1127,22 @@ const updateUser = async (
       "centroFormacionId",
       "fechaVinculacion",
       "fechaFinalizacion",
-      "foto"
+      "foto",
     ];
 
-
     const datosActualizados = {};
-
 
     for (
       const campo of camposPermitidos
     ) {
-
       if (
         req.body[campo] !==
         undefined
       ) {
-
         datosActualizados[campo] =
           req.body[campo];
       }
     }
-
-
-    // ==========================================
-    // VALIDAR QUE HAYA DATOS
-    // ==========================================
 
     if (
       Object.keys(
@@ -1298,123 +1151,101 @@ const updateUser = async (
       req.body.password ===
         undefined
     ) {
-
       return res.status(400).json({
         message:
-          "No hay datos válidos para actualizar"
+          "No hay datos válidos para actualizar",
       });
     }
 
-
     // ==========================================
-    // VALIDAR NOMBRES
+    // NOMBRES
     // ==========================================
 
     if (
       datosActualizados.nombres !==
       undefined
     ) {
-
       if (
         !esTextoValido(
           datosActualizados.nombres
         )
       ) {
-
         return res.status(400).json({
           message:
-            "Los nombres son obligatorios"
+            "Los nombres son obligatorios",
         });
       }
-
 
       datosActualizados.nombres =
         datosActualizados.nombres.trim();
 
-
       if (
-        datosActualizados.nombres.length <
-          2 ||
-        datosActualizados.nombres.length >
-          100
+        datosActualizados.nombres.length < 2 ||
+        datosActualizados.nombres.length > 100
       ) {
-
         return res.status(400).json({
           message:
-            "Los nombres deben tener entre 2 y 100 caracteres"
+            "Los nombres deben tener entre 2 y 100 caracteres",
         });
       }
     }
 
-
     // ==========================================
-    // VALIDAR APELLIDOS
+    // APELLIDOS
     // ==========================================
 
     if (
       datosActualizados.apellidos !==
       undefined
     ) {
-
       if (
         !esTextoValido(
           datosActualizados.apellidos
         )
       ) {
-
         return res.status(400).json({
           message:
-            "Los apellidos son obligatorios"
+            "Los apellidos son obligatorios",
         });
       }
-
 
       datosActualizados.apellidos =
         datosActualizados.apellidos.trim();
 
-
       if (
-        datosActualizados.apellidos.length <
-          2 ||
-        datosActualizados.apellidos.length >
-          100
+        datosActualizados.apellidos.length < 2 ||
+        datosActualizados.apellidos.length > 100
       ) {
-
         return res.status(400).json({
           message:
-            "Los apellidos deben tener entre 2 y 100 caracteres"
+            "Los apellidos deben tener entre 2 y 100 caracteres",
         });
       }
     }
 
-
     // ==========================================
-    // VALIDAR EMAIL
+    // EMAIL
     // ==========================================
 
     if (
       datosActualizados.email !==
       undefined
     ) {
-
       if (
         !esEmailValido(
           datosActualizados.email
         )
       ) {
-
         return res.status(400).json({
           message:
-            "El correo electrónico no es válido"
+            "El correo electrónico no es válido",
         });
       }
-
 
       datosActualizados.email =
         datosActualizados.email
           .trim()
           .toLowerCase();
-
 
       const emailExiste =
         await User.findOne({
@@ -1423,46 +1254,40 @@ const updateUser = async (
               datosActualizados.email,
 
             id: {
-              [Op.ne]: id
-            }
-          }
+              [Op.ne]: id,
+            },
+          },
         });
-
 
       if (emailExiste) {
         return res.status(409).json({
           message:
-            "El correo electrónico ya está registrado"
+            "El correo electrónico ya está registrado",
         });
       }
     }
 
-
     // ==========================================
-    // VALIDAR DOCUMENTO
+    // DOCUMENTO
     // ==========================================
 
     if (
       datosActualizados.documento !==
       undefined
     ) {
-
       if (
         !esDocumentoValido(
           datosActualizados.documento
         )
       ) {
-
         return res.status(400).json({
           message:
-            "El documento debe contener entre 6 y 15 números"
+            "El documento debe contener entre 6 y 15 números",
         });
       }
 
-
       datosActualizados.documento =
         datosActualizados.documento.trim();
-
 
       const documentoExiste =
         await User.findOne({
@@ -1471,50 +1296,44 @@ const updateUser = async (
               datosActualizados.documento,
 
             id: {
-              [Op.ne]: id
-            }
-          }
+              [Op.ne]: id,
+            },
+          },
         });
-
 
       if (documentoExiste) {
         return res.status(409).json({
           message:
-            "El documento ya está registrado"
+            "El documento ya está registrado",
         });
       }
     }
 
-
     // ==========================================
-    // VALIDAR TIPO DE DOCUMENTO
+    // TIPO DOCUMENTO
     // ==========================================
 
     if (
       datosActualizados.tipoDocumento !==
       undefined
     ) {
-
       if (
         !esTextoValido(
           datosActualizados.tipoDocumento
         )
       ) {
-
         return res.status(400).json({
           message:
-            "El tipo de documento es obligatorio"
+            "El tipo de documento es obligatorio",
         });
       }
-
 
       datosActualizados.tipoDocumento =
         datosActualizados.tipoDocumento.trim();
     }
 
-
     // ==========================================
-    // VALIDAR CELULAR
+    // CELULAR
     // ==========================================
 
     if (
@@ -1522,29 +1341,26 @@ const updateUser = async (
         undefined &&
       datosActualizados.celular !==
         null &&
-      datosActualizados.celular !== ""
+      datosActualizados.celular !==
+        ""
     ) {
-
       if (
         !esCelularValido(
           datosActualizados.celular
         )
       ) {
-
         return res.status(400).json({
           message:
-            "El celular debe tener 10 números y comenzar por 3"
+            "El celular debe tener 10 números y comenzar por 3",
         });
       }
-
 
       datosActualizados.celular =
         datosActualizados.celular.trim();
     }
 
-
     // ==========================================
-    // VALIDAR CENTRO DE FORMACIÓN
+    // CENTRO
     // ==========================================
 
     if (
@@ -1553,37 +1369,32 @@ const updateUser = async (
       datosActualizados.centroFormacionId !==
         null
     ) {
-
       if (
         !esIdValido(
           datosActualizados.centroFormacionId
         )
       ) {
-
         return res.status(400).json({
           message:
-            "El centro de formación no es válido"
+            "El centro de formación no es válido",
         });
       }
-
 
       const centro =
         await CentroFormacion.findByPk(
           datosActualizados.centroFormacionId
         );
 
-
       if (!centro) {
         return res.status(404).json({
           message:
-            "El centro de formación no existe"
+            "El centro de formación no existe",
         });
       }
     }
 
-
     // ==========================================
-    // VALIDAR FECHAS
+    // FECHAS
     // ==========================================
 
     if (
@@ -1593,13 +1404,11 @@ const updateUser = async (
         datosActualizados.fechaVinculacion
       )
     ) {
-
       return res.status(400).json({
         message:
-          "La fecha de vinculación no es válida"
+          "La fecha de vinculación no es válida",
       });
     }
-
 
     if (
       datosActualizados.fechaFinalizacion !==
@@ -1608,17 +1417,11 @@ const updateUser = async (
         datosActualizados.fechaFinalizacion
       )
     ) {
-
       return res.status(400).json({
         message:
-          "La fecha de finalización no es válida"
+          "La fecha de finalización no es válida",
       });
     }
-
-
-    // ==========================================
-    // VALIDAR ORDEN DE FECHAS
-    // ==========================================
 
     const fechaVinculacion =
       datosActualizados.fechaVinculacion ??
@@ -1628,42 +1431,36 @@ const updateUser = async (
       datosActualizados.fechaFinalizacion ??
       user.fechaFinalizacion;
 
-
     if (
       fechaVinculacion &&
       fechaFinalizacion &&
       new Date(fechaFinalizacion) <
         new Date(fechaVinculacion)
     ) {
-
       return res.status(400).json({
         message:
-          "La fecha de finalización no puede ser anterior a la fecha de vinculación"
+          "La fecha de finalización no puede ser anterior a la fecha de vinculación",
       });
     }
 
-
     // ==========================================
-    // VALIDAR CONTRASEÑA
+    // PASSWORD
     // ==========================================
 
     if (
       req.body.password !==
       undefined
     ) {
-
       if (
         !esPasswordValida(
           req.body.password
         )
       ) {
-
         return res.status(400).json({
           message:
-            "La contraseña debe tener mínimo 8 caracteres"
+            "La contraseña debe tener mínimo 8 caracteres",
         });
       }
-
 
       datosActualizados.password =
         await bcrypt.hash(
@@ -1671,7 +1468,6 @@ const updateUser = async (
           10
         );
     }
-
 
     // ==========================================
     // ACTUALIZAR
@@ -1681,150 +1477,115 @@ const updateUser = async (
       datosActualizados
     );
 
-
-    // ==========================================
-    // OCULTAR INFORMACIÓN SENSIBLE
-    // ==========================================
-
     const userResponse =
       user.toJSON();
-
 
     delete userResponse.password;
     delete userResponse.pinRecuperacion;
     delete userResponse.fechaPin;
 
-
     return res.status(200).json({
-
       message:
         "Usuario actualizado correctamente",
 
       user:
-        userResponse
+        userResponse,
     });
 
   } catch (error) {
-
     console.log(error);
 
     if (
       error.name ===
       "SequelizeUniqueConstraintError"
     ) {
-
       return res.status(409).json({
         message:
-          "El correo o documento ya está registrado"
+          "El correo o documento ya está registrado",
       });
     }
 
     return res.status(500).json({
       message:
-        "Error actualizando usuario"
+        "Error actualizando usuario",
     });
   }
 };
-
 
 // ==========================================
 // ELIMINAR USUARIO
 // ==========================================
+
 const deleteUser = async (
   req,
   res
 ) => {
-
   try {
-
-    const { id } =
-      req.params;
-
-
-    // ==========================================
-    // VALIDAR ID
-    // ==========================================
+    const { id } = req.params;
 
     if (!esIdValido(id)) {
       return res.status(400).json({
         message:
-          "El ID del usuario no es válido"
+          "El ID del usuario no es válido",
       });
     }
-
 
     const user =
       await User.findByPk(id);
 
-
     if (!user) {
       return res.status(404).json({
         message:
-          "Usuario no encontrado"
+          "Usuario no encontrado",
       });
     }
 
-
     await user.destroy();
-
 
     return res.status(200).json({
       message:
-        "Usuario eliminado correctamente"
+        "Usuario eliminado correctamente",
     });
 
   } catch (error) {
-
     console.log(error);
 
     return res.status(500).json({
       message:
-        "Error eliminando usuario"
+        "Error eliminando usuario",
     });
   }
 };
 
-
 // ==========================================
 // OBTENER MI PERFIL
 // ==========================================
+
 const obtenerMiPerfil = async (
   req,
   res
 ) => {
-
   try {
-
     if (
       !req.user ||
       !req.user.id
     ) {
-
       return res.status(401).json({
         message:
-          "Usuario no autenticado"
+          "Usuario no autenticado",
       });
     }
-
 
     if (
       !esIdValido(
         req.user.id
       )
     ) {
-
       return res.status(400).json({
         message:
-          "El ID del usuario no es válido"
+          "El ID del usuario no es válido",
       });
     }
-
-
-    console.log(
-      "Usuario del token:",
-      req.user
-    );
-
 
     const user =
       await User.findByPk(
@@ -1834,96 +1595,71 @@ const obtenerMiPerfil = async (
             exclude: [
               "password",
               "pinRecuperacion",
-              "fechaPin"
-            ]
-          }
+              "fechaPin",
+            ],
+          },
         }
       );
-
 
     if (!user) {
       return res.status(404).json({
         message:
-          "Usuario no encontrado"
+          "Usuario no encontrado",
       });
     }
 
-
-    console.log(
-      "Usuario encontrado:",
-      user
-    );
-
-
-    return res.json(
-      user
-    );
+    return res.json(user);
 
   } catch (error) {
-
     console.log(error);
 
     return res.status(500).json({
       message:
-        "Error obteniendo perfil"
+        "Error obteniendo perfil",
     });
   }
 };
 
-
 // ==========================================
 // LOGOUT
 // ==========================================
+
 const logout = (
   req,
   res
 ) => {
-
   res.clearCookie(
     "accessToken",
     {
       httpOnly: true,
       secure: false,
       sameSite: "lax",
-      path: "/"
+      path: "/",
     }
   );
 
-
   return res.status(200).json({
     message:
-      "Sesión cerrada"
+      "Sesión cerrada",
   });
 };
-
 
 // ==========================================
 // EXPORTAR
 // ==========================================
+
 module.exports = {
-
   register,
-
   login,
-
   getUsers,
-
   getUserById,
-
   updateUser,
-
   deleteUser,
-
   getCarnet,
-
   recuperarPassword,
-
   verificarPin,
-
   reenviarPin,
-
+  cambiarPassword,
   obtenerMiPerfil,
-
-  logout
-
+  logout,
 };

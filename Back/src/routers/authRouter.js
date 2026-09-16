@@ -1,44 +1,77 @@
 const express = require("express");
 
+const router = express.Router();
+
 const {
   register,
   login,
-  getUsers,
-  getUserById,
-  updateUser,
-  deleteUser,
   recuperarPassword,
   verificarPin,
+  cambiarPassword,
   reenviarPin,
-  getCarnet,
   obtenerMiPerfil,
-  logout
+  logout,
 } = require("../controllers/authController");
 
 const verifyToken = require("../middlewares/verifyToken");
-const authorizeRoles = require("../middlewares/roles");
 
-const router = express.Router();
+// ==========================================
+// REGISTRO
+// ==========================================
 
-router.post("/register", register);
-router.post("/login", login);
-
-router.post("/recuperar-password", recuperarPassword);
-router.post("/verificar-pin", verificarPin);
-router.post("/reenviar-pin", reenviarPin);
-
-router.get(
-  "/users",
-  verifyToken,
-  authorizeRoles("administrador"),
-  getUsers
+router.post(
+  "/register",
+  register
 );
 
-router.get(
-  "/users/:id",
-  verifyToken,
-  getUserById
+// ==========================================
+// LOGIN
+// ==========================================
+
+router.post(
+  "/login",
+  login
 );
+
+// ==========================================
+// RECUPERAR CONTRASEÑA
+// ==========================================
+
+router.post(
+  "/recuperar-password",
+  recuperarPassword
+);
+
+// ==========================================
+// VERIFICAR PIN
+// ==========================================
+
+router.post(
+  "/verificar-pin",
+  verificarPin
+);
+
+// ==========================================
+// CAMBIAR CONTRASEÑA
+// ==========================================
+
+router.post(
+  "/cambiar-password",
+  cambiarPassword
+);
+
+// ==========================================
+// REENVIAR PIN
+// ==========================================
+
+router.post(
+  "/reenviar-pin",
+  reenviarPin
+);
+
+// ==========================================
+// VERIFICAR SESIÓN
+// ==========================================
 
 router.get(
   "/me",
@@ -46,24 +79,13 @@ router.get(
   obtenerMiPerfil
 );
 
-router.put(
-  "/users/:id",
-  verifyToken,
-  updateUser
+// ==========================================
+// CERRAR SESIÓN
+// ==========================================
+
+router.post(
+  "/logout",
+  logout
 );
-
-router.delete(
-  "/users/:id",
-  verifyToken,
-  authorizeRoles("administrador"),
-  deleteUser
-);
-
-console.log("verifyToken:", verifyToken);
-console.log("authorizeRoles:", authorizeRoles);
-// CARNET
-router.get("/carnet/:id", verifyToken, getCarnet);
-
-router.post("/logout", logout);
 
 module.exports = router;

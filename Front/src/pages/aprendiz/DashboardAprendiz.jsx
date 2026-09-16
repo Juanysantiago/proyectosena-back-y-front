@@ -13,44 +13,61 @@ export default function DashboardAprendiz() {
   }, []);
 
   const cargarUsuario = async () => {
-    try {
 
-      const usuarioLocal = JSON.parse(
-        localStorage.getItem("user")
+    // Primero usamos el usuario guardado
+    const usuarioGuardado =
+      localStorage.getItem("user");
+
+    if (!usuarioGuardado) {
+      return;
+    }
+
+    let usuarioLocal;
+
+    try {
+      usuarioLocal =
+        JSON.parse(usuarioGuardado);
+    } catch (error) {
+      console.error(
+        "Error leyendo usuario:",
+        error
       );
 
-      if (!usuarioLocal?.id) {
-        console.log("No se encontró el usuario en localStorage");
-        return;
-      }
+      return;
+    }
+
+    // Mostrar inmediatamente los datos
+    setUser(usuarioLocal);
+
+    // Intentar actualizar los datos desde el backend
+    if (!usuarioLocal?.id) {
+      return;
+    }
+
+    try {
 
       const res = await axiosClient.get(
         `/auth/users/${usuarioLocal.id}`
       );
 
-      const usuario = res.data;
+      const usuarioActualizado =
+        res.data;
 
-      // Actualizamos el estado con los datos frescos
-      setUser(usuario);
+      setUser(usuarioActualizado);
 
-      // También actualizamos localStorage
       localStorage.setItem(
         "user",
-        JSON.stringify(usuario)
+        JSON.stringify(usuarioActualizado)
       );
 
     } catch (error) {
 
       console.log(
-        "Error al cargar los datos del usuario:",
-        error
+        "No se pudieron actualizar los datos. Se usarán los datos locales."
       );
 
-      // Si falla el backend, usamos los datos guardados
-      const usuarioLocal = JSON.parse(
-        localStorage.getItem("user")
-      );
-
+      // No redirigir.
+      // Conservamos el usuario guardado.
       setUser(usuarioLocal);
     }
   };
@@ -83,4 +100,3 @@ export default function DashboardAprendiz() {
     </div>
   );
 }
-

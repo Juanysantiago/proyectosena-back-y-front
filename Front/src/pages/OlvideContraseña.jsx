@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { axiosClient } from "../api/axiosClient";
+import { Link } from "react-router-dom";
+import "../styles/olvideContraseña.css";
 
 export default function OlvideContraseña() {
   const [email, setEmail] = useState("");
@@ -11,11 +13,12 @@ export default function OlvideContraseña() {
 
     try {
       setLoading(true);
+      setMensaje("");
 
       await axiosClient.post(
         "/auth/recuperar-password",
         {
-          email
+          email,
         }
       );
 
@@ -44,94 +47,59 @@ export default function OlvideContraseña() {
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        background: "linear-gradient(135deg,#ffffff,#e8f5e9)"
-      }}
-    >
-      <div
-        style={{
-          background: "white",
-          padding: "40px",
-          borderRadius: "15px",
-          width: "450px",
-          border: "1px solid #4caf50"
-        }}
-      >
-        <h2
-          style={{
-            color: "#2e7d32",
-            textAlign: "center"
-          }}
-        >
-          Recuperar contraseña
-        </h2>
+    <div className="olvide-container">
 
-        <p
-          style={{
-            textAlign: "center",
-            color: "#666",
-            fontSize: "14px",
-            marginBottom: "25px"
-          }}
-        >
-          Ingrese su correo electrónico. Le enviaremos un PIN de recuperación de 6 dígitos.
+      <div className="olvide-card">
+
+        <h2>Recuperar contraseña</h2>
+
+        <p className="olvide-description">
+          Ingresa tu correo electrónico y te enviaremos
+          un PIN de recuperación de 6 dígitos.
         </p>
 
         <form onSubmit={enviarPin}>
+
+          <label htmlFor="email">
+            Correo electrónico
+          </label>
+
           <input
+            id="email"
             type="email"
-            placeholder="Correo electrónico"
             value={email}
             onChange={(e) =>
               setEmail(e.target.value)
             }
             required
-            style={{
-              width: "100%",
-              padding: "12px",
-              borderRadius: "5px",
-              border: "1px solid #ddd",
-              marginBottom: "20px"
-            }}
           />
 
           <button
             type="submit"
             disabled={loading}
-            style={{
-              width: "100%",
-              padding: "12px",
-              background: "#4caf50",
-              color: "white",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer"
-            }}
           >
             {loading
               ? "Enviando..."
-              : "Confirmar"}
+              : "CONFIRMAR"}
           </button>
+
         </form>
 
         {mensaje && (
-          <div
-            style={{
-              marginTop: "15px",
-              textAlign: "center",
-              color: "#2e7d32",
-              fontWeight: "bold"
-            }}
-          >
+          <div className="mensaje">
             {mensaje}
           </div>
         )}
+
+        <Link
+          to="/"
+          className="volver-inicio"
+        >
+          Volver al inicio
+        </Link>
+
       </div>
+
     </div>
   );
 }

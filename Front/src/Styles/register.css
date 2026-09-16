@@ -4,113 +4,407 @@
 
 .register-container {
   min-height: 100vh;
-  background: #f3f3f3;
+  width: 100%;
+
+  background: #087f23;
+
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 30px;
-  position: relative;
-}
 
-.rol-selector {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-}
-
-.rol-selector select {
-  padding: 10px 15px;
-  border: 1px solid #4caf50;
-  border-radius: 5px;
-  outline: none;
-  font-weight: bold;
-  color: #2e7d32;
+  padding: 30px 20px;
 }
 
 .register-card {
   width: 100%;
-  max-width: 600px;
-  background: #f5f5f5;
-  border: 1px solid #4caf50;
-  border-radius: 20px;
-  padding: 40px;
+  max-width: 820px;
+
+  background: #ffffff;
+
+  border-radius: 18px;
+
+  padding: 35px 40px;
+
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.22);
 }
 
-.register-card h2 {
+/* =========================
+   TÍTULO
+========================= */
+
+.register-header {
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   text-align: center;
-  color: #2e7d32;
-  margin-bottom: 35px;
+
+  margin-bottom: 30px;
 }
 
-.register-card form {
+.register-header h1 {
+  margin: 0;
+
+  color: #087f23;
+
+  font-size: 30px;
+  font-weight: 800;
+
+  text-align: center;
+
+  width: 100%;
+}
+
+/* =========================
+   ROL
+========================= */
+
+.role-section {
+  margin-bottom: 25px;
+}
+
+.role-section label {
+  display: block;
+
+  margin-bottom: 9px;
+
+  color: #263238;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.role-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.role-button {
+  flex: 1;
+
+  height: 45px;
+
+  border: 1px solid #cfd8d3;
+
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #455a64;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.role-button:hover {
+  border-color: #087f23;
+}
+
+.role-button.active {
+  background: #e8f5e9;
+
+  border: 2px solid #087f23;
+
+  color: #087f23;
+}
+
+/* =========================
+   SECCIONES
+========================= */
+
+.form-section {
+  margin-bottom: 22px;
+
+  padding: 22px;
+
+  background: #f8faf8;
+
+  border: 1px solid #dce5df;
+
+  border-radius: 12px;
+}
+
+.form-section h3 {
+  margin: 0 0 18px;
+
+  padding-bottom: 10px;
+
+  border-bottom: 1px solid #dce5df;
+
+  color: #087f23;
+
+  font-size: 16px;
+  font-weight: 800;
+}
+
+/* =========================
+   CAMPOS
+========================= */
+
+.form-grid {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 18px 20px;
+}
+
+.form-group {
+  width: 100%;
+
   display: flex;
   flex-direction: column;
 }
 
-.register-card label {
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 8px;
-  margin-top: 18px;
+.form-group.full {
+  grid-column: 1 / -1;
 }
 
-.register-card input,
-.register-card select {
+.form-group label {
+  margin-bottom: 7px;
+
+  color: #37474f;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.form-group input,
+.form-group select {
   width: 100%;
-  height: 38px;
-  padding: 10px;
-  border: 1px solid #d3d3d3;
-  border-radius: 5px;
+  height: 44px;
+
+  padding: 0 12px;
+
+  border: 1px solid #cfd8d3;
+
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #263238;
+
+  font-size: 14px;
+
   outline: none;
-  background: #fff;
-  font-size: 15px;
 }
 
-.register-card input:focus,
-.register-card select:focus {
-  border-color: #4caf50;
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #087f23;
+
+  box-shadow: 0 0 0 3px rgba(8, 127, 35, 0.10);
 }
 
-.terminos {
+/* =========================
+   TÉRMINOS
+========================= */
+
+.terms {
+  width: 100%;
+
   display: flex;
   align-items: center;
+
   gap: 10px;
-  margin-top: 25px;
-}
 
-.terminos input {
-  width: 18px;
-  height: 18px;
-}
+  margin: 5px 0 18px;
 
-.terminos span {
-  color: #444;
-}
+  padding: 10px 4px;
 
-.error {
-  color: red;
-  text-align: center;
-  margin-top: 15px;
-}
+  color: #455a64;
 
-.register-card button {
-  width: 100%;
-  margin-top: 25px;
-  padding: 14px;
-  background: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 18px;
-  font-weight: bold;
+  font-size: 13px;
+
   cursor: pointer;
 }
 
-.register-card button:hover {
-  background: #43a047;
+.terms input[type="checkbox"] {
+  appearance: none;
+
+  -webkit-appearance: none;
+
+  width: 18px;
+  height: 18px;
+
+  min-width: 18px;
+
+  margin: 0;
+
+  border: 2px solid #087f23;
+
+  border-radius: 4px;
+
+  background: #ffffff;
+
+  cursor: pointer;
+
+  position: relative;
 }
 
-.register-card button:disabled {
-  opacity: 0.7;
+.terms input[type="checkbox"]:checked {
+  background: #087f23;
+}
+
+.terms input[type="checkbox"]:checked::after {
+  content: "✓";
+
+  position: absolute;
+
+  left: 2px;
+  top: -2px;
+
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.terms span {
+  line-height: 18px;
+}
+
+/* =========================
+   ERROR
+========================= */
+
+.register-error {
+  width: 100%;
+
+  margin-bottom: 15px;
+
+  padding: 11px;
+
+  border-radius: 7px;
+
+  background: #ffebee;
+
+  border: 1px solid #ffcdd2;
+
+  color: #c62828;
+
+  text-align: center;
+
+  font-size: 13px;
+}
+
+/* =========================
+   BOTÓN CREAR CUENTA
+========================= */
+
+.register-button {
+  width: 100%;
+
+  height: 48px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: #087f23;
+
+  color: #ffffff;
+
+  font-size: 15px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.register-button:hover {
+  background: #066b1d;
+}
+
+.register-button:disabled {
+  opacity: 0.6;
+
   cursor: not-allowed;
+}
+
+/* =========================
+   VOLVER AL INICIO
+========================= */
+
+.back-home {
+  display: block;
+
+  width: 100%;
+
+  margin-top: 16px;
+
+  padding: 11px;
+
+  border: 2px solid #087f23;
+
+  border-radius: 8px;
+
+  color: #087f23;
+
+  background: #ffffff;
+
+  text-align: center;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  text-decoration: none;
+
+  transition: 0.2s;
+}
+
+.back-home:hover {
+  background: #e8f5e9;
+
+  color: #066b1d;
+}
+
+/* =========================
+   CELULAR
+========================= */
+
+@media (max-width: 650px) {
+
+  .register-container {
+    padding: 20px 12px;
+
+    align-items: flex-start;
+  }
+
+  .register-card {
+    padding: 25px 18px;
+
+    border-radius: 15px;
+  }
+
+  .register-header h1 {
+    font-size: 25px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-group.full {
+    grid-column: 1;
+  }
+
+  .form-section {
+    padding: 17px;
+  }
+
+  .role-buttons {
+    flex-direction: column;
+  }
+
+  .role-button {
+    width: 100%;
+  }
 }

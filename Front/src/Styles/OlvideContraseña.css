@@ -6,7 +6,7 @@
    FONDO
 ========================= */
 
-.verificar-container {
+.olvide-container {
   min-height: 100vh;
   width: 100%;
 
@@ -20,12 +20,12 @@
 }
 
 /* =========================
-   TARJETA
+   FORMULARIO
 ========================= */
 
-.verificar-card {
+.olvide-card {
   width: 100%;
-  max-width: 520px;
+  max-width: 500px;
 
   background: #ffffff;
 
@@ -42,7 +42,7 @@
    TÍTULO
 ========================= */
 
-.verificar-card h2 {
+.olvide-card h2 {
   margin: 0 0 15px;
 
   color: #087f23;
@@ -54,11 +54,11 @@
 }
 
 /* =========================
-   TEXTO
+   DESCRIPCIÓN
 ========================= */
 
-.verificar-card p {
-  margin: 0 0 25px;
+.olvide-description {
+  margin: 0 0 28px;
 
   color: #455a64;
 
@@ -68,15 +68,35 @@
 }
 
 /* =========================
-   CAMPO CÓDIGO
+   LABEL
 ========================= */
 
-.verificar-card input {
+.olvide-card label {
+  display: block;
+
+  margin-bottom: 8px;
+
+  color: #263238;
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  text-align: left;
+}
+
+/* =========================
+   INPUT
+========================= */
+
+.olvide-card input {
   width: 100%;
 
-  height: 50px;
+  height: 48px;
 
-  padding: 0 15px;
+  padding: 0 14px;
+
+  margin-bottom: 20px;
 
   border: 1px solid #cfd8d3;
 
@@ -86,30 +106,25 @@
 
   color: #263238;
 
-  font-size: 20px;
-
-  font-weight: 700;
-
-  text-align: center;
-
-  letter-spacing: 6px;
+  font-size: 14px;
 
   outline: none;
 
-  margin-bottom: 18px;
+  transition: 0.2s;
 }
 
-.verificar-card input:focus {
+.olvide-card input:focus {
   border-color: #087f23;
 
-  box-shadow: 0 0 0 3px rgba(8, 127, 35, 0.10);
+  box-shadow:
+    0 0 0 3px rgba(8, 127, 35, 0.10);
 }
 
 /* =========================
-   BOTÓN VERIFICAR
+   BOTÓN CONFIRMAR
 ========================= */
 
-.verificar-card button[type="submit"] {
+.olvide-card button {
   width: 100%;
 
   height: 48px;
@@ -131,66 +146,24 @@
   transition: 0.2s;
 }
 
-.verificar-card button[type="submit"]:hover {
+.olvide-card button:hover {
   background: #066b1d;
 }
 
-.verificar-card button[type="submit"]:disabled {
+.olvide-card button:disabled {
   opacity: 0.6;
 
   cursor: not-allowed;
 }
 
 /* =========================
-   REENVIAR
+   MENSAJE
 ========================= */
 
-.reenviar-btn {
-  display: block;
+.mensaje {
+  margin-top: 18px;
 
-  width: 100%;
-
-  margin-top: 16px;
-
-  padding: 11px;
-
-  border: 2px solid #087f23;
-
-  border-radius: 8px;
-
-  background: #ffffff;
-
-  color: #087f23;
-
-  font-size: 14px;
-
-  font-weight: 700;
-
-  cursor: pointer;
-
-  transition: 0.2s;
-}
-
-.reenviar-btn:hover {
-  background: #e8f5e9;
-
-  color: #066b1d;
-}
-
-.reenviar-btn:disabled {
-  opacity: 0.6;
-
-  cursor: not-allowed;
-}
-
-/* =========================
-   MENSAJE EXITOSO
-========================= */
-
-.success-message {
-  margin-top: 16px;
-
-  padding: 11px;
+  padding: 12px;
 
   border-radius: 8px;
 
@@ -203,55 +176,62 @@
   font-size: 13px;
 
   font-weight: 700;
+
+  line-height: 19px;
 }
 
 /* =========================
-   MENSAJE ERROR
+   VOLVER AL INICIO
 ========================= */
 
-.error-message {
+.volver-inicio {
+  display: block;
+
+  width: 100%;
+
   margin-top: 16px;
 
-  padding: 11px;
+  padding: 12px;
+
+  border: 2px solid #087f23;
 
   border-radius: 8px;
 
-  background: #ffebee;
+  background: #ffffff;
 
-  border: 1px solid #ffcdd2;
+  color: #087f23;
 
-  color: #c62828;
+  text-decoration: none;
 
-  font-size: 13px;
+  font-size: 14px;
 
   font-weight: 700;
+
+  transition: 0.2s;
+}
+
+.volver-inicio:hover {
+  background: #e8f5e9;
 }
 
 /* =========================
    CELULAR
 ========================= */
 
-@media (max-width: 650px) {
+@media (max-width: 600px) {
 
-  .verificar-container {
+  .olvide-container {
     padding: 20px 12px;
-
-    align-items: flex-start;
   }
 
-  .verificar-card {
+  .olvide-card {
     padding: 28px 20px;
 
     border-radius: 15px;
   }
 
-  .verificar-card h2 {
+  .olvide-card h2 {
     font-size: 25px;
   }
 
-  .verificar-card input {
-    font-size: 18px;
-
-    letter-spacing: 5px;
-  }
 }
