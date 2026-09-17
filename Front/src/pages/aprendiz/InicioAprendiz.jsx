@@ -13,17 +13,12 @@ export default function InicioAprendiz() {
     <div className="inicio-aprendiz">
 
       {/* =========================
-          BIENVENIDA
+          BANNER DE BIENVENIDA
       ========================= */}
 
-      <section className="inicio-header">
+      <section className="hero-inicio">
 
-        <div className="inicio-header-content">
-
-          <span className="inicio-label">
-            SENA PARKING
-          </span>
-
+        <div>
           <h1>
             ¡Bienvenido a SENA Parking!
           </h1>
@@ -34,10 +29,9 @@ export default function InicioAprendiz() {
             y mantente informado sobre las novedades relacionadas con el
             servicio de parqueadero.
           </p>
-
         </div>
 
-        <div className="inicio-icon">
+        <div className="hero-icono">
           <FaUserGraduate />
         </div>
 
@@ -45,12 +39,12 @@ export default function InicioAprendiz() {
 
 
       {/* =========================
-          ACCESOS
+          FUNCIONES PRINCIPALES
       ========================= */}
 
-      <section className="inicio-section">
+      <section>
 
-        <h2 className="inicio-section-title">
+        <h2>
           Funciones principales
         </h2>
 
@@ -145,7 +139,7 @@ export default function InicioAprendiz() {
 
 
       {/* =========================
-          ACCESOS RÁPIDOS
+          INFORMACIÓN IMPORTANTE
       ========================= */}
 
       <section className="info-box">
@@ -157,22 +151,22 @@ export default function InicioAprendiz() {
         <ul>
 
           <li>
-            <span>📇</span>
+            <span>📇</span>{" "}
             Consulta y verifica los datos de tu carnet digital.
           </li>
 
           <li>
-            <span>📝</span>
+            <span>📝</span>{" "}
             Realiza solicitudes de carnet y consulta su estado.
           </li>
 
           <li>
-            <span>🚗</span>
+            <span>🚗</span>{" "}
             Mantén actualizada la información de tu vehículo registrado.
           </li>
 
           <li>
-            <span>🔔</span>
+            <span>🔔</span>{" "}
             Revisa periódicamente las notificaciones y novedades del sistema.
           </li>
 
