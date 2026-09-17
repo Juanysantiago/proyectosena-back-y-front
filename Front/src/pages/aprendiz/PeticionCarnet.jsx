@@ -3,7 +3,6 @@ import { axiosClient } from "../../api/axiosClient";
 import "../../styles/aprendiz/peticionCarnet.css";
 
 export default function PeticionCarnet() {
-
   const [user, setUser] = useState(null);
   const [cargandoUsuario, setCargandoUsuario] = useState(true);
 
@@ -22,20 +21,16 @@ export default function PeticionCarnet() {
 
   const [loading, setLoading] = useState(false);
 
-
   // ==========================================
-  // CARGAR USUARIO ACTUAL DESDE EL BACKEND
+  // CARGAR USUARIO
   // ==========================================
 
   useEffect(() => {
     cargarUsuario();
   }, []);
 
-
   const cargarUsuario = async () => {
-
     try {
-
       setCargandoUsuario(true);
 
       const usuarioLocal = JSON.parse(
@@ -43,7 +38,6 @@ export default function PeticionCarnet() {
       );
 
       if (!usuarioLocal?.id) {
-
         console.log(
           "No se encontró el usuario en localStorage"
         );
@@ -52,7 +46,6 @@ export default function PeticionCarnet() {
         return;
       }
 
-      // Consultamos los datos actuales en la base de datos
       const res = await axiosClient.get(
         `/auth/users/${usuarioLocal.id}`
       );
@@ -64,48 +57,40 @@ export default function PeticionCarnet() {
         usuarioActual
       );
 
-      // Actualizamos el estado
       setUser(usuarioActual);
 
-      // Sincronizamos localStorage
       localStorage.setItem(
         "user",
         JSON.stringify(usuarioActual)
       );
-
     } catch (error) {
-
       console.error(
         "Error al cargar los datos del usuario:",
         error
       );
 
-      // Si el backend falla, usamos temporalmente
-      // los datos que estaban guardados
-      const usuarioLocal = JSON.parse(
-        localStorage.getItem("user")
-      );
+      try {
+        const usuarioLocal = JSON.parse(
+          localStorage.getItem("user")
+        );
 
-      setUser(usuarioLocal);
-
+        setUser(usuarioLocal);
+      } catch {
+        setUser(null);
+      }
     } finally {
-
       setCargandoUsuario(false);
-
     }
   };
-
 
   // ==========================================
   // ENVIAR SOLICITUD
   // ==========================================
 
   const enviarSolicitud = async (e) => {
-
     e.preventDefault();
 
     try {
-
       setLoading(true);
 
       const formData = new FormData();
@@ -156,12 +141,10 @@ export default function PeticionCarnet() {
       );
 
       if (documentosAnexos) {
-
         formData.append(
           "documentosAnexos",
           documentosAnexos
         );
-
       }
 
       await axiosClient.post(
@@ -174,9 +157,7 @@ export default function PeticionCarnet() {
       );
 
       window.location.reload();
-
     } catch (error) {
-
       console.error(
         "Error al enviar la solicitud:",
         error
@@ -186,323 +167,361 @@ export default function PeticionCarnet() {
         error.response?.data?.message ||
         "Error al enviar la solicitud."
       );
-
     } finally {
-
       setLoading(false);
-
     }
   };
-
 
   // ==========================================
   // CARGANDO USUARIO
   // ==========================================
 
   if (cargandoUsuario) {
-
     return (
       <div className="peticion-container">
-
-        <h2>
-          Cargando información del aprendiz...
-        </h2>
-
+        <div className="peticion-card">
+          <div className="peticion-header">
+            <h2>
+              Cargando información del aprendiz...
+            </h2>
+          </div>
+        </div>
       </div>
     );
-
   }
-
 
   // ==========================================
   // USUARIO NO ENCONTRADO
   // ==========================================
 
   if (!user) {
-
     return (
       <div className="peticion-container">
+        <div className="peticion-card">
+          <div className="peticion-header">
+            <h2>
+              No se pudo cargar la información del aprendiz.
+            </h2>
+          </div>
 
-        <h2>
-          No se pudo cargar la información del aprendiz.
-        </h2>
-
-        <button
-          type="button"
-          onClick={cargarUsuario}
-        >
-          Actualizar
-        </button>
-
+          <button
+            type="button"
+            className="peticion-button"
+            onClick={cargarUsuario}
+          >
+            Actualizar
+          </button>
+        </div>
       </div>
     );
-
   }
-
 
   // ==========================================
   // FORMULARIO
   // ==========================================
 
   return (
-
     <div className="peticion-container">
 
-      <h2>
-        Solicitud de Carnet
-      </h2>
-
-
-      <form onSubmit={enviarSolicitud}>
-
-
-        {/* ============================= */}
-        {/* DATOS DEL APRENDIZ */}
-        {/* ============================= */}
-
-        <label>
-          Documento
-        </label>
-
-        <input
-          type="text"
-          value={user.documento || ""}
-          disabled
-        />
-
-
-        <label>
-          Nombre Completo
-        </label>
-
-        <input
-          type="text"
-          value={`${user.nombres || ""} ${user.apellidos || ""}`}
-          disabled
-        />
-
-
-        <label>
-          Ficha
-        </label>
-
-        <input
-          type="text"
-          value={user.ficha || ""}
-          disabled
-        />
-
-
-        {/* ============================= */}
-        {/* VEHÍCULO */}
-        {/* ============================= */}
-
-        <label>
-          Tipo de vehículo
-        </label>
-
-        <select
-          value={tipoVehiculo}
-          onChange={(e) =>
-            setTipoVehiculo(e.target.value)
-          }
-        >
-
-          <option value="bicicleta">
-            Bicicleta
-          </option>
-
-          <option value="moto">
-            Moto
-          </option>
-
-        </select>
-
-
-        <label>
-          Marca
-        </label>
-
-        <input
-          type="text"
-          value={marca}
-          onChange={(e) =>
-            setMarca(e.target.value)
-          }
-          required
-        />
-
-
-        <label>
-          Color
-        </label>
-
-        <input
-          type="text"
-          value={color}
-          onChange={(e) =>
-            setColor(e.target.value)
-          }
-          required
-        />
-
-
-        {/* ============================= */}
-        {/* BICICLETA */}
-        {/* ============================= */}
-
-        {tipoVehiculo === "bicicleta" ? (
-
-          <>
-
-            <label>
-              Serial
-            </label>
-
-            <input
-              type="text"
-              value={serialPlaca}
-              onChange={(e) =>
-                setSerialPlaca(e.target.value)
-              }
-              required
-            />
-
-          </>
-
-        ) : (
-
-          /* ============================= */
-          /* MOTO */
-          /* ============================= */
-
-          <>
-
-            <label>
-              Placa
-            </label>
-
-            <input
-              type="text"
-              value={serialPlaca}
-              onChange={(e) =>
-                setSerialPlaca(e.target.value)
-              }
-              required
-            />
-
-
-            <label>
-              Cilindraje
-            </label>
-
-            <input
-              type="text"
-              value={cilindraje}
-              onChange={(e) =>
-                setCilindraje(e.target.value)
-              }
-            />
-
-
-            <label>
-              Modelo
-            </label>
-
-            <input
-              type="text"
-              value={modelo}
-              onChange={(e) =>
-                setModelo(e.target.value)
-              }
-            />
-
-          </>
-
-        )}
-
-
-        {/* ============================= */}
-        {/* ARCHIVOS */}
-        {/* ============================= */}
-
-        <label>
-          Foto del aprendiz
-        </label>
-
-        <input
-          id="fotoAprendiz"
-          type="file"
-          accept="image/*"
-          onChange={(e) =>
-            setFotoAprendiz(e.target.files[0])
-          }
-          required
-        />
-
-
-        <label>
-          Foto del vehículo
-        </label>
-
-        <input
-          id="fotoVehiculo"
-          type="file"
-          accept="image/*"
-          onChange={(e) =>
-            setFotoVehiculo(e.target.files[0])
-          }
-          required
-        />
-
-
-        <label>
-          Formato diligenciado
-        </label>
-
-        <input
-          id="formatoDiligenciado"
-          type="file"
-          onChange={(e) =>
-            setFormatoDiligenciado(e.target.files[0])
-          }
-          required
-        />
-
-
-        <label>
-          Documentos anexos
-        </label>
-
-        <input
-          id="documentosAnexos"
-          type="file"
-          onChange={(e) =>
-            setDocumentosAnexos(e.target.files[0])
-          }
-        />
-
-
-        {/* ============================= */}
-        {/* BOTÓN */}
-        {/* ============================= */}
-
-        <button
-          type="submit"
-          disabled={loading}
-        >
-
-          {loading
-            ? "Enviando..."
-            : "Enviar Solicitud"
-          }
-
-        </button>
-
-      </form>
+      <div className="peticion-card">
+
+        {/* =========================
+            ENCABEZADO
+        ========================= */}
+
+        <div className="peticion-header">
+          <h1>Solicitud de Carnet</h1>
+
+          <p>
+            Complete la información requerida para
+            solicitar su carnet de acceso a SENA Parking.
+          </p>
+        </div>
+
+        {/* =========================
+            FORMULARIO
+        ========================= */}
+
+        <form onSubmit={enviarSolicitud}>
+
+          {/* =========================
+              DATOS DEL APRENDIZ
+          ========================= */}
+
+          <section className="peticion-section">
+
+            <h3>Datos del aprendiz</h3>
+
+            <div className="peticion-fields">
+
+              <div className="peticion-group">
+                <label>
+                  Documento
+                </label>
+
+                <input
+                  type="text"
+                  value={user.documento || ""}
+                  disabled
+                />
+              </div>
+
+              <div className="peticion-group">
+                <label>
+                  Nombre completo
+                </label>
+
+                <input
+                  type="text"
+                  value={`${user.nombres || ""} ${user.apellidos || ""}`}
+                  disabled
+                />
+              </div>
+
+              <div className="peticion-group">
+                <label>
+                  Ficha
+                </label>
+
+                <input
+                  type="text"
+                  value={user.ficha || ""}
+                  disabled
+                />
+              </div>
+
+            </div>
+
+          </section>
+
+          {/* =========================
+              INFORMACIÓN VEHÍCULO
+          ========================= */}
+
+          <section className="peticion-section">
+
+            <h3>Información del vehículo</h3>
+
+            <div className="peticion-fields">
+
+              <div className="peticion-group">
+                <label>
+                  Tipo de vehículo
+                </label>
+
+                <select
+                  value={tipoVehiculo}
+                  onChange={(e) =>
+                    setTipoVehiculo(e.target.value)
+                  }
+                >
+                  <option value="bicicleta">
+                    Bicicleta
+                  </option>
+
+                  <option value="moto">
+                    Moto
+                  </option>
+                </select>
+              </div>
+
+              <div className="peticion-group">
+                <label>
+                  Marca
+                </label>
+
+                <input
+                  type="text"
+                  value={marca}
+                  onChange={(e) =>
+                    setMarca(e.target.value)
+                  }
+                  required
+                />
+              </div>
+
+              <div className="peticion-group">
+                <label>
+                  Color
+                </label>
+
+                <input
+                  type="text"
+                  value={color}
+                  onChange={(e) =>
+                    setColor(e.target.value)
+                  }
+                  required
+                />
+              </div>
+
+              {tipoVehiculo === "bicicleta" ? (
+                <div className="peticion-group">
+                  <label>
+                    Serial
+                  </label>
+
+                  <input
+                    type="text"
+                    value={serialPlaca}
+                    onChange={(e) =>
+                      setSerialPlaca(e.target.value)
+                    }
+                    required
+                  />
+                </div>
+              ) : (
+                <>
+                  <div className="peticion-group">
+                    <label>
+                      Placa
+                    </label>
+
+                    <input
+                      type="text"
+                      value={serialPlaca}
+                      onChange={(e) =>
+                        setSerialPlaca(e.target.value)
+                      }
+                      required
+                    />
+                  </div>
+
+                  <div className="peticion-group">
+                    <label>
+                      Cilindraje
+                    </label>
+
+                    <input
+                      type="text"
+                      value={cilindraje}
+                      onChange={(e) =>
+                        setCilindraje(e.target.value)
+                      }
+                    />
+                  </div>
+
+                  <div className="peticion-group">
+                    <label>
+                      Modelo
+                    </label>
+
+                    <input
+                      type="text"
+                      value={modelo}
+                      onChange={(e) =>
+                        setModelo(e.target.value)
+                      }
+                    />
+                  </div>
+                </>
+              )}
+
+            </div>
+
+          </section>
+
+          {/* =========================
+              DOCUMENTOS
+          ========================= */}
+
+          <section className="peticion-section">
+
+            <h3>Documentos y archivos</h3>
+
+            <div className="peticion-fields">
+
+              <div className="peticion-group">
+                <label>
+                  Foto del aprendiz
+                </label>
+
+                <input
+                  id="fotoAprendiz"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) =>
+                    setFotoAprendiz(
+                      e.target.files[0]
+                    )
+                  }
+                  required
+                />
+              </div>
+
+              <div className="peticion-group">
+                <label>
+                  Foto del vehículo
+                </label>
+
+                <input
+                  id="fotoVehiculo"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) =>
+                    setFotoVehiculo(
+                      e.target.files[0]
+                    )
+                  }
+                  required
+                />
+              </div>
+
+              <div className="peticion-group">
+                <label>
+                  Formato diligenciado
+                </label>
+
+                <input
+                  id="formatoDiligenciado"
+                  type="file"
+                  onChange={(e) =>
+                    setFormatoDiligenciado(
+                      e.target.files[0]
+                    )
+                  }
+                  required
+                />
+              </div>
+
+              <div className="peticion-group">
+                <label>
+                  Documentos anexos
+                </label>
+
+                <input
+                  id="documentosAnexos"
+                  type="file"
+                  onChange={(e) =>
+                    setDocumentosAnexos(
+                      e.target.files[0]
+                    )
+                  }
+                />
+              </div>
+
+            </div>
+
+          </section>
+
+          {/* =========================
+              BOTÓN
+          ========================= */}
+
+          <button
+            type="submit"
+            className="peticion-button"
+            disabled={loading}
+          >
+            {loading
+              ? "Enviando..."
+              : "Enviar solicitud"}
+          </button>
+
+        </form>
+
+      </div>
 
     </div>
-
   );
-
 }

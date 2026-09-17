@@ -45,95 +45,285 @@ export default function SoporteTecnico() {
     }
   };
 
-  // Soportes pendientes
   const solicitudes = soportes.filter(
     (s) => s.estado !== "Resuelto"
   );
 
-  // Soportes respondidos
   const reportesRecibidos = soportes.filter(
     (s) => s.estado === "Resuelto"
   );
 
   return (
     <div className="soporte-container">
-      <h2>Soporte Técnico</h2>
 
-      <form
-        onSubmit={enviar}
-        className="soporte-form"
-      >
-        <input
-          type="text"
-          placeholder="Asunto"
-          value={asunto}
-          onChange={(e) => setAsunto(e.target.value)}
-          required
-        />
+      {/* ENCABEZADO */}
 
-        <textarea
-          placeholder="Describe tu problema"
-          value={descripcion}
-          onChange={(e) => setDescripcion(e.target.value)}
-          required
-        />
+      <div className="soporte-header">
+        <div>
+          <span className="soporte-label">
+            SENA PARKING
+          </span>
 
-        <button type="submit">
-          Enviar solicitud
-        </button>
-      </form>
+          <h2>Soporte Técnico</h2>
 
-      <hr />
+          <p>
+            Envía tus dudas, problemas o solicitudes de ayuda.
+            Aquí también podrás consultar el estado de tus
+            solicitudes y las respuestas del administrador.
+          </p>
+        </div>
 
-      <h3>Mis solicitudes</h3>
+        <div className="soporte-icon">
+          🛠️
+        </div>
+      </div>
 
-      {solicitudes.length === 0 ? (
-        <p>No tienes solicitudes pendientes.</p>
-      ) : (
-        solicitudes.map((item) => (
-          <div
-            key={item.id}
-            className="ticket"
-          >
-            <div className={`estado ${item.estado}`}>
-              {item.estado}
-            </div>
 
-            <h4>{item.asunto}</h4>
+      {/* FORMULARIO */}
 
-            <p>{item.descripcion}</p>
+      <section className="soporte-card">
+
+        <h3>Enviar solicitud</h3>
+
+        <p className="soporte-descripcion">
+          Completa los siguientes campos para enviar una
+          solicitud al administrador.
+        </p>
+
+        <form
+          onSubmit={enviar}
+          className="soporte-form"
+        >
+
+          <div className="campo-soporte">
+
+            <label>
+              Asunto
+            </label>
+
+            <input
+              type="text"
+              placeholder="Escribe el asunto de tu solicitud"
+              value={asunto}
+              onChange={(e) =>
+                setAsunto(e.target.value)
+              }
+              required
+            />
+
           </div>
-        ))
-      )}
 
-      <hr />
 
-      <h3>Reportes recibidos</h3>
+          <div className="campo-soporte">
 
-      {reportesRecibidos.length === 0 ? (
-        <p>No tienes respuestas del administrador.</p>
-      ) : (
-        reportesRecibidos.map((item) => (
-          <div
-            key={item.id}
-            className="ticket"
-          >
-            <div className="estado Resuelto">
-              Resuelto
-            </div>
+            <label>
+              Descripción
+            </label>
 
-            <h4>{item.asunto}</h4>
+            <textarea
+              placeholder="Describe detalladamente el problema o solicitud"
+              value={descripcion}
+              onChange={(e) =>
+                setDescripcion(e.target.value)
+              }
+              required
+            />
 
-            <p>{item.descripcion}</p>
-
-            <div className="respuesta">
-              <strong>Respuesta del administrador:</strong>
-              <br />
-              {item.respuesta}
-            </div>
           </div>
-        ))
-      )}
+
+
+          <button type="submit">
+            Enviar solicitud
+          </button>
+
+        </form>
+
+      </section>
+
+
+      {/* SOLICITUDES */}
+
+      <section className="soporte-card">
+
+        <div className="seccion-titulo">
+          <div>
+            <h3>Mis solicitudes</h3>
+
+            <p>
+              Consulta las solicitudes que todavía están
+              en proceso.
+            </p>
+          </div>
+
+          <span className="contador-soporte">
+            {solicitudes.length}
+          </span>
+        </div>
+
+
+        {solicitudes.length === 0 ? (
+
+          <div className="soporte-vacio">
+            <span>📭</span>
+
+            <p>
+              No tienes solicitudes pendientes.
+            </p>
+          </div>
+
+        ) : (
+
+          <div className="tickets">
+
+            {solicitudes.map((item) => (
+
+              <div
+                key={item.id}
+                className="ticket"
+              >
+
+                <div className="ticket-superior">
+
+                  <div className="ticket-icon">
+                    💬
+                  </div>
+
+                  <div>
+
+                    <h4>
+                      {item.asunto}
+                    </h4>
+
+                    <span
+                      className={`estado ${item.estado}`}
+                    >
+                      {item.estado}
+                    </span>
+
+                  </div>
+
+                </div>
+
+                <div className="ticket-descripcion">
+
+                  <strong>
+                    Descripción
+                  </strong>
+
+                  <p>
+                    {item.descripcion}
+                  </p>
+
+                </div>
+
+              </div>
+
+            ))}
+
+          </div>
+
+        )}
+
+      </section>
+
+
+      {/* RESPUESTAS */}
+
+      <section className="soporte-card">
+
+        <div className="seccion-titulo">
+          <div>
+            <h3>Reportes recibidos</h3>
+
+            <p>
+              Consulta las respuestas enviadas por el
+              administrador.
+            </p>
+          </div>
+
+          <span className="contador-soporte">
+            {reportesRecibidos.length}
+          </span>
+        </div>
+
+
+        {reportesRecibidos.length === 0 ? (
+
+          <div className="soporte-vacio">
+            <span>📬</span>
+
+            <p>
+              No tienes respuestas del administrador.
+            </p>
+          </div>
+
+        ) : (
+
+          <div className="tickets">
+
+            {reportesRecibidos.map((item) => (
+
+              <div
+                key={item.id}
+                className="ticket ticket-resuelto"
+              >
+
+                <div className="ticket-superior">
+
+                  <div className="ticket-icon">
+                    💬
+                  </div>
+
+                  <div>
+
+                    <h4>
+                      {item.asunto}
+                    </h4>
+
+                    <span className="estado Resuelto">
+                      Resuelto
+                    </span>
+
+                  </div>
+
+                </div>
+
+
+                <div className="ticket-descripcion">
+
+                  <strong>
+                    Tu solicitud
+                  </strong>
+
+                  <p>
+                    {item.descripcion}
+                  </p>
+
+                </div>
+
+
+                <div className="respuesta">
+
+                  <div className="respuesta-titulo">
+                    ✓ Respuesta del administrador
+                  </div>
+
+                  <p>
+                    {item.respuesta}
+                  </p>
+
+                </div>
+
+              </div>
+
+            ))}
+
+          </div>
+
+        )}
+
+      </section>
+
     </div>
   );
 }

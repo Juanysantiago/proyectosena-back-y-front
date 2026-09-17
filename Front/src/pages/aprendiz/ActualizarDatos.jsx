@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { axiosClient } from "../../api/axiosClient";
-
+import "../../styles/aprendiz/actualizarDatos.css";
 
 export default function ActualizarDatos() {
   const [tipo, setTipo] = useState("datos_personales");
@@ -35,11 +35,15 @@ export default function ActualizarDatos() {
 
   const cargarUsuario = async () => {
     try {
-      const usuarioLocal = JSON.parse(localStorage.getItem("user"));
+      const usuarioLocal = JSON.parse(
+        localStorage.getItem("user")
+      );
+
+      if (!usuarioLocal?.id) return;
 
       const res = await axiosClient.get(
-  `/auth/users/${usuarioLocal.id}`
-);
+        `/auth/users/${usuarioLocal.id}`
+      );
 
       const usuario = res.data;
 
@@ -56,11 +60,13 @@ export default function ActualizarDatos() {
         tipoDocumento: usuario.tipoDocumento || "",
         celular: usuario.celular || "",
         ficha: usuario.ficha || "",
-        centroFormacionId: usuario.centroFormacionId || "",
-        fechaVinculacion: usuario.fechaVinculacion || "",
-        fechaFinalizacion: usuario.fechaFinalizacion || ""
+        centroFormacionId:
+          usuario.centroFormacionId || "",
+        fechaVinculacion:
+          usuario.fechaVinculacion || "",
+        fechaFinalizacion:
+          usuario.fechaFinalizacion || ""
       }));
-
     } catch (error) {
       console.log(error);
     }
@@ -73,7 +79,6 @@ export default function ActualizarDatos() {
       );
 
       setVehiculos(res.data);
-
     } catch (error) {
       console.log(error);
     }
@@ -83,14 +88,13 @@ export default function ActualizarDatos() {
     const { name, value } = e.target;
 
     if (name === "tipoVehiculo") {
-
       const vehiculo = vehiculos.find(
         (v) =>
-          v.tipo?.toLowerCase() === value.toLowerCase()
+          v.tipo?.toLowerCase() ===
+          value.toLowerCase()
       );
 
       if (vehiculo) {
-
         setFormData((prev) => ({
           ...prev,
           tipoVehiculo: value,
@@ -103,9 +107,7 @@ export default function ActualizarDatos() {
           cilindraje: vehiculo.cilindraje || "",
           modelo: vehiculo.modelo || ""
         }));
-
       } else {
-
         setFormData((prev) => ({
           ...prev,
           tipoVehiculo: value,
@@ -115,7 +117,6 @@ export default function ActualizarDatos() {
           cilindraje: "",
           modelo: ""
         }));
-
       }
 
       return;
@@ -131,7 +132,6 @@ export default function ActualizarDatos() {
     e.preventDefault();
 
     try {
-
       const usuario = JSON.parse(
         localStorage.getItem("user")
       );
@@ -140,7 +140,6 @@ export default function ActualizarDatos() {
       let datosNuevos = {};
 
       if (tipo === "datos_personales") {
-
         datosActuales = {
           nombres: usuario.nombres,
           apellidos: usuario.apellidos,
@@ -148,9 +147,12 @@ export default function ActualizarDatos() {
           tipoDocumento: usuario.tipoDocumento,
           celular: usuario.celular,
           ficha: usuario.ficha,
-          centroFormacionId: usuario.centroFormacionId,
-          fechaVinculacion: usuario.fechaVinculacion,
-          fechaFinalizacion: usuario.fechaFinalizacion
+          centroFormacionId:
+            usuario.centroFormacionId,
+          fechaVinculacion:
+            usuario.fechaVinculacion,
+          fechaFinalizacion:
+            usuario.fechaFinalizacion
         };
 
         datosNuevos = {
@@ -160,13 +162,14 @@ export default function ActualizarDatos() {
           tipoDocumento: formData.tipoDocumento,
           celular: formData.celular,
           ficha: formData.ficha,
-          centroFormacionId: formData.centroFormacionId,
-          fechaVinculacion: formData.fechaVinculacion,
-          fechaFinalizacion: formData.fechaFinalizacion
+          centroFormacionId:
+            formData.centroFormacionId,
+          fechaVinculacion:
+            formData.fechaVinculacion,
+          fechaFinalizacion:
+            formData.fechaFinalizacion
         };
-
       } else {
-
         datosNuevos = {
           tipoVehiculo: formData.tipoVehiculo,
           marca: formData.marca,
@@ -175,7 +178,6 @@ export default function ActualizarDatos() {
           cilindraje: formData.cilindraje,
           modelo: formData.modelo
         };
-
       }
 
       const form = new FormData();
@@ -193,17 +195,13 @@ export default function ActualizarDatos() {
       );
 
       if (tipo === "datos_personales") {
-
         if (fotoPerfil) {
           form.append("fotoNueva", fotoPerfil);
         }
-
       } else {
-
         if (nuevaFoto) {
           form.append("fotoNueva", nuevaFoto);
         }
-
       }
 
       documentos.forEach((doc) => {
@@ -223,261 +221,482 @@ export default function ActualizarDatos() {
       alert(
         "Solicitud enviada correctamente."
       );
-
     } catch (error) {
-
       console.log(error);
 
       alert(
         error.response?.data?.message ||
-        "Error al enviar solicitud"
+          "Error al enviar solicitud"
       );
-
     }
   };
 
   return (
-    <div className="peticion-container">
-      <h2>Actualizar Datos</h2>
+    <div className="actualizar-page">
 
-      <label>¿Qué desea actualizar?</label>
+      <div className="actualizar-container">
 
-      <select
-        value={tipo}
-        onChange={(e) => setTipo(e.target.value)}
-      >
-        <option value="datos_personales">
-          Datos Personales
-        </option>
+        {/* ENCABEZADO */}
 
-        <option value="datos_vehiculo">
-          Datos del Vehículo
-        </option>
-      </select>
+        <div className="actualizar-header">
+          
 
-      <form onSubmit={enviarSolicitud}>
-        {tipo === "datos_personales" && (
-          <>
-            <label>Nombres</label>
-            <input
-              name="nombres"
-              value={formData.nombres}
-              onChange={handleChange}
-            />
+          <h2>
+            ACTUALIZACIÓN DE DATOS
+          </h2>
 
-            <label>Apellidos</label>
-            <input
-              name="apellidos"
-              value={formData.apellidos}
-              onChange={handleChange}
-            />
+          <p>
+            Modifica tus datos personales o la
+            información de tu vehículo y envía una
+            solicitud para su revisión.
+          </p>
+        </div>
 
-            <label>Documento</label>
-            <input
-              name="documento"
-              value={formData.documento}
-              onChange={handleChange}
-            />
+        {/* TIPO DE ACTUALIZACIÓN */}
 
-            <label>Tipo Documento</label>
-            <input
-              name="tipoDocumento"
-              value={formData.tipoDocumento}
-              onChange={handleChange}
-            />
+        <div className="tipo-actualizacion">
 
-            <label>Celular</label>
-            <input
-              name="celular"
-              value={formData.celular}
-              onChange={handleChange}
-            />
+          <label>
+            ¿Qué desea actualizar?
+          </label>
 
-            <label>Ficha</label>
-            <input
-              name="ficha"
-              value={formData.ficha}
-              onChange={handleChange}
-            />
+          <select
+            value={tipo}
+            onChange={(e) =>
+              setTipo(e.target.value)
+            }
+          >
+            <option value="datos_personales">
+              Datos Personales
+            </option>
 
-            <label>Fecha Vinculación</label>
-            <input
-              type="date"
-              name="fechaVinculacion"
-              value={formData.fechaVinculacion}
-              onChange={handleChange}
-            />
+            <option value="datos_vehiculo">
+              Datos del Vehículo
+            </option>
+          </select>
 
-            <label>Fecha Finalización</label>
-            <input
-              type="date"
-              name="fechaFinalizacion"
-              value={formData.fechaFinalizacion}
-              onChange={handleChange}
-            />
-<hr />
+        </div>
 
-<h3>Nueva foto del aprendiz</h3>
+        <form onSubmit={enviarSolicitud}>
 
-<input
-  type="file"
-  accept="image/*"
-  onChange={(e) =>
-    setFotoPerfil(e.target.files[0])
-  }
-/>
+          {/* =========================
+              DATOS PERSONALES
+          ========================= */}
 
-<label>Documentos anexos</label>
+          {tipo === "datos_personales" && (
+            <>
 
-<input
-  type="file"
-  multiple
-  onChange={(e) =>
-    setDocumentos(
-      Array.from(e.target.files)
-    )
-  }
-/>
+              <div className="form-section">
 
-          </>
-        )}
+                <div className="section-title">
+                  <h3>
+                    Información personal
+                  </h3>
 
-        {tipo === "datos_vehiculo" && (
-          <>
-            <label>Tipo Vehículo</label>
+                  <p>
+                    Actualiza la información
+                    registrada en tu cuenta.
+                  </p>
+                </div>
 
-            <select
-              name="tipoVehiculo"
-              value={formData.tipoVehiculo}
-              onChange={handleChange}
-            >
-              <option value="">Seleccione</option>
-              <option value="bicicleta">Bicicleta</option>
-              <option value="moto">Moto</option>
-            </select>
+                <div className="form-grid">
 
-    
+                  <div className="campo">
+                    <label>Nombres</label>
 
-           {formData.tipoVehiculo === "bicicleta" && (
-  <>
-    <label>Marca</label>
-    <input
-      name="marca"
-      value={formData.marca}
-      onChange={handleChange}
-    />
+                    <input
+                      name="nombres"
+                      value={formData.nombres}
+                      onChange={handleChange}
+                    />
+                  </div>
 
-    <label>Color</label>
-    <input
-      name="color"
-      value={formData.color}
-      onChange={handleChange}
-    />
+                  <div className="campo">
+                    <label>Apellidos</label>
 
-    <label>Serial</label>
-    <input
-      name="serialPlaca"
-      value={formData.serialPlaca}
-      onChange={handleChange}
-    />
+                    <input
+                      name="apellidos"
+                      value={formData.apellidos}
+                      onChange={handleChange}
+                    />
+                  </div>
 
- <label>Nueva Foto de la Bicicleta</label>
+                  <div className="campo">
+                    <label>Documento</label>
 
-<input
-  type="file"
-  accept="image/*"
-  onChange={(e) =>
-    setNuevaFoto(e.target.files[0])
-  }
-/>
+                    <input
+                      name="documento"
+                      value={formData.documento}
+                      onChange={handleChange}
+                    />
+                  </div>
 
-<label>Documentos anexos</label>
+                  <div className="campo">
+                    <label>
+                      Tipo Documento
+                    </label>
 
-<input
-  type="file"
-  multiple
-  onChange={(e) =>
-    setDocumentos(
-      Array.from(e.target.files)
-    )
-  }
-/>
+                    <input
+                      name="tipoDocumento"
+                      value={
+                        formData.tipoDocumento
+                      }
+                      onChange={handleChange}
+                    />
+                  </div>
 
-  </>
-)}
+                  <div className="campo">
+                    <label>Celular</label>
 
-         {formData.tipoVehiculo === "moto" && (
-  <>
-    <label>Marca</label>
-    <input
-      name="marca"
-      value={formData.marca}
-      onChange={handleChange}
-    />
+                    <input
+                      name="celular"
+                      value={formData.celular}
+                      onChange={handleChange}
+                    />
+                  </div>
 
-    <label>Color</label>
-    <input
-      name="color"
-      value={formData.color}
-      onChange={handleChange}
-    />
+                  <div className="campo">
+                    <label>Ficha</label>
 
-    <label>Placa</label>
-    <input
-      name="serialPlaca"
-      value={formData.serialPlaca}
-      onChange={handleChange}
-    />
+                    <input
+                      name="ficha"
+                      value={formData.ficha}
+                      onChange={handleChange}
+                    />
+                  </div>
 
-    <label>Cilindraje</label>
-    <input
-      name="cilindraje"
-      value={formData.cilindraje}
-      onChange={handleChange}
-    />
+                  <div className="campo">
+                    <label>
+                      Fecha Vinculación
+                    </label>
 
-    <label>Modelo</label>
-    <input
-      name="modelo"
-      value={formData.modelo}
-      onChange={handleChange}
-    />
+                    <input
+                      type="date"
+                      name="fechaVinculacion"
+                      value={
+                        formData.fechaVinculacion
+                      }
+                      onChange={handleChange}
+                    />
+                  </div>
 
-   <label>Nueva Foto de la Moto</label>
+                  <div className="campo">
+                    <label>
+                      Fecha Finalización
+                    </label>
 
-<input
-  type="file"
-  accept="image/*"
-  onChange={(e) =>
-    setNuevaFoto(e.target.files[0])
-  }
-/>
+                    <input
+                      type="date"
+                      name="fechaFinalizacion"
+                      value={
+                        formData.fechaFinalizacion
+                      }
+                      onChange={handleChange}
+                    />
+                  </div>
 
-<label>Documentos anexos</label>
+                </div>
 
-<input
-  type="file"
-  multiple
-  onChange={(e) =>
-    setDocumentos(
-      Array.from(e.target.files)
-    )
-  }
-/>
+              </div>
 
+              {/* ARCHIVOS PERSONALES */}
 
+              <div className="archivos-section">
 
+                <h3>
+                  Documentos y fotografía
+                </h3>
 
-  </>
-)}
-          </>
-        )}
+                <p>
+                  Adjunta los archivos necesarios
+                  para respaldar la actualización.
+                </p>
 
-        <button type="submit">
-          Enviar Solicitud
-        </button>
-      </form>
+                <div className="archivo-campo">
+
+                  <label>
+                    Nueva foto del aprendiz
+                  </label>
+
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) =>
+                      setFotoPerfil(
+                        e.target.files[0]
+                      )
+                    }
+                  />
+
+                </div>
+
+                <div className="archivo-campo">
+
+                  <label>
+                    Documentos anexos
+                  </label>
+
+                  <input
+                    type="file"
+                    multiple
+                    onChange={(e) =>
+                      setDocumentos(
+                        Array.from(
+                          e.target.files
+                        )
+                      )
+                    }
+                  />
+
+                </div>
+
+              </div>
+
+            </>
+          )}
+
+          {/* =========================
+              VEHÍCULO
+          ========================= */}
+
+          {tipo === "datos_vehiculo" && (
+            <>
+
+              <div className="form-section">
+
+                <div className="section-title">
+                  <h3>
+                    Información del vehículo
+                  </h3>
+
+                  <p>
+                    Selecciona el tipo de vehículo
+                    y actualiza sus datos.
+                  </p>
+                </div>
+
+                <div className="campo">
+
+                  <label>
+                    Tipo Vehículo
+                  </label>
+
+                  <select
+                    name="tipoVehiculo"
+                    value={
+                      formData.tipoVehiculo
+                    }
+                    onChange={handleChange}
+                  >
+                    <option value="">
+                      Seleccione
+                    </option>
+
+                    <option value="bicicleta">
+                      Bicicleta
+                    </option>
+
+                    <option value="moto">
+                      Moto
+                    </option>
+                  </select>
+
+                </div>
+
+                {/* BICICLETA */}
+
+                {formData.tipoVehiculo ===
+                  "bicicleta" && (
+                  <div className="form-grid">
+
+                    <div className="campo">
+                      <label>Marca</label>
+
+                      <input
+                        name="marca"
+                        value={formData.marca}
+                        onChange={
+                          handleChange
+                        }
+                      />
+                    </div>
+
+                    <div className="campo">
+                      <label>Color</label>
+
+                      <input
+                        name="color"
+                        value={formData.color}
+                        onChange={
+                          handleChange
+                        }
+                      />
+                    </div>
+
+                    <div className="campo">
+                      <label>Serial</label>
+
+                      <input
+                        name="serialPlaca"
+                        value={
+                          formData.serialPlaca
+                        }
+                        onChange={
+                          handleChange
+                        }
+                      />
+                    </div>
+
+                  </div>
+                )}
+
+                {/* MOTO */}
+
+                {formData.tipoVehiculo ===
+                  "moto" && (
+                  <div className="form-grid">
+
+                    <div className="campo">
+                      <label>Marca</label>
+
+                      <input
+                        name="marca"
+                        value={formData.marca}
+                        onChange={
+                          handleChange
+                        }
+                      />
+                    </div>
+
+                    <div className="campo">
+                      <label>Color</label>
+
+                      <input
+                        name="color"
+                        value={formData.color}
+                        onChange={
+                          handleChange
+                        }
+                      />
+                    </div>
+
+                    <div className="campo">
+                      <label>Placa</label>
+
+                      <input
+                        name="serialPlaca"
+                        value={
+                          formData.serialPlaca
+                        }
+                        onChange={
+                          handleChange
+                        }
+                      />
+                    </div>
+
+                    <div className="campo">
+                      <label>
+                        Cilindraje
+                      </label>
+
+                      <input
+                        name="cilindraje"
+                        value={
+                          formData.cilindraje
+                        }
+                        onChange={
+                          handleChange
+                        }
+                      />
+                    </div>
+
+                    <div className="campo">
+                      <label>Modelo</label>
+
+                      <input
+                        name="modelo"
+                        value={
+                          formData.modelo
+                        }
+                        onChange={
+                          handleChange
+                        }
+                      />
+                    </div>
+
+                  </div>
+                )}
+
+              </div>
+
+              {/* ARCHIVOS VEHÍCULO */}
+
+              <div className="archivos-section">
+
+                <h3>
+                  Fotografía y documentos
+                </h3>
+
+                <p>
+                  Puedes adjuntar una nueva
+                  fotografía y documentos relacionados
+                  con el vehículo.
+                </p>
+
+                <div className="archivo-campo">
+
+                  <label>
+                    Nueva Foto del Vehículo
+                  </label>
+
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) =>
+                      setNuevaFoto(
+                        e.target.files[0]
+                      )
+                    }
+                  />
+
+                </div>
+
+                <div className="archivo-campo">
+
+                  <label>
+                    Documentos anexos
+                  </label>
+
+                  <input
+                    type="file"
+                    multiple
+                    onChange={(e) =>
+                      setDocumentos(
+                        Array.from(
+                          e.target.files
+                        )
+                      )
+                    }
+                  />
+
+                </div>
+
+              </div>
+
+            </>
+          )}
+
+          <button
+            type="submit"
+            className="btn-actualizar"
+          >
+            Enviar Solicitud
+          </button>
+
+        </form>
+
+      </div>
+
     </div>
   );
 }
-

@@ -8,21 +8,27 @@ export default function VerificarCodigo() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const email = localStorage.getItem("emailRecuperacion");
-
   const verificarCodigo = async (e) => {
     e.preventDefault();
 
     setError("");
     setMensaje("");
 
+    const email = localStorage.getItem(
+      "emailRecuperacion"
+    );
+
     if (!email) {
-      setError("No se encontró el correo de recuperación.");
+      setError(
+        "No se encontró el correo de recuperación."
+      );
       return;
     }
 
     if (!/^\d{6}$/.test(pin)) {
-      setError("El PIN debe contener 6 números.");
+      setError(
+        "El PIN debe contener 6 números."
+      );
       return;
     }
 
@@ -37,49 +43,87 @@ export default function VerificarCodigo() {
         }
       );
 
-      console.log("RESPUESTA VERIFICAR PIN:", res.data);
+      console.log(
+        "RESPUESTA VERIFICAR PIN:",
+        res.data
+      );
 
-      /*
-       * EL BACKEND DEVUELVE:
-       *
-       * {
-       *   message: "Código correcto",
-       *   resetToken: "..."
-       * }
-       */
+      // ==========================================
+      // EL BACKEND DEVUELVE resetToken
+      // ==========================================
 
-      const resetToken = res.data?.resetToken;
+      const resetToken =
+        res.data?.resetToken;
 
       if (!resetToken) {
         setError(
           "No se recibió el token de recuperación."
         );
+
+        console.error(
+          "El backend no devolvió resetToken:",
+          res.data
+        );
+
         return;
       }
 
-      // Guardar el token temporal
+      // ==========================================
+      // GUARDAR TOKEN DE RECUPERACIÓN
+      // ==========================================
+
       localStorage.setItem(
         "tokenRecuperacion",
         resetToken
       );
 
-      // Guardar correo
+      // ==========================================
+      // GUARDAR CORREO
+      // ==========================================
+
       localStorage.setItem(
         "emailRecuperacion",
         email.trim().toLowerCase()
       );
+
+      // ==========================================
+      // MARCAR PIN COMO VERIFICADO
+      // ==========================================
 
       localStorage.setItem(
         "pinVerificado",
         "true"
       );
 
+      console.log(
+        "TOKEN GUARDADO:",
+        localStorage.getItem(
+          "tokenRecuperacion"
+        )
+      );
+
+      console.log(
+        "PIN VERIFICADO:",
+        localStorage.getItem(
+          "pinVerificado"
+        )
+      );
+
+      // ==========================================
+      // MENSAJE DE ÉXITO
+      // ==========================================
+
       setMensaje(
         "Código verificado correctamente."
       );
 
+      // ==========================================
+      // IR A CAMBIAR CONTRASEÑA
+      // ==========================================
+
       setTimeout(() => {
-        window.location.href = "/cambiar-contraseña";
+        window.location.href =
+          "/cambiar-contraseña";
       }, 800);
 
     } catch (err) {
@@ -88,10 +132,16 @@ export default function VerificarCodigo() {
         err
       );
 
+      console.error(
+        "RESPUESTA DEL ERROR:",
+        err?.response?.data
+      );
+
       setError(
         err?.response?.data?.message ||
         "Código incorrecto."
       );
+
     } finally {
       setLoading(false);
     }
@@ -100,6 +150,10 @@ export default function VerificarCodigo() {
   const reenviarCodigo = async () => {
     setError("");
     setMensaje("");
+
+    const email = localStorage.getItem(
+      "emailRecuperacion"
+    );
 
     if (!email) {
       setError(
@@ -111,14 +165,19 @@ export default function VerificarCodigo() {
     try {
       setLoading(true);
 
-      await axiosClient.post(
+      const res = await axiosClient.post(
         "/auth/reenviar-pin",
         {
           email: email.trim().toLowerCase(),
         }
       );
 
-      // El PIN anterior deja de ser válido
+      console.log(
+        "RESPUESTA REENVIAR PIN:",
+        res.data
+      );
+
+      // El token anterior deja de utilizarse
       localStorage.removeItem(
         "tokenRecuperacion"
       );
@@ -139,10 +198,16 @@ export default function VerificarCodigo() {
         err
       );
 
+      console.error(
+        "RESPUESTA DEL ERROR:",
+        err?.response?.data
+      );
+
       setError(
         err?.response?.data?.message ||
         "No fue posible reenviar el código."
       );
+
     } finally {
       setLoading(false);
     }
@@ -150,9 +215,12 @@ export default function VerificarCodigo() {
 
   return (
     <div className="verificar-container">
+
       <div className="verificar-card">
 
-        <h2>Código de verificación</h2>
+        <h2>
+          Código de verificación
+        </h2>
 
         <p>
           Ingrese el PIN de 6 dígitos enviado
@@ -168,7 +236,10 @@ export default function VerificarCodigo() {
             value={pin}
             onChange={(e) =>
               setPin(
-                e.target.value.replace(/\D/g, "")
+                e.target.value.replace(
+                  /\D/g,
+                  ""
+                )
               )
             }
             placeholder="Código de 6 dígitos"
@@ -208,6 +279,7 @@ export default function VerificarCodigo() {
         </button>
 
       </div>
+
     </div>
   );
 }

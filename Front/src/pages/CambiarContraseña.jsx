@@ -21,7 +21,7 @@ export default function CambiarContraseña() {
     setMensaje("");
 
     // ==========================================
-    // OBTENER TOKEN
+    // OBTENER TOKEN DE RECUPERACIÓN
     // ==========================================
 
     const resetToken =
@@ -34,7 +34,10 @@ export default function CambiarContraseña() {
         "pinVerificado"
       );
 
-    if (!resetToken || pinVerificado !== "true") {
+    if (
+      !resetToken ||
+      pinVerificado !== "true"
+    ) {
       setError(
         "La sesión de recuperación no es válida. Solicite un nuevo código."
       );
@@ -71,6 +74,10 @@ export default function CambiarContraseña() {
         resetToken
       );
 
+      // ==========================================
+      // CAMBIAR CONTRASEÑA
+      // ==========================================
+
       const res = await axiosClient.post(
         "/auth/cambiar-password",
         {
@@ -83,6 +90,10 @@ export default function CambiarContraseña() {
         "RESPUESTA CAMBIAR PASSWORD:",
         res.data
       );
+
+      // ==========================================
+      // MENSAJE DE ÉXITO
+      // ==========================================
 
       setMensaje(
         "Contraseña actualizada correctamente."
@@ -104,6 +115,10 @@ export default function CambiarContraseña() {
         "emailRecuperacion"
       );
 
+      // Limpiar campos
+      setPassword("");
+      setConfirmarPassword("");
+
       // ==========================================
       // VOLVER AL LOGIN
       // ==========================================
@@ -120,10 +135,16 @@ export default function CambiarContraseña() {
         err
       );
 
+      console.error(
+        "RESPUESTA DEL ERROR:",
+        err?.response?.data
+      );
+
       setError(
         err?.response?.data?.message ||
         "No fue posible cambiar la contraseña."
       );
+
     } finally {
       setLoading(false);
     }

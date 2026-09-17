@@ -1,64 +1,145 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+
 import { axiosClient } from "../api/axiosClient";
 import { obtenerCentros } from "../api/centroFormacionApi";
+
 import "../styles/register.css";
 
 export default function Register() {
-  const [rol, setRol] = useState("aprendiz");
-  const [centros, setCentros] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [aceptar, setAceptar] = useState(false);
 
-  const [formData, setFormData] = useState({
-    nombres: "",
-    apellidos: "",
-    documento: "",
-    tipoDocumento: "",
-    celular: "",
-    ficha: "",
-    centroFormacionId: "",
-    fechaVinculacion: "",
-    fechaFinalizacion: "",
-    email: "",
-    password: "",
-  });
+  const [rol, setRol] =
+    useState("aprendiz");
+
+  const [centros, setCentros] =
+    useState([]);
+
+  const [loading, setLoading] =
+    useState(false);
+
+  const [loadingCentros, setLoadingCentros] =
+    useState(true);
+
+  const [error, setError] =
+    useState("");
+
+  const [aceptar, setAceptar] =
+    useState(false);
+
+  const [formData, setFormData] =
+    useState({
+      nombres: "",
+      apellidos: "",
+      documento: "",
+      tipoDocumento: "",
+      celular: "",
+      ficha: "",
+      centroFormacionId: "",
+      fechaVinculacion: "",
+      fechaFinalizacion: "",
+      email: "",
+      password: "",
+    });
+
+  // ==========================================
+  // CARGAR CENTROS
+  // ==========================================
 
   useEffect(() => {
-    const cargarCentros = async () => {
-      try {
-        const res = await obtenerCentros();
 
-        const datos = Array.isArray(res.data)
-          ? res.data
-          : res.data?.data || [];
+    const cargarCentros = async () => {
+
+      try {
+
+        setLoadingCentros(true);
+
+        const res =
+          await obtenerCentros();
+
+        console.log(
+          "🏫 RESPUESTA CENTROS:",
+          res.data
+        );
+
+        let datos = [];
+
+        if (Array.isArray(res.data)) {
+
+          datos = res.data;
+
+        } else if (
+          Array.isArray(res.data?.data)
+        ) {
+
+          datos = res.data.data;
+
+        } else if (
+          Array.isArray(res.data?.centros)
+        ) {
+
+          datos = res.data.centros;
+        }
+
+        console.log(
+          "🏫 CENTROS CARGADOS:",
+          datos
+        );
 
         setCentros(datos);
+
       } catch (error) {
-        console.error(error);
+
+        console.error(
+          "❌ ERROR CARGANDO CENTROS:",
+          error
+        );
+
+        setCentros([]);
+
+      } finally {
+
+        setLoadingCentros(false);
       }
     };
 
     cargarCentros();
+
   }, []);
 
+  // ==========================================
+  // CAMBIAR INPUT
+  // ==========================================
+
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+
+    const {
+      name,
+      value
+    } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
+  // ==========================================
+  // CAMBIAR ROL
+  // ==========================================
+
   const cambiarRol = (nuevoRol) => {
+
     setRol(nuevoRol);
+
     setError("");
 
     if (nuevoRol === "guarda") {
+
       setAceptar(false);
 
       setFormData((prev) => ({
         ...prev,
+
         ficha: "",
         centroFormacionId: "",
         fechaVinculacion: "",
@@ -67,17 +148,34 @@ export default function Register() {
     }
   };
 
+  // ==========================================
+  // REGISTRO
+  // ==========================================
+
   const handleSubmit = async (e) => {
+
     e.preventDefault();
+
     setError("");
 
-    if (rol === "aprendiz" && !aceptar) {
-      setError("Debes aceptar los términos y condiciones.");
+    if (
+      rol === "aprendiz" &&
+      !aceptar
+    ) {
+
+      setError(
+        "Debes aceptar los términos y condiciones."
+      );
+
       return;
     }
 
     if (!formData.tipoDocumento) {
-      setError("Selecciona el tipo de documento.");
+
+      setError(
+        "Selecciona el tipo de documento."
+      );
+
       return;
     }
 
@@ -90,51 +188,97 @@ export default function Register() {
         !formData.fechaFinalizacion
       )
     ) {
-      setError("Completa todos los datos del aprendiz.");
+
+      setError(
+        "Completa todos los datos del aprendiz."
+      );
+
       return;
     }
 
     setLoading(true);
 
     try {
+
       const dataToSend = {
-        nombres: formData.nombres,
-        apellidos: formData.apellidos,
-        documento: formData.documento,
-        tipoDocumento: formData.tipoDocumento,
-        celular: formData.celular,
-        email: formData.email,
-        password: formData.password,
+
+        nombres:
+          formData.nombres.trim(),
+
+        apellidos:
+          formData.apellidos.trim(),
+
+        documento:
+          formData.documento.trim(),
+
+        tipoDocumento:
+          formData.tipoDocumento,
+
+        celular:
+          formData.celular.trim(),
+
+        email:
+          formData.email.trim(),
+
+        password:
+          formData.password,
+
         rol,
       };
 
       if (rol === "aprendiz") {
-        dataToSend.ficha = formData.ficha;
+
+        dataToSend.ficha =
+          formData.ficha.trim();
+
         dataToSend.centroFormacionId =
           formData.centroFormacionId;
+
         dataToSend.fechaVinculacion =
           formData.fechaVinculacion;
+
         dataToSend.fechaFinalizacion =
           formData.fechaFinalizacion;
       }
 
-      await axiosClient.post(
-        "/auth/register",
+      console.log(
+        "📤 DATOS REGISTRO:",
         dataToSend
+      );
+
+      const res =
+        await axiosClient.post(
+          "/auth/register",
+          dataToSend
+        );
+
+      console.log(
+        "✅ REGISTRO:",
+        res.data
       );
 
       alert(
         `Registro exitoso. Bienvenido ${formData.nombres}`
       );
 
-      window.location.href = "/login";
+      window.location.href =
+        "/login";
+
     } catch (err) {
+
+      console.error(
+        "❌ ERROR REGISTRO:",
+        err
+      );
+
       setError(
         err?.response?.data?.message ||
         err?.message ||
         "No fue posible completar el registro."
       );
+
     } finally {
+
       setLoading(false);
     }
   };
@@ -144,19 +288,19 @@ export default function Register() {
 
       <div className="register-card">
 
-        {/* TÍTULO */}
-
         <div className="register-header">
           <h1>CREAR CUENTA</h1>
         </div>
 
         <form onSubmit={handleSubmit}>
 
-          {/* TIPO DE USUARIO */}
+          {/* ROL */}
 
           <div className="role-section">
 
-            <label>Tipo de usuario</label>
+            <label>
+              Tipo de usuario
+            </label>
 
             <div className="role-buttons">
 
@@ -167,7 +311,9 @@ export default function Register() {
                     ? "role-button active"
                     : "role-button"
                 }
-                onClick={() => cambiarRol("aprendiz")}
+                onClick={() =>
+                  cambiarRol("aprendiz")
+                }
               >
                 Aprendiz
               </button>
@@ -179,25 +325,31 @@ export default function Register() {
                     ? "role-button active"
                     : "role-button"
                 }
-                onClick={() => cambiarRol("guarda")}
+                onClick={() =>
+                  cambiarRol("guarda")
+                }
               >
                 Guarda
               </button>
 
             </div>
-
           </div>
 
           {/* DATOS PERSONALES */}
 
           <div className="form-section">
 
-            <h3>Datos personales</h3>
+            <h3>
+              Datos personales
+            </h3>
 
             <div className="form-grid">
 
               <div className="form-group">
-                <label>Nombres</label>
+
+                <label>
+                  Nombres
+                </label>
 
                 <input
                   type="text"
@@ -206,10 +358,14 @@ export default function Register() {
                   onChange={handleChange}
                   required
                 />
+
               </div>
 
               <div className="form-group">
-                <label>Apellidos</label>
+
+                <label>
+                  Apellidos
+                </label>
 
                 <input
                   type="text"
@@ -218,10 +374,14 @@ export default function Register() {
                   onChange={handleChange}
                   required
                 />
+
               </div>
 
               <div className="form-group">
-                <label>Tipo de documento</label>
+
+                <label>
+                  Tipo de documento
+                </label>
 
                 <select
                   name="tipoDocumento"
@@ -229,6 +389,7 @@ export default function Register() {
                   onChange={handleChange}
                   required
                 >
+
                   <option value="">
                     Seleccionar
                   </option>
@@ -248,11 +409,16 @@ export default function Register() {
                   <option value="PAS">
                     Pasaporte
                   </option>
+
                 </select>
+
               </div>
 
               <div className="form-group">
-                <label>Número de documento</label>
+
+                <label>
+                  Número de documento
+                </label>
 
                 <input
                   type="text"
@@ -261,10 +427,14 @@ export default function Register() {
                   onChange={handleChange}
                   required
                 />
+
               </div>
 
               <div className="form-group">
-                <label>Número de celular</label>
+
+                <label>
+                  Número de celular
+                </label>
 
                 <input
                   type="tel"
@@ -273,22 +443,30 @@ export default function Register() {
                   onChange={handleChange}
                   required
                 />
+
               </div>
 
             </div>
+
           </div>
 
           {/* DATOS APRENDIZ */}
 
           {rol === "aprendiz" && (
+
             <div className="form-section">
 
-              <h3>Información del aprendiz</h3>
+              <h3>
+                Información del aprendiz
+              </h3>
 
               <div className="form-grid">
 
                 <div className="form-group">
-                  <label>Ficha</label>
+
+                  <label>
+                    Ficha
+                  </label>
 
                   <input
                     type="text"
@@ -297,10 +475,14 @@ export default function Register() {
                     onChange={handleChange}
                     required
                   />
+
                 </div>
 
                 <div className="form-group">
-                  <label>Centro de formación</label>
+
+                  <label>
+                    Centro de formación
+                  </label>
 
                   <select
                     name="centroFormacionId"
@@ -308,68 +490,105 @@ export default function Register() {
                     onChange={handleChange}
                     required
                   >
+
                     <option value="">
-                      Seleccionar
+                      {loadingCentros
+                        ? "Cargando centros..."
+                        : "Seleccionar centro"}
                     </option>
 
-                    {centros.map((centro) => (
-                      <option
-                        key={centro.id}
-                        value={centro.id}
-                      >
-                        {centro.nombre}
-                        {centro.ciudad
-                          ? ` - ${centro.ciudad}`
-                          : ""}
-                      </option>
-                    ))}
+                    {centros.map(
+                      (centro) => (
+
+                        <option
+                          key={centro.id}
+                          value={centro.id}
+                        >
+                          {centro.nombre}
+
+                          {centro.ciudad
+                            ? ` - ${centro.ciudad}`
+                            : ""}
+                        </option>
+
+                      )
+                    )}
+
                   </select>
+
+                  {!loadingCentros &&
+                    centros.length === 0 && (
+                      <small>
+                        No hay centros disponibles.
+                      </small>
+                    )}
+
                 </div>
 
                 <div className="form-group">
-                  <label>Fecha de vinculación</label>
+
+                  <label>
+                    Fecha de vinculación
+                  </label>
 
                   <input
                     type="date"
                     name="fechaVinculacion"
-                    value={formData.fechaVinculacion}
+                    value={
+                      formData.fechaVinculacion
+                    }
                     onChange={handleChange}
                     max={
-                      formData.fechaFinalizacion || undefined
+                      formData.fechaFinalizacion ||
+                      undefined
                     }
                     required
                   />
+
                 </div>
 
                 <div className="form-group">
-                  <label>Fecha de finalización</label>
+
+                  <label>
+                    Fecha de finalización
+                  </label>
 
                   <input
                     type="date"
                     name="fechaFinalizacion"
-                    value={formData.fechaFinalizacion}
+                    value={
+                      formData.fechaFinalizacion
+                    }
                     onChange={handleChange}
                     min={
-                      formData.fechaVinculacion || undefined
+                      formData.fechaVinculacion ||
+                      undefined
                     }
                     required
                   />
+
                 </div>
 
               </div>
+
             </div>
           )}
 
-          {/* DATOS DE ACCESO */}
+          {/* DATOS ACCESO */}
 
           <div className="form-section">
 
-            <h3>Datos de acceso</h3>
+            <h3>
+              Datos de acceso
+            </h3>
 
             <div className="form-grid">
 
               <div className="form-group full">
-                <label>Correo electrónico</label>
+
+                <label>
+                  Correo electrónico
+                </label>
 
                 <input
                   type="email"
@@ -378,10 +597,14 @@ export default function Register() {
                   onChange={handleChange}
                   required
                 />
+
               </div>
 
               <div className="form-group full">
-                <label>Contraseña</label>
+
+                <label>
+                  Contraseña
+                </label>
 
                 <input
                   type="password"
@@ -389,22 +612,28 @@ export default function Register() {
                   value={formData.password}
                   onChange={handleChange}
                   required
+                  minLength={8}
                 />
+
               </div>
 
             </div>
+
           </div>
 
           {/* TÉRMINOS */}
 
           {rol === "aprendiz" && (
+
             <label className="terms">
 
               <input
                 type="checkbox"
                 checked={aceptar}
                 onChange={(e) =>
-                  setAceptar(e.target.checked)
+                  setAceptar(
+                    e.target.checked
+                  )
                 }
               />
 
@@ -418,12 +647,14 @@ export default function Register() {
           {/* ERROR */}
 
           {error && (
+
             <div className="register-error">
               {error}
             </div>
+
           )}
 
-          {/* CREAR CUENTA */}
+          {/* BOTÓN */}
 
           <button
             type="submit"
@@ -434,8 +665,6 @@ export default function Register() {
               ? "Registrando..."
               : "CREAR CUENTA"}
           </button>
-
-          {/* VOLVER */}
 
           <Link
             to="/"

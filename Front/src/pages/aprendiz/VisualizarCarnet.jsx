@@ -1,6 +1,6 @@
-
 import { useEffect, useState } from "react";
 import { carnetApi } from "../../api/carnetApi";
+
 import "../../styles/aprendiz/visualizarCarnet.css";
 
 const API_URL = "http://localhost:3000";
@@ -8,6 +8,7 @@ const API_URL = "http://localhost:3000";
 /* =====================================================
    CONSTRUIR URL DE IMAGEN
 ===================================================== */
+
 const construirUrlImagen = (ruta) => {
   if (!ruta) {
     return null;
@@ -19,6 +20,8 @@ const construirUrlImagen = (ruta) => {
     return null;
   }
 
+  console.log("Ruta original:", rutaLimpia);
+
   // Si ya es una URL completa
   if (
     rutaLimpia.startsWith("http://") ||
@@ -28,36 +31,68 @@ const construirUrlImagen = (ruta) => {
     return rutaLimpia;
   }
 
-  // Cambiar "\" por "/"
+  // Cambiar \ por /
   rutaLimpia = rutaLimpia.replace(/\\/g, "/");
 
-  // Quitar "./" inicial
+  // Quitar ./ inicial
   rutaLimpia = rutaLimpia.replace(/^\.\/+/, "");
 
-  // Quitar "/" inicial
+  // Quitar / inicial
   rutaLimpia = rutaLimpia.replace(/^\/+/, "");
 
   // Si ya contiene uploads/
-  if (rutaLimpia.startsWith("uploads/")) {
+  if (rutaLimpia.toLowerCase().startsWith("uploads/")) {
     return `${API_URL}/${rutaLimpia}`;
   }
 
-  // Si solamente contiene el nombre/ruta del archivo
+  // Si contiene public/uploads/
+  if (
+    rutaLimpia
+      .toLowerCase()
+      .startsWith("public/uploads/")
+  ) {
+    return `${API_URL}/${rutaLimpia.replace(
+      /^public\//i,
+      ""
+    )}`;
+  }
+
+  // Si contiene /uploads/ en alguna parte
+  const posicionUploads = rutaLimpia
+    .toLowerCase()
+    .indexOf("uploads/");
+
+  if (posicionUploads !== -1) {
+    rutaLimpia = rutaLimpia.substring(
+      posicionUploads
+    );
+
+    return `${API_URL}/${rutaLimpia}`;
+  }
+
+  // Si solamente viene el nombre del archivo
   return `${API_URL}/uploads/${rutaLimpia}`;
 };
+
 
 /* =====================================================
    COMPONENTE
 ===================================================== */
+
 export default function VisualizarCarnet() {
+
   const [carnet, setCarnet] = useState(null);
   const [loading, setLoading] = useState(true);
+
 
   /* ===================================================
      CARGAR CARNET
   =================================================== */
+
   const cargarCarnet = async () => {
+
     try {
+
       setLoading(true);
 
       const res = await carnetApi.obtenerMiCarnet();
@@ -69,100 +104,165 @@ export default function VisualizarCarnet() {
       console.log("Carnet completo:", res.data);
 
       console.log(
-        "📸 Foto aprendiz guardada:",
+        "📸 Foto aprendiz recibida:",
         res.data?.user?.foto
       );
 
       console.log(
-        "🚗 Foto vehículo guardada:",
+        "🚗 Foto vehículo recibida:",
         res.data?.vehiculo?.foto_principal
       );
 
-      const fotoAprendizUrl = construirUrlImagen(
-        res.data?.user?.foto
-      );
 
-      const fotoVehiculoUrl = construirUrlImagen(
-        res.data?.vehiculo?.foto_principal
-      );
+      const fotoAprendizUrl =
+        construirUrlImagen(
+          res.data?.user?.foto
+        );
+
+      const fotoVehiculoUrl =
+        construirUrlImagen(
+          res.data?.vehiculo?.foto_principal
+        );
+
 
       console.log(
-        "🌐 URL foto aprendiz:",
+        "🌐 URL FOTO APRENDIZ:",
         fotoAprendizUrl
       );
 
       console.log(
-        "🌐 URL foto vehículo:",
+        "🌐 URL FOTO VEHÍCULO:",
         fotoVehiculoUrl
       );
 
+
       setCarnet({
         ...res.data,
-        _fotoAprendizUrl: fotoAprendizUrl,
-        _fotoVehiculoUrl: fotoVehiculoUrl
+
+        _fotoAprendizUrl:
+          fotoAprendizUrl,
+
+        _fotoVehiculoUrl:
+          fotoVehiculoUrl,
       });
 
     } catch (error) {
+
       console.error(
         "❌ Error al cargar carnet:",
         error
       );
 
       setCarnet(null);
+
     } finally {
+
       setLoading(false);
+
     }
   };
+
 
   /* ===================================================
      CARGAR AL ENTRAR
   =================================================== */
+
   useEffect(() => {
     cargarCarnet();
   }, []);
 
+
   /* ===================================================
      CARGANDO
   =================================================== */
+
   if (loading) {
+
     return (
       <div className="contenedor-carnet">
-        <h2>Cargando carnet...</h2>
+
+        <div className="carnet-wrapper">
+
+          <div className="carnet-header">
+            <h2>
+              SERVICIO NACIONAL DE APRENDIZAJE
+            </h2>
+
+            <h3>SENA</h3>
+          </div>
+
+          <div className="datos">
+            <h3>
+              Cargando carnet...
+            </h3>
+          </div>
+
+        </div>
+
       </div>
     );
   }
+
 
   /* ===================================================
      SIN CARNET
   =================================================== */
+
   if (!carnet) {
+
     return (
       <div className="contenedor-carnet">
 
-        <h2>
-          No existe un carnet disponible.
-        </h2>
+        <div className="carnet-wrapper">
 
-        <button
-          className="btn-imprimir"
-          onClick={cargarCarnet}
-        >
-          Actualizar
-        </button>
+          <div className="carnet-header">
+
+            <h2>
+              SERVICIO NACIONAL DE APRENDIZAJE
+            </h2>
+
+            <h3>SENA</h3>
+
+          </div>
+
+          <div className="datos">
+
+            <h3>
+              No existe un carnet disponible.
+            </h3>
+
+            <button
+              className="btn-imprimir"
+              onClick={cargarCarnet}
+            >
+              Actualizar
+            </button>
+
+          </div>
+
+        </div>
 
       </div>
     );
   }
 
+
   /* ===================================================
-     DATOS ACTUALES DEL BACKEND
+     DATOS
   =================================================== */
 
-  const usuario = carnet.user || {};
-  const vehiculo = carnet.vehiculo || {};
+  const usuario =
+    carnet.user || {};
+
+  const vehiculo =
+    carnet.vehiculo || {};
+
 
   const nombreCompleto =
-    `${usuario.nombres || ""} ${usuario.apellidos || ""}`.trim();
+    `${usuario.nombres || ""} ${
+      usuario.apellidos || ""
+    }`.trim();
+
 
   const centroFormacion =
     usuario.centroFormacion?.nombre ||
@@ -170,26 +270,47 @@ export default function VisualizarCarnet() {
     usuario.centroFormacion?.nombre_centro ||
     "No registrado";
 
+
   /* ===================================================
      IMÁGENES
   =================================================== */
 
   const fotoAprendiz =
     carnet._fotoAprendizUrl ||
-    construirUrlImagen(usuario.foto);
+    construirUrlImagen(
+      usuario.foto
+    );
+
 
   const fotoVehiculo =
     carnet._fotoVehiculoUrl ||
-    construirUrlImagen(vehiculo.foto_principal);
+    construirUrlImagen(
+      vehiculo.foto_principal ||
+      vehiculo.foto
+    );
+
+
+  console.log(
+    "🖼️ Foto aprendiz final:",
+    fotoAprendiz
+  );
+
+  console.log(
+    "🖼️ Foto vehículo final:",
+    fotoVehiculo
+  );
+
 
   /* ===================================================
      RENDER
   =================================================== */
 
   return (
+
     <div className="contenedor-carnet">
 
       <div className="carnet-wrapper">
+
 
         {/* =============================================
             ENCABEZADO
@@ -214,6 +335,7 @@ export default function VisualizarCarnet() {
 
         <div className="imagenes">
 
+
           {/* FOTO APRENDIZ */}
 
           <div className="foto-aprendiz">
@@ -226,22 +348,32 @@ export default function VisualizarCarnet() {
 
               <img
                 src={fotoAprendiz}
-                alt="Aprendiz"
+                alt="Foto del aprendiz"
                 key={fotoAprendiz}
+
+                onLoad={() => {
+                  console.log(
+                    "✅ Foto del aprendiz cargada:",
+                    fotoAprendiz
+                  );
+                }}
+
                 onError={(e) => {
+
                   console.error(
-                    "❌ No se pudo cargar la foto del aprendiz:",
+                    "❌ Error cargando foto del aprendiz:",
                     fotoAprendiz
                   );
 
-                  e.currentTarget.style.display = "none";
+                  e.currentTarget.style.display =
+                    "none";
                 }}
               />
 
             ) : (
 
               <p>
-                No hay foto
+                No hay foto del aprendiz
               </p>
 
             )}
@@ -261,22 +393,32 @@ export default function VisualizarCarnet() {
 
               <img
                 src={fotoVehiculo}
-                alt="Vehículo"
+                alt="Foto del vehículo"
                 key={fotoVehiculo}
+
+                onLoad={() => {
+                  console.log(
+                    "✅ Foto del vehículo cargada:",
+                    fotoVehiculo
+                  );
+                }}
+
                 onError={(e) => {
+
                   console.error(
-                    "❌ No se pudo cargar la foto del vehículo:",
+                    "❌ Error cargando foto del vehículo:",
                     fotoVehiculo
                   );
 
-                  e.currentTarget.style.display = "none";
+                  e.currentTarget.style.display =
+                    "none";
                 }}
               />
 
             ) : (
 
               <p>
-                No hay foto
+                No hay foto del vehículo
               </p>
 
             )}
@@ -298,27 +440,32 @@ export default function VisualizarCarnet() {
 
           <p>
             <b>Nombre:</b>{" "}
-            {nombreCompleto || "No registrado"}
+            {nombreCompleto ||
+              "No registrado"}
           </p>
 
           <p>
             <b>Tipo documento:</b>{" "}
-            {usuario.tipoDocumento || "No registrado"}
+            {usuario.tipoDocumento ||
+              "No registrado"}
           </p>
 
           <p>
             <b>Documento:</b>{" "}
-            {usuario.documento || "No registrado"}
+            {usuario.documento ||
+              "No registrado"}
           </p>
 
           <p>
             <b>Correo:</b>{" "}
-            {usuario.email || "No registrado"}
+            {usuario.email ||
+              "No registrado"}
           </p>
 
           <p>
             <b>Celular:</b>{" "}
-            {usuario.celular || "No registrado"}
+            {usuario.celular ||
+              "No registrado"}
           </p>
 
           <p>
@@ -328,7 +475,8 @@ export default function VisualizarCarnet() {
 
           <p>
             <b>Ficha:</b>{" "}
-            {usuario.ficha || "No registrada"}
+            {usuario.ficha ||
+              "No registrada"}
           </p>
 
           <p>
@@ -345,7 +493,8 @@ export default function VisualizarCarnet() {
 
           <p>
             <b>Estado:</b>{" "}
-            {carnet.estado || "No registrado"}
+            {carnet.estado ||
+              "No registrado"}
           </p>
 
 
@@ -362,23 +511,22 @@ export default function VisualizarCarnet() {
 
           <p>
             <b>Tipo:</b>{" "}
-            {vehiculo.tipo || "No registrado"}
+            {vehiculo.tipo ||
+              "No registrado"}
           </p>
 
           <p>
             <b>Marca:</b>{" "}
-            {vehiculo.marca || "No registrada"}
+            {vehiculo.marca ||
+              "No registrada"}
           </p>
 
           <p>
             <b>Color:</b>{" "}
-            {vehiculo.color || "No registrado"}
+            {vehiculo.color ||
+              "No registrado"}
           </p>
 
-
-          {/* ===========================================
-              BICICLETA
-          =========================================== */}
 
           {vehiculo.tipo?.toLowerCase() ===
           "bicicleta" ? (
@@ -390,10 +538,6 @@ export default function VisualizarCarnet() {
             </p>
 
           ) : (
-
-            /* =========================================
-               MOTO
-            ========================================= */
 
             <>
 
@@ -447,12 +591,13 @@ export default function VisualizarCarnet() {
 
 
         {/* =============================================
-            PIE DEL CARNET
+            PIE
         ============================================= */}
 
         <div className="carnet-footer">
 
-          Carnet válido para ingreso al Centro de Formación
+          Carnet válido para ingreso al
+          Centro de Formación
 
         </div>
 
@@ -467,7 +612,9 @@ export default function VisualizarCarnet() {
 
         <button
           className="btn-imprimir"
-          onClick={() => window.print()}
+          onClick={() =>
+            window.print()
+          }
         >
           Imprimir Carnet
         </button>
