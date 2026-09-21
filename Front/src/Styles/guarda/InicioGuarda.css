@@ -1,200 +1,365 @@
-.inicio-guarda{
-    max-width:1200px;
-    margin:auto;
-    padding:35px;
-    font-family:'Segoe UI',sans-serif;
+* {
+  box-sizing: border-box;
 }
 
-/*=========================
-        HERO
-=========================*/
+/* =========================
+   PÁGINA
+========================= */
 
-.hero-guarda{
-    width:100%;
-    background:#28a745;
-    background:linear-gradient(135deg,#13863b,#32b44a);
-    color:#fff;
+.inicio-guarda {
+  width: 100%;
+  min-height: calc(100vh - 75px);
+  padding: 40px 20px;
 
-    border-radius:22px;
+  background: #087f23;
 
-    padding:45px;
-
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-
-    margin-bottom:40px;
-
-    box-shadow:0 10px 25px rgba(0,0,0,.15);
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: #263238;
 }
 
-.hero-texto{
-    flex:1;
+/* =========================
+   CONTENEDOR PRINCIPAL
+========================= */
+
+.inicio-guarda {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.hero-texto h1{
-    font-size:48px;
-    margin-bottom:15px;
+/* =========================
+   HERO
+========================= */
+
+.hero-guarda {
+  width: 100%;
+  max-width: 1200px;
+
+  background: #ffffff;
+
+  border-radius: 14px;
+  border: 1px solid #dce5df;
+
+  padding: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 30px;
+
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
 }
 
-.hero-texto p{
-    font-size:20px;
-    line-height:1.7;
-    max-width:650px;
+/* =========================
+   TEXTO HERO
+========================= */
+
+.hero-texto {
+  flex: 1;
 }
 
-.hero-icono{
-    display:flex;
-    justify-content:center;
-    align-items:center;
+.hero-texto h1 {
+  margin: 0 0 15px;
 
-    font-size:110px;
+  color: #087f23;
 
-    color:rgba(255,255,255,.25);
-
-    margin-left:40px;
+  font-size: 38px;
+  font-weight: 800;
 }
 
-/*=========================
-        CARDS
-=========================*/
+.hero-texto p {
+  margin: 0;
 
-.cards-guarda{
+  max-width: 750px;
 
-    display:grid;
+  color: #455a64;
 
-    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  font-size: 17px;
+  line-height: 1.7;
+}
 
-    gap:25px;
+/* =========================
+   ICONO HERO
+========================= */
 
-    margin-bottom:40px;
+.hero-icono {
+  width: 130px;
+  height: 130px;
+
+  margin-left: 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #f8faf8;
+  border: 1px solid #dce5df;
+
+  color: #087f23;
+
+  font-size: 70px;
+}
+
+/* =========================
+   CARDS
+========================= */
+
+.cards-guarda {
+  width: 100%;
+  max-width: 1200px;
+
+  display: grid;
+
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  gap: 20px;
+
+  margin-bottom: 30px;
+}
+
+/* =========================
+   CARD
+========================= */
+
+.card-guarda {
+  background: #ffffff;
+
+  border: 1px solid #dce5df;
+  border-radius: 10px;
+
+  padding: 30px 20px;
+
+  text-align: center;
+
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+
+  transition: 0.2s ease;
+}
+
+.card-guarda:hover {
+  transform: translateY(-5px);
+
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.14);
+
+  border-color: #087f23;
+}
+
+/* =========================
+   ICONOS
+========================= */
+
+.icono-card {
+  font-size: 45px;
+
+  margin-bottom: 18px;
+
+  color: #087f23;
+}
+
+/* =========================
+   TITULOS CARDS
+========================= */
+
+.card-guarda h3 {
+  margin: 0 0 12px;
+
+  color: #087f23;
+
+  font-size: 19px;
+  font-weight: 800;
+}
+
+/* =========================
+   TEXTO CARDS
+========================= */
+
+.card-guarda p {
+  margin: 0;
+
+  color: #607d8b;
+
+  font-size: 14px;
+
+  line-height: 1.6;
+}
+
+/* =========================
+   MENSAJE FINAL
+========================= */
+
+.mensaje-final {
+  width: 100%;
+  max-width: 1200px;
+
+  background: #ffffff;
+
+  border: 1px solid #dce5df;
+  border-left: 6px solid #087f23;
+
+  border-radius: 10px;
+
+  padding: 28px 30px;
+
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+/* =========================
+   TITULO MENSAJE
+========================= */
+
+.mensaje-final h2 {
+  margin: 0 0 18px;
+
+  color: #087f23;
+
+  font-size: 21px;
+  font-weight: 800;
+}
+
+/* =========================
+   LISTA
+========================= */
+
+.mensaje-final ul {
+  margin: 0;
+  padding-left: 22px;
+
+  color: #455a64;
+}
+
+.mensaje-final li {
+  margin: 10px 0;
+
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 1000px) {
+
+  .cards-guarda {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 
 }
 
-.card-guarda{
+/* =========================
+   MÓVIL
+========================= */
 
-    background:#fff;
+@media (max-width: 700px) {
 
-    border-radius:18px;
+  .inicio-guarda {
+    padding: 25px 15px;
+  }
 
-    padding:35px 25px;
+  .hero-guarda {
+    padding: 30px 25px;
 
-    text-align:center;
+    flex-direction: column;
 
-    border-top:5px solid #32b44a;
+    text-align: center;
+  }
 
-    box-shadow:0 8px 18px rgba(0,0,0,.08);
+  .hero-texto h1 {
+    font-size: 28px;
+  }
 
-    transition:.3s;
+  .hero-texto p {
+    font-size: 15px;
+  }
 
-}
+  .hero-icono {
+    width: 100px;
+    height: 100px;
 
-.card-guarda:hover{
+    margin: 25px 0 0;
 
-    transform:translateY(-8px);
+    font-size: 55px;
+  }
 
-}
+  .cards-guarda {
+    grid-template-columns: 1fr;
+  }
 
-.icono-card{
+  .card-guarda {
+    padding: 25px 20px;
+  }
 
-    font-size:55px;
-
-    color:#32b44a;
-
-    margin-bottom:18px;
-
-}
-
-.card-guarda h3{
-
-    color:#13863b;
-
-    margin-bottom:15px;
-
-    font-size:30px;
-
-}
-
-.card-guarda p{
-
-    color:#666;
-
-    line-height:1.7;
+  .mensaje-final {
+    padding: 22px;
+  }
 
 }
 
-/*=========================
-      MENSAJE
-=========================*/
+/* =========================
+   MÓVIL PEQUEÑO
+========================= */
 
-.mensaje-final{
+@media (max-width: 480px) {
 
-    background:#fff;
+  .inicio-guarda {
+    padding: 15px 10px;
+  }
 
-    border-left:6px solid #32b44a;
+  .hero-guarda {
+    padding: 25px 18px;
 
-    padding:30px;
+    border-radius: 10px;
+  }
 
-    border-radius:18px;
+  .hero-texto h1 {
+    font-size: 23px;
+  }
 
-    box-shadow:0 8px 18px rgba(0,0,0,.08);
+  .hero-texto p {
+    font-size: 14px;
+  }
 
-}
+  .hero-icono {
+    width: 85px;
+    height: 85px;
 
-.mensaje-final h2{
+    font-size: 45px;
+  }
 
-    color:#13863b;
+  .card-guarda {
+    border-radius: 8px;
+    padding: 22px 17px;
+  }
 
-    margin-bottom:15px;
+  .icono-card {
+    font-size: 40px;
+  }
 
-}
+  .card-guarda h3 {
+    font-size: 17px;
+  }
 
-.mensaje-final ul{
+  .card-guarda p {
+    font-size: 13px;
+  }
 
-    padding-left:20px;
-
-}
-
-.mensaje-final li{
-
-    margin:10px 0;
-
-}
-
-/*=========================
-      RESPONSIVE
-=========================*/
-
-@media(max-width:768px){
-
-.hero-guarda{
-
-    flex-direction:column;
-
-    text-align:center;
-
-}
-
-.hero-icono{
-
-    margin-top:25px;
-
-    margin-left:0;
-
-    font-size:80px;
+  .mensaje-final {
+    border-radius: 8px;
+    padding: 20px;
+  }
 
 }
 
-.hero-texto h1{
+/* =========================
+   EVITAR DESBORDE
+========================= */
 
-    font-size:34px;
-
-}
-
-.hero-texto p{
-
-    font-size:17px;
-
-}
-
+.hero-guarda,
+.cards-guarda,
+.mensaje-final {
+  margin-left: auto;
+  margin-right: auto;
 }

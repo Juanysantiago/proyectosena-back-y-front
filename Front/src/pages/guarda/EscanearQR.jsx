@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Html5Qrcode } from "html5-qrcode";
 import { axiosClient } from "../../api/axiosClient";
@@ -22,7 +21,7 @@ const construirUrlImagen = (ruta) => {
   }
 
   rutaLimpia = rutaLimpia.replace(/\\/g, "/");
-  rutaLimpia = rutaLimpia.replace(/^\.\/+/, "");
+  rutaLimpia = rutaLimpia.replace(/^(\.\.\/)+/, "");
   rutaLimpia = rutaLimpia.replace(/^\/+/, "");
 
   if (rutaLimpia.startsWith("uploads/")) {
@@ -61,10 +60,7 @@ export default function EscanearQR() {
           setEscaneando(false);
 
           try {
-            console.log(
-              "🔎 QR ESCANEADO:",
-              decodedText
-            );
+            console.log("🔎 QR ESCANEADO:", decodedText);
 
             const { data } = await axiosClient.post(
               "/api/carnet/escanear",
@@ -135,297 +131,437 @@ export default function EscanearQR() {
   console.log("CARNET:", carnet);
 
   return (
-    <div className="escanear-container">
+    <div className="escanear-page">
 
-      <h2 className="titulo-qr">
-        ESCANEAR QR
-      </h2>
+      <div className="escanear-container">
 
-      {!escaneando && (
-        <>
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/685/685655.png"
-            alt="Cámara"
-            className="camara-imagen"
-          />
+        {/* =========================
+            ENCABEZADO
+        ========================= */}
 
-          <button
-            className="btn-escanear"
-            onClick={iniciarEscaneo}
-          >
-            ESCANEAR
-          </button>
-        </>
-      )}
+        <div className="escanear-header">
 
-      <div id="reader"></div>
+          <span>SENA PARKING</span>
 
-      {carnet && (
-        <div className="resultado-qr">
-
-          {/* ========================= */}
-          {/* MOVIMIENTO */}
-          {/* ========================= */}
-
-          <h3>
-            {(carnet.tipo || "registro").toUpperCase()}
-          </h3>
+          <h1>Escanear QR</h1>
 
           <p>
-            <strong>
-              Mensaje:
-            </strong>{" "}
-            {carnet.message ||
-              "Registro realizado correctamente"}
+            Escanea el código QR del carnet para
+            consultar los datos y registrar el acceso.
           </p>
-
-          {/* ========================= */}
-          {/* IMÁGENES */}
-          {/* ========================= */}
-
-          <div className="imagenes-qr">
-
-            {carnet.user?.foto && (
-              <img
-                src={construirUrlImagen(
-                  carnet.user.foto
-                )}
-                alt="Aprendiz"
-                className="foto-aprendiz"
-                onError={(e) => {
-                  console.error(
-                    "No se pudo cargar la foto del aprendiz:",
-                    e.currentTarget.src
-                  );
-
-                  e.currentTarget.style.display =
-                    "none";
-                }}
-              />
-            )}
-
-            {carnet.vehiculo?.foto_principal && (
-              <img
-                src={construirUrlImagen(
-                  carnet.vehiculo.foto_principal
-                )}
-                alt="Vehículo"
-                className="foto-vehiculo"
-                onError={(e) => {
-                  console.error(
-                    "No se pudo cargar la foto del vehículo:",
-                    e.currentTarget.src
-                  );
-
-                  e.currentTarget.style.display =
-                    "none";
-                }}
-              />
-            )}
-
-          </div>
-
-          {/* ========================= */}
-          {/* DATOS DEL APRENDIZ */}
-          {/* ========================= */}
-
-          <h4>
-            DATOS DEL APRENDIZ
-          </h4>
-
-          <p>
-            <strong>
-              Nombre:
-            </strong>{" "}
-            {carnet.user?.nombres || ""}
-            {" "}
-            {carnet.user?.apellidos || ""}
-          </p>
-
-          <p>
-            <strong>
-              Tipo de documento:
-            </strong>{" "}
-            {carnet.user?.tipoDocumento ||
-              "No disponible"}
-          </p>
-
-          <p>
-            <strong>
-              Documento:
-            </strong>{" "}
-            {carnet.user?.documento ||
-              "No disponible"}
-          </p>
-
-          <p>
-            <strong>
-              Ficha:
-            </strong>{" "}
-            {carnet.user?.ficha ||
-              "No disponible"}
-          </p>
-
-          <p>
-            <strong>
-              Correo:
-            </strong>{" "}
-            {carnet.user?.email ||
-              "No disponible"}
-          </p>
-
-          <p>
-            <strong>
-              Celular:
-            </strong>{" "}
-            {carnet.user?.celular ||
-              "No disponible"}
-          </p>
-
-          <p>
-            <strong>
-              Centro:
-            </strong>{" "}
-            {carnet.user?.centroFormacion?.nombre ||
-              "No disponible"}
-          </p>
-
-          <p>
-            <strong>
-              Ciudad:
-            </strong>{" "}
-            {carnet.user?.centroFormacion?.ciudad ||
-              "No disponible"}
-          </p>
-
-          {/* ========================= */}
-          {/* DATOS DEL VEHÍCULO */}
-          {/* ========================= */}
-
-          {carnet.vehiculo && (
-            <>
-              <h4>
-                DATOS DEL VEHÍCULO
-              </h4>
-
-              <p>
-                <strong>
-                  Tipo:
-                </strong>{" "}
-                {carnet.vehiculo.tipo ||
-                  "No disponible"}
-              </p>
-
-              <p>
-                <strong>
-                  Marca:
-                </strong>{" "}
-                {carnet.vehiculo.marca ||
-                  "No disponible"}
-              </p>
-
-              <p>
-                <strong>
-                  Color:
-                </strong>{" "}
-                {carnet.vehiculo.color ||
-                  "No disponible"}
-              </p>
-
-              <p>
-                <strong>
-                  Placa:
-                </strong>{" "}
-                {carnet.vehiculo.placa ||
-                  "No disponible"}
-              </p>
-
-              <p>
-                <strong>
-                  Serial:
-                </strong>{" "}
-                {carnet.vehiculo.serial ||
-                  "No disponible"}
-              </p>
-
-              <p>
-                <strong>
-                  Modelo:
-                </strong>{" "}
-                {carnet.vehiculo.modelo ||
-                  "No disponible"}
-              </p>
-
-              <p>
-                <strong>
-                  Cilindraje:
-                </strong>{" "}
-                {carnet.vehiculo.cilindraje ||
-                  "No disponible"}
-              </p>
-            </>
-          )}
-
-          {/* ========================= */}
-          {/* ESTADO DEL REGISTRO */}
-          {/* ========================= */}
-
-          <h4>
-            REGISTRO DE ACCESO
-          </h4>
-
-          <p>
-            <strong>
-              Movimiento:
-            </strong>{" "}
-            {(carnet.tipo ||
-              "No disponible").toUpperCase()}
-          </p>
-
-          <p>
-            <strong>
-              Estado:
-            </strong>{" "}
-            {carnet.estado ||
-              "No disponible"}
-          </p>
-
-          {carnet.registro && (
-            <>
-              <p>
-                <strong>
-                  Fecha:
-                </strong>{" "}
-                {carnet.registro.fecha ||
-                  "No disponible"}
-              </p>
-
-              <p>
-                <strong>
-                  Hora de entrada:
-                </strong>{" "}
-                {carnet.registro.hora_entrada
-                  ? new Date(
-                      carnet.registro.hora_entrada
-                    ).toLocaleString()
-                  : "No disponible"}
-              </p>
-
-              {carnet.registro.hora_salida && (
-                <p>
-                  <strong>
-                    Hora de salida:
-                  </strong>{" "}
-                  {new Date(
-                    carnet.registro.hora_salida
-                  ).toLocaleString()}
-                </p>
-              )}
-            </>
-          )}
 
         </div>
-      )}
+
+        {/* =========================
+            ESCÁNER
+        ========================= */}
+
+        <section className="scanner-card">
+
+          {!escaneando && !carnet && (
+            <div className="scanner-inicio">
+
+              <div className="scanner-icono">
+                📷
+              </div>
+
+              <h2>
+                Escanear carnet
+              </h2>
+
+              <p>
+                Presiona el botón para activar la cámara
+                y escanear el código QR del carnet.
+              </p>
+
+              <button
+                className="btn-escanear"
+                onClick={iniciarEscaneo}
+              >
+                ESCANEAR QR
+              </button>
+
+            </div>
+          )}
+
+          {escaneando && (
+            <div className="scanner-activo">
+
+              <div className="scanner-titulo">
+                <span className="scanner-punto"></span>
+
+                Cámara activa
+              </div>
+
+              <p>
+                Coloca el código QR dentro del área
+                de escaneo.
+              </p>
+
+            </div>
+          )}
+
+          <div id="reader"></div>
+
+        </section>
+
+        {/* =========================
+            RESULTADO
+        ========================= */}
+
+        {carnet && (
+          <section className="resultado-qr">
+
+            <div className="resultado-header">
+
+              <div>
+                <span>RESULTADO DEL ESCANEO</span>
+
+                <h2>
+                  {(carnet.tipo || "registro").toUpperCase()}
+                </h2>
+              </div>
+
+              <div className="estado-acceso">
+                {carnet.estado ||
+                  "Registrado"}
+              </div>
+
+            </div>
+
+            <div className="mensaje-qr">
+              <strong>Mensaje</strong>
+
+              <p>
+                {carnet.message ||
+                  "Registro realizado correctamente"}
+              </p>
+            </div>
+
+            {/* =========================
+                IMÁGENES
+            ========================= */}
+
+            <div className="imagenes-qr">
+
+              {carnet.user?.foto && (
+                <div className="imagen-card">
+
+                  <span>
+                    APRENDIZ
+                  </span>
+
+                  <img
+                    src={construirUrlImagen(
+                      carnet.user.foto
+                    )}
+                    alt="Aprendiz"
+                    className="foto-aprendiz"
+                    onError={(e) => {
+                      console.error(
+                        "No se pudo cargar la foto del aprendiz:",
+                        e.currentTarget.src
+                      );
+
+                      e.currentTarget.style.display =
+                        "none";
+                    }}
+                  />
+
+                </div>
+              )}
+
+              {carnet.vehiculo?.foto_principal && (
+                <div className="imagen-card">
+
+                  <span>
+                    VEHÍCULO
+                  </span>
+
+                  <img
+                    src={construirUrlImagen(
+                      carnet.vehiculo.foto_principal
+                    )}
+                    alt="Vehículo"
+                    className="foto-vehiculo"
+                    onError={(e) => {
+                      console.error(
+                        "No se pudo cargar la foto del vehículo:",
+                        e.currentTarget.src
+                      );
+
+                      e.currentTarget.style.display =
+                        "none";
+                    }}
+                  />
+
+                </div>
+              )}
+
+            </div>
+
+            {/* =========================
+                DATOS DEL APRENDIZ
+            ========================= */}
+
+            <div className="datos-seccion">
+
+              <div className="datos-titulo">
+                <span>01</span>
+
+                <h3>
+                  Datos del aprendiz
+                </h3>
+              </div>
+
+              <div className="datos-grid">
+
+                <div className="dato">
+                  <span>Nombre</span>
+
+                  <strong>
+                    {carnet.user?.nombres || ""}
+                    {" "}
+                    {carnet.user?.apellidos || ""}
+                  </strong>
+                </div>
+
+                <div className="dato">
+                  <span>Tipo de documento</span>
+
+                  <strong>
+                    {carnet.user?.tipoDocumento ||
+                      "No disponible"}
+                  </strong>
+                </div>
+
+                <div className="dato">
+                  <span>Documento</span>
+
+                  <strong>
+                    {carnet.user?.documento ||
+                      "No disponible"}
+                  </strong>
+                </div>
+
+                <div className="dato">
+                  <span>Ficha</span>
+
+                  <strong>
+                    {carnet.user?.ficha ||
+                      "No disponible"}
+                  </strong>
+                </div>
+
+                <div className="dato">
+                  <span>Correo</span>
+
+                  <strong>
+                    {carnet.user?.email ||
+                      "No disponible"}
+                  </strong>
+                </div>
+
+                <div className="dato">
+                  <span>Celular</span>
+
+                  <strong>
+                    {carnet.user?.celular ||
+                      "No disponible"}
+                  </strong>
+                </div>
+
+                <div className="dato">
+                  <span>Centro</span>
+
+                  <strong>
+                    {carnet.user?.centroFormacion?.nombre ||
+                      "No disponible"}
+                  </strong>
+                </div>
+
+                <div className="dato">
+                  <span>Ciudad</span>
+
+                  <strong>
+                    {carnet.user?.centroFormacion?.ciudad ||
+                      "No disponible"}
+                  </strong>
+                </div>
+
+              </div>
+
+            </div>
+
+            {/* =========================
+                DATOS DEL VEHÍCULO
+            ========================= */}
+
+            {carnet.vehiculo && (
+              <div className="datos-seccion">
+
+                <div className="datos-titulo">
+                  <span>02</span>
+
+                  <h3>
+                    Datos del vehículo
+                  </h3>
+                </div>
+
+                <div className="datos-grid">
+
+                  <div className="dato">
+                    <span>Tipo</span>
+
+                    <strong>
+                      {carnet.vehiculo.tipo ||
+                        "No disponible"}
+                    </strong>
+                  </div>
+
+                  <div className="dato">
+                    <span>Marca</span>
+
+                    <strong>
+                      {carnet.vehiculo.marca ||
+                        "No disponible"}
+                    </strong>
+                  </div>
+
+                  <div className="dato">
+                    <span>Color</span>
+
+                    <strong>
+                      {carnet.vehiculo.color ||
+                        "No disponible"}
+                    </strong>
+                  </div>
+
+                  <div className="dato">
+                    <span>Placa</span>
+
+                    <strong>
+                      {carnet.vehiculo.placa ||
+                        "No disponible"}
+                    </strong>
+                  </div>
+
+                  <div className="dato">
+                    <span>Serial</span>
+
+                    <strong>
+                      {carnet.vehiculo.serial ||
+                        "No disponible"}
+                    </strong>
+                  </div>
+
+                  <div className="dato">
+                    <span>Modelo</span>
+
+                    <strong>
+                      {carnet.vehiculo.modelo ||
+                        "No disponible"}
+                    </strong>
+                  </div>
+
+                  <div className="dato">
+                    <span>Cilindraje</span>
+
+                    <strong>
+                      {carnet.vehiculo.cilindraje ||
+                        "No disponible"}
+                    </strong>
+                  </div>
+
+                </div>
+
+              </div>
+            )}
+
+            {/* =========================
+                REGISTRO DE ACCESO
+            ========================= */}
+
+            <div className="datos-seccion">
+
+              <div className="datos-titulo">
+                <span>03</span>
+
+                <h3>
+                  Registro de acceso
+                </h3>
+              </div>
+
+              <div className="datos-grid">
+
+                <div className="dato">
+                  <span>Movimiento</span>
+
+                  <strong>
+                    {(carnet.tipo ||
+                      "No disponible").toUpperCase()}
+                  </strong>
+                </div>
+
+                <div className="dato">
+                  <span>Estado</span>
+
+                  <strong>
+                    {carnet.estado ||
+                      "No disponible"}
+                  </strong>
+                </div>
+
+                {carnet.registro && (
+                  <>
+                    <div className="dato">
+                      <span>Fecha</span>
+
+                      <strong>
+                        {carnet.registro.fecha ||
+                          "No disponible"}
+                      </strong>
+                    </div>
+
+                    <div className="dato">
+                      <span>
+                        Hora de entrada
+                      </span>
+
+                      <strong>
+                        {carnet.registro.hora_entrada
+                          ? new Date(
+                              carnet.registro.hora_entrada
+                            ).toLocaleString()
+                          : "No disponible"}
+                      </strong>
+                    </div>
+
+                    {carnet.registro.hora_salida && (
+                      <div className="dato">
+                        <span>
+                          Hora de salida
+                        </span>
+
+                        <strong>
+                          {new Date(
+                            carnet.registro.hora_salida
+                          ).toLocaleString()}
+                        </strong>
+                      </div>
+                    )}
+                  </>
+                )}
+
+              </div>
+
+            </div>
+
+          </section>
+        )}
+
+      </div>
+
     </div>
   );
 }

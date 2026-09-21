@@ -7,52 +7,83 @@ import { axiosClient } from "../api/axiosClient";
 export default function NavbarGuarda() {
   const [menuOpen, setMenuOpen] = useState(false);
 
- const logout = async () => {
-  try {
-    await axiosClient.post("/auth/logout");
-  } catch (error) {
-    console.error(error);
-  } finally {
-    localStorage.clear();
-    sessionStorage.clear();
-    window.location.href = "/";
-  }
-};
+  const logout = async () => {
+    try {
+      await axiosClient.post("/auth/logout");
+    } catch (error) {
+      console.error(error);
+    } finally {
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location.href = "/";
+    }
+  };
 
   return (
     <header className="guarda-header">
 
+      {/* LOGO */}
       <div className="logo">
-        <img src={logo} alt="Logo Sena Parking" />
+        <img
+          src={logo}
+          alt="Logo Sena Parking"
+        />
       </div>
 
+      {/* MENÚ */}
       <nav className="menu-principal">
 
-        <NavLink to="/dashboard-guarda">
+        {/* INICIO */}
+        <NavLink
+          to="/dashboard-guarda"
+          end
+          className={({ isActive }) =>
+            isActive ? "activo" : ""
+          }
+        >
           INICIO
         </NavLink>
 
-        <NavLink to="/dashboard-guarda/escanear-qr">
+        {/* ESCANEAR QR */}
+        <NavLink
+          to="/dashboard-guarda/escanear-qr"
+          className={({ isActive }) =>
+            isActive ? "activo" : ""
+          }
+        >
           ESCANEAR QR
         </NavLink>
 
-        <NavLink to="/dashboard-guarda/manual">
+        {/* MANUAL */}
+        <NavLink
+          to="/dashboard-guarda/manual"
+          className={({ isActive }) =>
+            isActive ? "activo" : ""
+          }
+        >
           MANUAL
         </NavLink>
 
-      
-
-        <NavLink to="/dashboard-guarda/entrada-salida">
+        {/* ENTRADA / SALIDA */}
+        <NavLink
+          to="/dashboard-guarda/entrada-salida"
+          className={({ isActive }) =>
+            isActive ? "activo" : ""
+          }
+        >
           ENTRADA / SALIDA
         </NavLink>
 
       </nav>
 
+      {/* MENÚ HAMBURGUESA */}
       <div className="menu-hamburguesa">
 
         <button
           className="hamburguesa"
-          onClick={() => setMenuOpen(!menuOpen)}
+          onClick={() =>
+            setMenuOpen(!menuOpen)
+          }
         >
           ☰
         </button>
