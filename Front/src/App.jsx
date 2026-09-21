@@ -35,7 +35,7 @@ import ActualizarDatos from "./pages/aprendiz/ActualizarDatos";
 import PeticionCarnet from "./pages/aprendiz/PeticionCarnet";
 import ManualUso from "./pages/aprendiz/ManualUso";
 import SoporteTecnico from "./pages/aprendiz/SoporteTecnico";
-import VencimientoCarnet from "./pages/aprendiz/VencimientoCarnet";
+
 
 import {
   BrowserRouter,
@@ -194,51 +194,46 @@ export default function App() {
 
         {/* ================= APRENDIZ ================= */}
 
-        <Route
-          path="/dashboard-aprendiz"
-          element={
-            <ProtectedRoute rol="aprendiz">
-              <DashboardAprendiz />
-            </ProtectedRoute>
-          }
-        >
+<Route
+  path="/dashboard-aprendiz"
+  element={
+    <ProtectedRoute rol="aprendiz">
+      <DashboardAprendiz />
+    </ProtectedRoute>
+  }
+>
 
-          <Route
-            index
-            element={<InicioAprendiz />}
-          />
+  <Route
+    index
+    element={<InicioAprendiz />}
+  />
 
-          <Route
-            path="visualizar-carnet"
-            element={<VisualizarCarnet />}
-          />
+  <Route
+    path="visualizar-carnet"
+    element={<VisualizarCarnet />}
+  />
 
-          <Route
-            path="actualizar-datos"
-            element={<ActualizarDatos />}
-          />
+  <Route
+    path="actualizar-datos"
+    element={<ActualizarDatos />}
+  />
 
-          <Route
-            path="peticion-carnet"
-            element={<PeticionCarnet />}
-          />
+  <Route
+    path="peticion-carnet"
+    element={<PeticionCarnet />}
+  />
 
-          <Route
-            path="manual"
-            element={<ManualUso />}
-          />
+  <Route
+    path="manual"
+    element={<ManualUso />}
+  />
 
-          <Route
-            path="soporte"
-            element={<SoporteTecnico />}
-          />
+  <Route
+    path="soporte"
+    element={<SoporteTecnico />}
+  />
 
-          <Route
-            path="vencimiento"
-            element={<VencimientoCarnet />}
-          />
-
-        </Route>
+</Route>
 
         {/* ================= NO ENCONTRADA ================= */}
 

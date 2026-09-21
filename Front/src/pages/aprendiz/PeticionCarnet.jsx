@@ -157,6 +157,7 @@ export default function PeticionCarnet() {
       );
 
       window.location.reload();
+
     } catch (error) {
       console.error(
         "Error al enviar la solicitud:",
@@ -167,6 +168,7 @@ export default function PeticionCarnet() {
         error.response?.data?.message ||
         "Error al enviar la solicitud."
       );
+
     } finally {
       setLoading(false);
     }
@@ -180,11 +182,13 @@ export default function PeticionCarnet() {
     return (
       <div className="peticion-container">
         <div className="peticion-card">
+
           <div className="peticion-header">
             <h2>
               Cargando información del aprendiz...
             </h2>
           </div>
+
         </div>
       </div>
     );
@@ -197,10 +201,13 @@ export default function PeticionCarnet() {
   if (!user) {
     return (
       <div className="peticion-container">
+
         <div className="peticion-card">
+
           <div className="peticion-header">
             <h2>
-              No se pudo cargar la información del aprendiz.
+              No se pudo cargar la información
+              del aprendiz.
             </h2>
           </div>
 
@@ -211,7 +218,9 @@ export default function PeticionCarnet() {
           >
             Actualizar
           </button>
+
         </div>
+
       </div>
     );
   }
@@ -230,12 +239,16 @@ export default function PeticionCarnet() {
         ========================= */}
 
         <div className="peticion-header">
-          <h1>Solicitud de Carnet</h1>
+
+          <h1>
+            Solicitud de Carnet
+          </h1>
 
           <p>
             Complete la información requerida para
             solicitar su carnet de acceso a SENA Parking.
           </p>
+
         </div>
 
         {/* =========================
@@ -250,11 +263,14 @@ export default function PeticionCarnet() {
 
           <section className="peticion-section">
 
-            <h3>Datos del aprendiz</h3>
+            <h3>
+              Datos del aprendiz
+            </h3>
 
             <div className="peticion-fields">
 
               <div className="peticion-group">
+
                 <label>
                   Documento
                 </label>
@@ -264,9 +280,11 @@ export default function PeticionCarnet() {
                   value={user.documento || ""}
                   disabled
                 />
+
               </div>
 
               <div className="peticion-group">
+
                 <label>
                   Nombre completo
                 </label>
@@ -276,9 +294,11 @@ export default function PeticionCarnet() {
                   value={`${user.nombres || ""} ${user.apellidos || ""}`}
                   disabled
                 />
+
               </div>
 
               <div className="peticion-group">
+
                 <label>
                   Ficha
                 </label>
@@ -288,6 +308,7 @@ export default function PeticionCarnet() {
                   value={user.ficha || ""}
                   disabled
                 />
+
               </div>
 
             </div>
@@ -300,11 +321,14 @@ export default function PeticionCarnet() {
 
           <section className="peticion-section">
 
-            <h3>Información del vehículo</h3>
+            <h3>
+              Información del vehículo
+            </h3>
 
             <div className="peticion-fields">
 
               <div className="peticion-group">
+
                 <label>
                   Tipo de vehículo
                 </label>
@@ -312,9 +336,13 @@ export default function PeticionCarnet() {
                 <select
                   value={tipoVehiculo}
                   onChange={(e) =>
-                    setTipoVehiculo(e.target.value)
+                    setTipoVehiculo(
+                      e.target.value
+                    )
                   }
+                  required
                 >
+
                   <option value="bicicleta">
                     Bicicleta
                   </option>
@@ -322,10 +350,13 @@ export default function PeticionCarnet() {
                   <option value="moto">
                     Moto
                   </option>
+
                 </select>
+
               </div>
 
               <div className="peticion-group">
+
                 <label>
                   Marca
                 </label>
@@ -338,9 +369,11 @@ export default function PeticionCarnet() {
                   }
                   required
                 />
+
               </div>
 
               <div className="peticion-group">
+
                 <label>
                   Color
                 </label>
@@ -353,10 +386,13 @@ export default function PeticionCarnet() {
                   }
                   required
                 />
+
               </div>
 
               {tipoVehiculo === "bicicleta" ? (
+
                 <div className="peticion-group">
+
                   <label>
                     Serial
                   </label>
@@ -365,14 +401,21 @@ export default function PeticionCarnet() {
                     type="text"
                     value={serialPlaca}
                     onChange={(e) =>
-                      setSerialPlaca(e.target.value)
+                      setSerialPlaca(
+                        e.target.value
+                      )
                     }
                     required
                   />
+
                 </div>
+
               ) : (
+
                 <>
+
                   <div className="peticion-group">
+
                     <label>
                       Placa
                     </label>
@@ -381,13 +424,17 @@ export default function PeticionCarnet() {
                       type="text"
                       value={serialPlaca}
                       onChange={(e) =>
-                        setSerialPlaca(e.target.value)
+                        setSerialPlaca(
+                          e.target.value
+                        )
                       }
                       required
                     />
+
                   </div>
 
                   <div className="peticion-group">
+
                     <label>
                       Cilindraje
                     </label>
@@ -396,12 +443,16 @@ export default function PeticionCarnet() {
                       type="text"
                       value={cilindraje}
                       onChange={(e) =>
-                        setCilindraje(e.target.value)
+                        setCilindraje(
+                          e.target.value
+                        )
                       }
                     />
+
                   </div>
 
                   <div className="peticion-group">
+
                     <label>
                       Modelo
                     </label>
@@ -410,11 +461,16 @@ export default function PeticionCarnet() {
                       type="text"
                       value={modelo}
                       onChange={(e) =>
-                        setModelo(e.target.value)
+                        setModelo(
+                          e.target.value
+                        )
                       }
                     />
+
                   </div>
+
                 </>
+
               )}
 
             </div>
@@ -427,11 +483,14 @@ export default function PeticionCarnet() {
 
           <section className="peticion-section">
 
-            <h3>Documentos y archivos</h3>
+            <h3>
+              Documentos y archivos
+            </h3>
 
             <div className="peticion-fields">
 
               <div className="peticion-group">
+
                 <label>
                   Foto del aprendiz
                 </label>
@@ -447,9 +506,11 @@ export default function PeticionCarnet() {
                   }
                   required
                 />
+
               </div>
 
               <div className="peticion-group">
+
                 <label>
                   Foto del vehículo
                 </label>
@@ -465,9 +526,11 @@ export default function PeticionCarnet() {
                   }
                   required
                 />
+
               </div>
 
               <div className="peticion-group">
+
                 <label>
                   Formato diligenciado
                 </label>
@@ -482,9 +545,11 @@ export default function PeticionCarnet() {
                   }
                   required
                 />
+
               </div>
 
               <div className="peticion-group">
+
                 <label>
                   Documentos anexos
                 </label>
@@ -498,6 +563,7 @@ export default function PeticionCarnet() {
                     )
                   }
                 />
+
               </div>
 
             </div>

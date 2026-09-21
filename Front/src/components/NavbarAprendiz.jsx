@@ -47,16 +47,16 @@ export default function NavbarAprendiz() {
   };
 
   const logout = async () => {
-  try {
-    await axiosClient.post("/auth/logout");
-  } catch (error) {
-    console.error(error);
-  } finally {
-    localStorage.clear();
-    sessionStorage.clear();
-    navigate("/", { replace: true });
-  }
-};
+    try {
+      await axiosClient.post("/auth/logout");
+    } catch (error) {
+      console.error(error);
+    } finally {
+      localStorage.clear();
+      sessionStorage.clear();
+      navigate("/", { replace: true });
+    }
+  };
 
   const cerrarMenu = () => {
     setMenuOpen(false);
@@ -68,6 +68,7 @@ export default function NavbarAprendiz() {
 
   return (
     <header className="aprendiz-header">
+
       <div className="logo">
         <img
           src={logo}
@@ -76,6 +77,7 @@ export default function NavbarAprendiz() {
       </div>
 
       <nav className="menu-principal">
+
         <NavLink
           to="/dashboard-aprendiz"
           end
@@ -112,6 +114,7 @@ export default function NavbarAprendiz() {
         >
           PETICIÓN DEL CARNET
         </NavLink>
+
       </nav>
 
       <div
@@ -121,7 +124,11 @@ export default function NavbarAprendiz() {
           gap: "15px",
         }}
       >
+
+        {/* NOTIFICACIONES */}
+
         <div className="campana-container">
+
           <button
             className="campana-btn"
             onClick={abrirNotificaciones}
@@ -137,31 +144,51 @@ export default function NavbarAprendiz() {
 
           {mostrarNotificaciones && (
             <div className="panel-notificaciones">
-              <h3>Notificaciones</h3>
+
+              <h3>
+                Notificaciones
+              </h3>
 
               {notificaciones.length === 0 ? (
-                <p>No tienes notificaciones.</p>
+
+                <p>
+                  No tienes notificaciones.
+                </p>
+
               ) : (
+
                 notificaciones.map((n) => (
+
                   <div
                     key={n.id}
                     className="notificacion-item"
                   >
-                    <p>{n.mensaje}</p>
+
+                    <p>
+                      {n.mensaje}
+                    </p>
 
                     <small>
                       {new Date(
                         n.createdAt
                       ).toLocaleString()}
                     </small>
+
                   </div>
+
                 ))
+
               )}
+
             </div>
           )}
+
         </div>
 
+        {/* MENÚ HAMBURGUESA */}
+
         <div className="menu-hamburguesa">
+
           <button
             className="hamburguesa"
             onClick={() =>
@@ -172,7 +199,9 @@ export default function NavbarAprendiz() {
           </button>
 
           {menuOpen && (
+
             <div className="dropdown">
+
               <NavLink
                 to="/dashboard-aprendiz/manual"
                 onClick={cerrarMenu}
@@ -187,20 +216,18 @@ export default function NavbarAprendiz() {
                 Soporte técnico
               </NavLink>
 
-              <NavLink
-                to="/dashboard-aprendiz/vencimiento"
-                onClick={cerrarMenu}
-              >
-                Vencimiento carnet
-              </NavLink>
-
               <button onClick={logout}>
                 Cerrar sesión
               </button>
+
             </div>
+
           )}
+
         </div>
+
       </div>
+
     </header>
   );
 }
