@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 
 import { axiosClient } from "../api/axiosClient";
 import { obtenerCentros } from "../api/centroFormacionApi";
+import { tipoDocumentosApi } from "../api/tipoDocumentosApi";
 
 import "../styles/register.css";
 
@@ -14,10 +15,16 @@ export default function Register() {
   const [centros, setCentros] =
     useState([]);
 
+  const [tiposDocumento, setTiposDocumento] =
+    useState([]);
+
   const [loading, setLoading] =
     useState(false);
 
   const [loadingCentros, setLoadingCentros] =
+    useState(true);
+
+  const [loadingTiposDocumento, setLoadingTiposDocumento] =
     useState(true);
 
   const [error, setError] =
@@ -103,6 +110,65 @@ export default function Register() {
     };
 
     cargarCentros();
+
+  }, []);
+
+  // ==========================================
+  // CARGAR TIPOS DE DOCUMENTO
+  // ==========================================
+
+  useEffect(() => {
+
+    const cargarTiposDocumento = async () => {
+
+      try {
+
+        setLoadingTiposDocumento(true);
+
+        const res =
+          await tipoDocumentosApi.list();
+
+        console.log(
+          "📄 RESPUESTA TIPOS DOCUMENTO:",
+          res.data
+        );
+
+        let datos = [];
+
+        if (Array.isArray(res.data)) {
+
+          datos = res.data;
+
+        } else if (
+          Array.isArray(res.data?.data)
+        ) {
+
+          datos = res.data.data;
+        }
+
+        console.log(
+          "📄 TIPOS DE DOCUMENTO CARGADOS:",
+          datos
+        );
+
+        setTiposDocumento(datos);
+
+      } catch (error) {
+
+        console.error(
+          "❌ ERROR CARGANDO TIPOS DE DOCUMENTO:",
+          error
+        );
+
+        setTiposDocumento([]);
+
+      } finally {
+
+        setLoadingTiposDocumento(false);
+      }
+    };
+
+    cargarTiposDocumento();
 
   }, []);
 
@@ -388,27 +454,27 @@ export default function Register() {
                   value={formData.tipoDocumento}
                   onChange={handleChange}
                   required
+                  disabled={loadingTiposDocumento}
                 >
 
                   <option value="">
-                    Seleccionar
+                    {loadingTiposDocumento
+                      ? "Cargando..."
+                      : "Seleccionar"}
                   </option>
 
-                  <option value="CC">
-                    Cédula de ciudadanía
-                  </option>
+                  {tiposDocumento.map(
+                    (tipo) => (
 
-                  <option value="TI">
-                    Tarjeta de identidad
-                  </option>
+                      <option
+                        key={tipo.id}
+                        value={tipo.sigla}
+                      >
+                        {tipo.nombre_documento}
+                      </option>
 
-                  <option value="CE">
-                    Cédula de extranjería
-                  </option>
-
-                  <option value="PAS">
-                    Pasaporte
-                  </option>
+                    )
+                  )}
 
                 </select>
 
