@@ -2,8 +2,18 @@ import { axiosClient } from "./axiosClient";
 
 export const carnetApi = {
 
-  obtenerMiCarnet: () =>
-    axiosClient.get("/api/carnet/mi-carnet"),
+  obtenerMiCarnet: async () => {
+    const respuesta = await axiosClient.get(
+      "/api/carnet/mi-carnet"
+    );
+
+    console.log(
+      "🎫 RESPUESTA CARNETS:",
+      respuesta.data
+    );
+
+    return respuesta.data;
+  },
 
   obtenerPendientes: () =>
     axiosClient.get("/api/carnet/pendientes"),
@@ -13,7 +23,7 @@ export const carnetApi = {
 
   escanear: (codigoQr) =>
     axiosClient.post("/api/carnet/escanear", {
-      codigoQr
-    })
+      codigoQr,
+    }),
 
 };

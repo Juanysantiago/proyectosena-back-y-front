@@ -6,24 +6,37 @@ export default function PeticionCarnet() {
   const [user, setUser] = useState(null);
   const [cargandoUsuario, setCargandoUsuario] = useState(true);
 
-  const [tipoVehiculo, setTipoVehiculo] = useState("bicicleta");
+  // ==============================
+  // VEHÍCULO
+  // ==============================
 
+  const [tipoVehiculo, setTipoVehiculo] = useState("bicicleta");
   const [marca, setMarca] = useState("");
   const [color, setColor] = useState("");
   const [serialPlaca, setSerialPlaca] = useState("");
   const [cilindraje, setCilindraje] = useState("");
   const [modelo, setModelo] = useState("");
 
+  // ==============================
+  // ARCHIVOS
+  // ==============================
+
   const [fotoAprendiz, setFotoAprendiz] = useState(null);
   const [fotoVehiculo, setFotoVehiculo] = useState(null);
-  const [formatoDiligenciado, setFormatoDiligenciado] = useState(null);
-  const [documentosAnexos, setDocumentosAnexos] = useState(null);
+
+  const [fotoCedula, setFotoCedula] = useState(null);
+  const [tarjetaPropiedad, setTarjetaPropiedad] = useState(null);
+
+  const [soat, setSoat] = useState(null);
+  const [tecnomecanica, setTecnomecanica] = useState(null);
+
+  const [fotoPlacaSerial, setFotoPlacaSerial] = useState(null);
 
   const [loading, setLoading] = useState(false);
 
-  // ==========================================
+  // ==============================
   // CARGAR USUARIO
-  // ==========================================
+  // ==============================
 
   useEffect(() => {
     cargarUsuario();
@@ -38,10 +51,6 @@ export default function PeticionCarnet() {
       );
 
       if (!usuarioLocal?.id) {
-        console.log(
-          "No se encontró el usuario en localStorage"
-        );
-
         setUser(null);
         return;
       }
@@ -50,22 +59,16 @@ export default function PeticionCarnet() {
         `/auth/users/${usuarioLocal.id}`
       );
 
-      const usuarioActual = res.data;
-
-      console.log(
-        "Usuario actual recibido desde el backend:",
-        usuarioActual
-      );
-
-      setUser(usuarioActual);
+      setUser(res.data);
 
       localStorage.setItem(
         "user",
-        JSON.stringify(usuarioActual)
+        JSON.stringify(res.data)
       );
+
     } catch (error) {
       console.error(
-        "Error al cargar los datos del usuario:",
+        "Error al cargar usuario:",
         error
       );
 
@@ -78,23 +81,121 @@ export default function PeticionCarnet() {
       } catch {
         setUser(null);
       }
+
     } finally {
       setCargandoUsuario(false);
     }
   };
 
-  // ==========================================
+  // ==============================
+  // CAMBIAR VEHÍCULO
+  // ==============================
+
+  const cambiarTipoVehiculo = (tipo) => {
+    setTipoVehiculo(tipo);
+
+    setSerialPlaca("");
+    setCilindraje("");
+    setModelo("");
+    setSoat(null);
+    setTecnomecanica(null);
+    setFotoPlacaSerial(null);
+  };
+
+  // ==============================
   // ENVIAR SOLICITUD
-  // ==========================================
+  // ==============================
 
   const enviarSolicitud = async (e) => {
     e.preventDefault();
 
+    if (loading) return;
+
+    // ==============================
+    // VALIDACIONES
+    // ==============================
+
+    if (!fotoAprendiz) {
+      alert("Debe seleccionar la foto del aprendiz.");
+      return;
+    }
+
+    if (!fotoVehiculo) {
+      alert("Debe seleccionar la foto del vehículo.");
+      return;
+    }
+
+    if (!fotoCedula) {
+      alert("Debe seleccionar la foto de la cédula.");
+      return;
+    }
+
+    if (!tarjetaPropiedad) {
+      alert("Debe seleccionar la tarjeta de propiedad.");
+      return;
+    }
+
+    if (!serialPlaca.trim()) {
+      alert(
+        tipoVehiculo === "bicicleta"
+          ? "Debe ingresar el serial de la bicicleta."
+          : "Debe ingresar la placa de la moto."
+      );
+      return;
+    }
+
+    // ==============================
+    // BICICLETA
+    // ==============================
+
+    if (tipoVehiculo === "bicicleta") {
+      if (!fotoPlacaSerial) {
+        alert("Debe seleccionar la foto del serial.");
+        return;
+      }
+    }
+
+    // ==============================
+    // MOTO
+    // ==============================
+
+    if (tipoVehiculo === "moto") {
+      if (!modelo.trim()) {
+        alert("Debe ingresar el modelo.");
+        return;
+      }
+
+      if (!cilindraje.trim()) {
+        alert("Debe ingresar el cilindraje.");
+        return;
+      }
+
+      if (!soat) {
+        alert("Debe seleccionar el SOAT.");
+        return;
+      }
+
+      if (!tecnomecanica) {
+        alert("Debe seleccionar la tecnomecánica.");
+        return;
+      }
+
+      if (!fotoPlacaSerial) {
+        alert("Debe seleccionar la foto de la placa.");
+        return;
+      }
+    }
+
     try {
       setLoading(true);
 
+      // ==============================
+      // FORMDATA
+      // ==============================
+
       const formData = new FormData();
 
+      // VEHÍCULO
       formData.append(
         "tipoVehiculo",
         tipoVehiculo
@@ -115,15 +216,21 @@ export default function PeticionCarnet() {
         serialPlaca.trim()
       );
 
-      formData.append(
-        "cilindraje",
-        cilindraje.trim()
-      );
+      if (tipoVehiculo === "moto") {
+        formData.append(
+          "cilindraje",
+          cilindraje.trim()
+        );
 
-      formData.append(
-        "modelo",
-        modelo.trim()
-      );
+        formData.append(
+          "modelo",
+          modelo.trim()
+        );
+      }
+
+      // ==============================
+      // FOTOS
+      // ==============================
 
       formData.append(
         "fotoAprendiz",
@@ -135,21 +242,94 @@ export default function PeticionCarnet() {
         fotoVehiculo
       );
 
+      // ==============================
+      // DOCUMENTOS
+      // ==============================
+
       formData.append(
-        "formatoDiligenciado",
-        formatoDiligenciado
+        "fotoCedula",
+        fotoCedula
       );
 
-      if (documentosAnexos) {
+      formData.append(
+        "tarjetaPropiedad",
+        tarjetaPropiedad
+      );
+
+      // ==============================
+      // SERIAL / PLACA
+      // ==============================
+
+      formData.append(
+        "fotoPlacaSerial",
+        fotoPlacaSerial
+      );
+
+      // ==============================
+      // DOCUMENTOS MOTO
+      // ==============================
+
+      if (tipoVehiculo === "moto") {
         formData.append(
-          "documentosAnexos",
-          documentosAnexos
+          "soat",
+          soat
+        );
+
+        formData.append(
+          "tecnomecanica",
+          tecnomecanica
         );
       }
 
-      await axiosClient.post(
-        "/api/solicitudes-carnet",
-        formData
+      // ==============================
+      // DEBUG
+      // ==============================
+
+      console.log(
+        "================================"
+      );
+
+      console.log(
+        "📤 ENVIANDO SOLICITUD"
+      );
+
+      console.log(
+        "👤 Usuario:",
+        user?.id
+      );
+
+      console.log(
+        "🚲 Tipo:",
+        tipoVehiculo
+      );
+
+      console.log(
+        "================================"
+      );
+
+      for (const [key, value] of formData.entries()) {
+        console.log(
+          "📦",
+          key,
+          value instanceof File
+            ? value.name
+            : value
+        );
+      }
+
+      // ==============================
+      // POST
+      // ==============================
+
+      const respuesta =
+        await axiosClient.post(
+          "/api/solicitudes-carnet",
+          formData
+        );
+
+      console.log(
+        "✅ RESPUESTA:",
+        respuesta.data
       );
 
       alert(
@@ -160,8 +340,18 @@ export default function PeticionCarnet() {
 
     } catch (error) {
       console.error(
-        "Error al enviar la solicitud:",
+        "❌ ERROR:",
         error
+      );
+
+      console.error(
+        "❌ STATUS:",
+        error.response?.status
+      );
+
+      console.error(
+        "❌ BACKEND:",
+        error.response?.data
       );
 
       alert(
@@ -174,34 +364,31 @@ export default function PeticionCarnet() {
     }
   };
 
-  // ==========================================
-  // CARGANDO USUARIO
-  // ==========================================
+  // ==============================
+  // CARGANDO
+  // ==============================
 
   if (cargandoUsuario) {
     return (
       <div className="peticion-container">
         <div className="peticion-card">
-
           <div className="peticion-header">
             <h2>
               Cargando información del aprendiz...
             </h2>
           </div>
-
         </div>
       </div>
     );
   }
 
-  // ==========================================
-  // USUARIO NO ENCONTRADO
-  // ==========================================
+  // ==============================
+  // SIN USUARIO
+  // ==============================
 
   if (!user) {
     return (
       <div className="peticion-container">
-
         <div className="peticion-card">
 
           <div className="peticion-header">
@@ -220,23 +407,18 @@ export default function PeticionCarnet() {
           </button>
 
         </div>
-
       </div>
     );
   }
 
-  // ==========================================
+  // ==============================
   // FORMULARIO
-  // ==========================================
+  // ==============================
 
   return (
     <div className="peticion-container">
 
       <div className="peticion-card">
-
-        {/* =========================
-            ENCABEZADO
-        ========================= */}
 
         <div className="peticion-header">
 
@@ -251,15 +433,11 @@ export default function PeticionCarnet() {
 
         </div>
 
-        {/* =========================
-            FORMULARIO
-        ========================= */}
-
         <form onSubmit={enviarSolicitud}>
 
-          {/* =========================
-              DATOS DEL APRENDIZ
-          ========================= */}
+          {/* ==============================
+              DATOS APRENDIZ
+          ============================== */}
 
           <section className="peticion-section">
 
@@ -270,7 +448,6 @@ export default function PeticionCarnet() {
             <div className="peticion-fields">
 
               <div className="peticion-group">
-
                 <label>
                   Documento
                 </label>
@@ -280,11 +457,9 @@ export default function PeticionCarnet() {
                   value={user.documento || ""}
                   disabled
                 />
-
               </div>
 
               <div className="peticion-group">
-
                 <label>
                   Nombre completo
                 </label>
@@ -294,11 +469,9 @@ export default function PeticionCarnet() {
                   value={`${user.nombres || ""} ${user.apellidos || ""}`}
                   disabled
                 />
-
               </div>
 
               <div className="peticion-group">
-
                 <label>
                   Ficha
                 </label>
@@ -308,16 +481,15 @@ export default function PeticionCarnet() {
                   value={user.ficha || ""}
                   disabled
                 />
-
               </div>
 
             </div>
 
           </section>
 
-          {/* =========================
-              INFORMACIÓN VEHÍCULO
-          ========================= */}
+          {/* ==============================
+              VEHÍCULO
+          ============================== */}
 
           <section className="peticion-section">
 
@@ -336,13 +508,12 @@ export default function PeticionCarnet() {
                 <select
                   value={tipoVehiculo}
                   onChange={(e) =>
-                    setTipoVehiculo(
+                    cambiarTipoVehiculo(
                       e.target.value
                     )
                   }
                   required
                 >
-
                   <option value="bicicleta">
                     Bicicleta
                   </option>
@@ -350,7 +521,6 @@ export default function PeticionCarnet() {
                   <option value="moto">
                     Moto
                   </option>
-
                 </select>
 
               </div>
@@ -389,49 +559,29 @@ export default function PeticionCarnet() {
 
               </div>
 
-              {tipoVehiculo === "bicicleta" ? (
+              <div className="peticion-group">
 
-                <div className="peticion-group">
+                <label>
+                  {tipoVehiculo === "bicicleta"
+                    ? "Serial"
+                    : "Placa"}
+                </label>
 
-                  <label>
-                    Serial
-                  </label>
+                <input
+                  type="text"
+                  value={serialPlaca}
+                  onChange={(e) =>
+                    setSerialPlaca(
+                      e.target.value
+                    )
+                  }
+                  required
+                />
 
-                  <input
-                    type="text"
-                    value={serialPlaca}
-                    onChange={(e) =>
-                      setSerialPlaca(
-                        e.target.value
-                      )
-                    }
-                    required
-                  />
+              </div>
 
-                </div>
-
-              ) : (
-
+              {tipoVehiculo === "moto" && (
                 <>
-
-                  <div className="peticion-group">
-
-                    <label>
-                      Placa
-                    </label>
-
-                    <input
-                      type="text"
-                      value={serialPlaca}
-                      onChange={(e) =>
-                        setSerialPlaca(
-                          e.target.value
-                        )
-                      }
-                      required
-                    />
-
-                  </div>
 
                   <div className="peticion-group">
 
@@ -447,6 +597,7 @@ export default function PeticionCarnet() {
                           e.target.value
                         )
                       }
+                      required
                     />
 
                   </div>
@@ -465,26 +616,26 @@ export default function PeticionCarnet() {
                           e.target.value
                         )
                       }
+                      required
                     />
 
                   </div>
 
                 </>
-
               )}
 
             </div>
 
           </section>
 
-          {/* =========================
-              DOCUMENTOS
-          ========================= */}
+          {/* ==============================
+              FOTOGRAFÍAS
+          ============================== */}
 
           <section className="peticion-section">
 
             <h3>
-              Documentos y archivos
+              Fotografías
             </h3>
 
             <div className="peticion-fields">
@@ -496,12 +647,11 @@ export default function PeticionCarnet() {
                 </label>
 
                 <input
-                  id="fotoAprendiz"
                   type="file"
                   accept="image/*"
                   onChange={(e) =>
                     setFotoAprendiz(
-                      e.target.files[0]
+                      e.target.files?.[0] || null
                     )
                   }
                   required
@@ -516,52 +666,14 @@ export default function PeticionCarnet() {
                 </label>
 
                 <input
-                  id="fotoVehiculo"
                   type="file"
                   accept="image/*"
                   onChange={(e) =>
                     setFotoVehiculo(
-                      e.target.files[0]
+                      e.target.files?.[0] || null
                     )
                   }
                   required
-                />
-
-              </div>
-
-              <div className="peticion-group">
-
-                <label>
-                  Formato diligenciado
-                </label>
-
-                <input
-                  id="formatoDiligenciado"
-                  type="file"
-                  onChange={(e) =>
-                    setFormatoDiligenciado(
-                      e.target.files[0]
-                    )
-                  }
-                  required
-                />
-
-              </div>
-
-              <div className="peticion-group">
-
-                <label>
-                  Documentos anexos
-                </label>
-
-                <input
-                  id="documentosAnexos"
-                  type="file"
-                  onChange={(e) =>
-                    setDocumentosAnexos(
-                      e.target.files[0]
-                    )
-                  }
                 />
 
               </div>
@@ -570,9 +682,155 @@ export default function PeticionCarnet() {
 
           </section>
 
-          {/* =========================
+          {/* ==============================
+              DOCUMENTOS
+          ============================== */}
+
+          <section className="peticion-section">
+
+            <h3>
+              Documentos requeridos
+            </h3>
+
+            <div className="peticion-fields">
+
+              {/* CÉDULA */}
+
+              <div className="peticion-group">
+
+                <label>
+                  Foto de la cédula
+                </label>
+
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) =>
+                    setFotoCedula(
+                      e.target.files?.[0] || null
+                    )
+                  }
+                  required
+                />
+
+              </div>
+
+              {/* TARJETA */}
+
+              <div className="peticion-group">
+
+                <label>
+                  Tarjeta de propiedad
+                </label>
+
+                <input
+                  type="file"
+                  accept="image/*,.pdf"
+                  onChange={(e) =>
+                    setTarjetaPropiedad(
+                      e.target.files?.[0] || null
+                    )
+                  }
+                  required
+                />
+
+              </div>
+
+              {/* BICICLETA */}
+
+              {tipoVehiculo === "bicicleta" && (
+                <div className="peticion-group">
+
+                  <label>
+                    Foto del serial
+                  </label>
+
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) =>
+                      setFotoPlacaSerial(
+                        e.target.files?.[0] || null
+                      )
+                    }
+                    required
+                  />
+
+                </div>
+              )}
+
+              {/* MOTO */}
+
+              {tipoVehiculo === "moto" && (
+                <>
+
+                  <div className="peticion-group">
+
+                    <label>
+                      SOAT
+                    </label>
+
+                    <input
+                      type="file"
+                      accept="image/*,.pdf"
+                      onChange={(e) =>
+                        setSoat(
+                          e.target.files?.[0] || null
+                        )
+                      }
+                      required
+                    />
+
+                  </div>
+
+                  <div className="peticion-group">
+
+                    <label>
+                      Tecnomecánica
+                    </label>
+
+                    <input
+                      type="file"
+                      accept="image/*,.pdf"
+                      onChange={(e) =>
+                        setTecnomecanica(
+                          e.target.files?.[0] || null
+                        )
+                      }
+                      required
+                    />
+
+                  </div>
+
+                  <div className="peticion-group">
+
+                    <label>
+                      Foto de la placa
+                    </label>
+
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) =>
+                        setFotoPlacaSerial(
+                          e.target.files?.[0] || null
+                        )
+                      }
+                      required
+                    />
+
+                  </div>
+
+                </>
+              )}
+
+            </div>
+
+          </section>
+
+          {/* ==============================
               BOTÓN
-          ========================= */}
+          ============================== */}
 
           <button
             type="submit"

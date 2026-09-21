@@ -2,30 +2,73 @@ const express = require("express");
 
 const router = express.Router();
 
-const verifyToken = require("../../middlewares/verifyToken");
+const verifyToken =
+  require("../../middlewares/verifyToken");
 
-const upload = require("../../middlewares/upload");
+const upload =
+  require("../../middlewares/upload");
 
 const {
   crearSolicitud,
   listarSolicitudes,
   aprobarSolicitud,
-  rechazarSolicitud
+  rechazarSolicitud,
 } = require(
   "../../controllers/aprendiz/solicitudCarnetController"
 );
 
+// ==========================================
+// CREAR SOLICITUD
+// ==========================================
+
 router.post(
   "/solicitudes-carnet",
+
   verifyToken,
+
   upload.fields([
-    { name: "fotoAprendiz", maxCount: 1 },
-    { name: "fotoVehiculo", maxCount: 1 },
-    { name: "formatoDiligenciado", maxCount: 1 },
-    { name: "documentosAnexos", maxCount: 1 }
+    {
+      name: "fotoAprendiz",
+      maxCount: 1,
+    },
+
+    {
+      name: "fotoVehiculo",
+      maxCount: 1,
+    },
+
+    {
+      name: "fotoCedula",
+      maxCount: 1,
+    },
+
+    {
+      name: "tarjetaPropiedad",
+      maxCount: 1,
+    },
+
+    {
+      name: "soat",
+      maxCount: 1,
+    },
+
+    {
+      name: "tecnomecanica",
+      maxCount: 1,
+    },
+
+    {
+      name: "fotoPlacaSerial",
+      maxCount: 1,
+    },
   ]),
+
   crearSolicitud
 );
+
+// ==========================================
+// LISTAR SOLICITUDES
+// ==========================================
 
 router.get(
   "/solicitudes-carnet",
@@ -33,11 +76,19 @@ router.get(
   listarSolicitudes
 );
 
+// ==========================================
+// APROBAR
+// ==========================================
+
 router.put(
   "/solicitudes-carnet/:id/aprobar",
   verifyToken,
   aprobarSolicitud
 );
+
+// ==========================================
+// RECHAZAR
+// ==========================================
 
 router.put(
   "/solicitudes-carnet/:id/rechazar",

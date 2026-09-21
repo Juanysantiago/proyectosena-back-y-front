@@ -33,9 +33,9 @@ import InicioAprendiz from "./pages/aprendiz/InicioAprendiz";
 import VisualizarCarnet from "./pages/aprendiz/VisualizarCarnet";
 import ActualizarDatos from "./pages/aprendiz/ActualizarDatos";
 import PeticionCarnet from "./pages/aprendiz/PeticionCarnet";
+import MisVehiculos from "./pages/aprendiz/MisVehiculos";
 import ManualUso from "./pages/aprendiz/ManualUso";
 import SoporteTecnico from "./pages/aprendiz/SoporteTecnico";
-
 
 import {
   BrowserRouter,
@@ -194,46 +194,53 @@ export default function App() {
 
         {/* ================= APRENDIZ ================= */}
 
-<Route
-  path="/dashboard-aprendiz"
-  element={
-    <ProtectedRoute rol="aprendiz">
-      <DashboardAprendiz />
-    </ProtectedRoute>
-  }
->
+        <Route
+          path="/dashboard-aprendiz"
+          element={
+            <ProtectedRoute rol="aprendiz">
+              <DashboardAprendiz />
+            </ProtectedRoute>
+          }
+        >
 
-  <Route
-    index
-    element={<InicioAprendiz />}
-  />
+          <Route
+            index
+            element={<InicioAprendiz />}
+          />
 
-  <Route
-    path="visualizar-carnet"
-    element={<VisualizarCarnet />}
-  />
+          <Route
+            path="visualizar-carnet"
+            element={<VisualizarCarnet />}
+          />
 
-  <Route
-    path="actualizar-datos"
-    element={<ActualizarDatos />}
-  />
+          {/* NUEVA SECCIÓN MIS VEHÍCULOS */}
 
-  <Route
-    path="peticion-carnet"
-    element={<PeticionCarnet />}
-  />
+          <Route
+            path="mis-vehiculos"
+            element={<MisVehiculos />}
+          />
 
-  <Route
-    path="manual"
-    element={<ManualUso />}
-  />
+          <Route
+            path="actualizar-datos"
+            element={<ActualizarDatos />}
+          />
 
-  <Route
-    path="soporte"
-    element={<SoporteTecnico />}
-  />
+          <Route
+            path="peticion-carnet"
+            element={<PeticionCarnet />}
+          />
 
-</Route>
+          <Route
+            path="manual"
+            element={<ManualUso />}
+          />
+
+          <Route
+            path="soporte"
+            element={<SoporteTecnico />}
+          />
+
+        </Route>
 
         {/* ================= NO ENCONTRADA ================= */}
 

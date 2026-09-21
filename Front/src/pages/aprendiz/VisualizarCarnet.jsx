@@ -1,601 +1,830 @@
 import { useEffect, useState } from "react";
-
 import { carnetApi } from "../../api/carnetApi";
-
 import "../../styles/aprendiz/visualizarCarnet.css";
 
-const API_URL = "http://localhost:3000";
-
-/* =====================================================
-   CONSTRUIR URL DE IMAGEN
-===================================================== */
-
-const construirUrlImagen = (ruta) => {
-  if (!ruta) {
-    return null;
-  }
-
-  let rutaLimpia = String(ruta).trim();
-
-  if (!rutaLimpia) {
-    return null;
-  }
-
-  console.log("Ruta original:", rutaLimpia);
-
-  // Si ya es una URL completa
-  if (
-    rutaLimpia.startsWith("http://") ||
-    rutaLimpia.startsWith("https://") ||
-    rutaLimpia.startsWith("data:")
-  ) {
-    return rutaLimpia;
-  }
-
-  // Cambiar \ por /
-  rutaLimpia = rutaLimpia.replace(/\\/g, "/");
-
-  // Quitar ./ inicial
-  rutaLimpia = rutaLimpia.replace(/^\.\/+/, "");
-
-  // Quitar / inicial
-  rutaLimpia = rutaLimpia.replace(/^\/+/, "");
-
-  // Si ya contiene uploads/
-  if (rutaLimpia.toLowerCase().startsWith("uploads/")) {
-    return `${API_URL}/${rutaLimpia}`;
-  }
-
-  // Si contiene public/uploads/
-  if (
-    rutaLimpia
-      .toLowerCase()
-      .startsWith("public/uploads/")
-  ) {
-    return `${API_URL}/${rutaLimpia.replace(
-      /^public\//i,
-      ""
-    )}`;
-  }
-
-  // Si contiene uploads/ en alguna parte
-  const posicionUploads = rutaLimpia
-    .toLowerCase()
-    .indexOf("uploads/");
-
-  if (posicionUploads !== -1) {
-    rutaLimpia = rutaLimpia.substring(
-      posicionUploads
-    );
-
-    return `${API_URL}/${rutaLimpia}`;
-  }
-
-  // Si solamente viene el nombre del archivo
-  return `${API_URL}/uploads/${rutaLimpia}`;
-};
-
-/* =====================================================
-   COMPONENTE
-===================================================== */
-
 export default function VisualizarCarnet() {
-  const [carnet, setCarnet] = useState(null);
+
+  const [carnets, setCarnets] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  /* ===================================================
-     CARGAR CARNET
-  =================================================== */
+  useEffect(() => {
+    cargarCarnets();
+  }, []);
 
-  const cargarCarnet = async () => {
+  // =====================================================
+  // CARGAR TODOS LOS CARNETS
+  // =====================================================
+
+  const cargarCarnets = async () => {
+
     try {
-      setLoading(true);
 
-      const res =
+      setLoading(true);
+      setError("");
+
+      const respuesta =
         await carnetApi.obtenerMiCarnet();
 
-      console.log("====================================");
-      console.log("📋 CARNET RECIBIDO");
-      console.log("====================================");
-
       console.log(
-        "Carnet completo:",
-        res.data
+        "🎫 TODOS LOS CARNETS:",
+        respuesta
       );
 
-      console.log(
-        "📸 Foto aprendiz recibida:",
-        res.data?.user?.foto
-      );
+      /*
+       * IMPORTANTE:
+       *
+       * carnetApi ya devuelve respuesta.data
+       *
+       * Por lo tanto:
+       *
+       * respuesta = [
+       *   carnet1,
+       *   carnet2
+       * ]
+       */
 
-      console.log(
-        "🚗 Foto vehículo recibida:",
-        res.data?.vehiculo?.foto_principal
-      );
+      if (Array.isArray(respuesta)) {
 
-      const fotoAprendizUrl =
-        construirUrlImagen(
-          res.data?.user?.foto
+        setCarnets(respuesta);
+
+        return;
+      }
+
+      /*
+       * Compatibilidad por si el backend
+       * devuelve { carnets: [...] }
+       */
+
+      if (
+        Array.isArray(respuesta?.carnets)
+      ) {
+
+        setCarnets(
+          respuesta.carnets
         );
 
-      const fotoVehiculoUrl =
-        construirUrlImagen(
-          res.data?.vehiculo?.foto_principal
+        return;
+      }
+
+      /*
+       * Compatibilidad por si devuelve
+       * { data: [...] }
+       */
+
+      if (
+        Array.isArray(respuesta?.data)
+      ) {
+
+        setCarnets(
+          respuesta.data
         );
 
-      console.log(
-        "🌐 URL FOTO APRENDIZ:",
-        fotoAprendizUrl
-      );
+        return;
+      }
 
-      console.log(
-        "🌐 URL FOTO VEHÍCULO:",
-        fotoVehiculoUrl
-      );
+      /*
+       * Compatibilidad con un solo carnet
+       */
 
-      setCarnet({
-        ...res.data,
-        _fotoAprendizUrl:
-          fotoAprendizUrl,
-        _fotoVehiculoUrl:
-          fotoVehiculoUrl,
-      });
+      if (
+        respuesta &&
+        respuesta.id
+      ) {
+
+        setCarnets([
+          respuesta,
+        ]);
+
+        return;
+      }
+
+      setCarnets([]);
 
     } catch (error) {
+
       console.error(
-        "❌ Error al cargar carnet:",
+        "❌ ERROR CARGANDO CARNETS:",
         error
       );
 
-      setCarnet(null);
+      console.error(
+        "❌ RESPUESTA SERVIDOR:",
+        error.response?.data
+      );
+
+      setCarnets([]);
+
+      setError(
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        error.message ||
+        "No se pudieron cargar los carnets."
+      );
 
     } finally {
+
       setLoading(false);
+
     }
+
   };
 
-  /* ===================================================
-     CARGAR AL ENTRAR
-  =================================================== */
+  // =====================================================
+  // OBTENER IMAGEN
+  // =====================================================
 
-  useEffect(() => {
-    cargarCarnet();
-  }, []);
+  const obtenerImagen = (archivo) => {
 
-  /* ===================================================
-     CARGANDO
-  =================================================== */
+    if (!archivo) {
+      return null;
+    }
+
+    /*
+     * Base64
+     */
+
+    if (
+      archivo.startsWith(
+        "data:image/"
+      )
+    ) {
+
+      return archivo;
+
+    }
+
+    /*
+     * URL completa
+     */
+
+    if (
+      archivo.startsWith(
+        "http://"
+      ) ||
+      archivo.startsWith(
+        "https://"
+      )
+    ) {
+
+      return archivo;
+
+    }
+
+    /*
+     * Archivo guardado en uploads
+     */
+
+    const nombreArchivo =
+      String(archivo)
+        .replace(/^[/\\]+/, "")
+        .replace(
+          /^uploads[/\\]+/,
+          ""
+        )
+        .replace(
+          /\\/g,
+          "/"
+        );
+
+    return `http://localhost:3000/uploads/${nombreArchivo}`;
+
+  };
+
+  // =====================================================
+  // CARGANDO
+  // =====================================================
 
   if (loading) {
+
     return (
-      <div className="contenedor-carnet">
 
-        <div className="carnet-wrapper">
+      <div className="visualizar-carnet-container">
 
-          <div className="carnet-header">
+        <div className="visualizar-carnet-card">
+
+          <div className="visualizar-carnet-loading">
 
             <h2>
-              SERVICIO NACIONAL DE APRENDIZAJE
+              Cargando carnets...
             </h2>
 
-            <h3>SENA</h3>
-
-          </div>
-
-          <div className="datos">
-
-            <h3>
-              Cargando carnet...
-            </h3>
+            <p>
+              Consultando tus carnets generados.
+            </p>
 
           </div>
 
         </div>
 
       </div>
+
     );
+
   }
 
-  /* ===================================================
-     SIN CARNET
-  =================================================== */
-
-  if (!carnet) {
-    return (
-      <div className="contenedor-carnet">
-
-        <div className="carnet-wrapper">
-
-          <div className="carnet-header">
-
-            <h2>
-              SERVICIO NACIONAL DE APRENDIZAJE
-            </h2>
-
-            <h3>SENA</h3>
-
-          </div>
-
-          <div className="datos">
-
-            <h3>
-              No existe un carnet disponible.
-            </h3>
-
-            <button
-              className="btn-imprimir"
-              onClick={cargarCarnet}
-            >
-              Actualizar
-            </button>
-
-          </div>
-
-        </div>
-
-      </div>
-    );
-  }
-
-  /* ===================================================
-     DATOS
-  =================================================== */
-
-  const usuario =
-    carnet.user || {};
-
-  const vehiculo =
-    carnet.vehiculo || {};
-
-  const nombreCompleto =
-    `${usuario.nombres || ""} ${
-      usuario.apellidos || ""
-    }`.trim();
-
-  const centroFormacion =
-    usuario.centroFormacion?.nombre ||
-    usuario.centroFormacion?.nombreCentro ||
-    usuario.centroFormacion?.nombre_centro ||
-    "No registrado";
-
-  /* ===================================================
-     IMÁGENES
-  =================================================== */
-
-  const fotoAprendiz =
-    carnet._fotoAprendizUrl ||
-    construirUrlImagen(
-      usuario.foto
-    );
-
-  const fotoVehiculo =
-    carnet._fotoVehiculoUrl ||
-    construirUrlImagen(
-      vehiculo.foto_principal ||
-      vehiculo.foto
-    );
-
-  console.log(
-    "🖼️ Foto aprendiz final:",
-    fotoAprendiz
-  );
-
-  console.log(
-    "🖼️ Foto vehículo final:",
-    fotoVehiculo
-  );
-
-  /* ===================================================
-     RENDER
-  =================================================== */
+  // =====================================================
+  // VISTA PRINCIPAL
+  // =====================================================
 
   return (
-    <div className="contenedor-carnet">
 
-      <div className="carnet-wrapper">
+    <div className="visualizar-carnet-container">
 
-        {/* =============================================
+      <div className="visualizar-carnet-card">
+
+        {/* =================================================
             ENCABEZADO
-        ============================================= */}
+        ================================================= */}
 
-        <div className="carnet-header">
+        <div className="visualizar-carnet-header">
 
-          <h2>
-            SERVICIO NACIONAL DE APRENDIZAJE
-          </h2>
+          <div>
 
-          <h3>
-            SENA
-          </h3>
+            <span className="visualizar-carnet-label">
+              SENA PARKING
+            </span>
 
-        </div>
+            <h1>
+              Mis carnets
+            </h1>
 
-        {/* =============================================
-            IMÁGENES
-        ============================================= */}
-
-        <div className="imagenes">
-
-          {/* FOTO APRENDIZ */}
-
-          <div className="foto-aprendiz">
-
-            <h4>
-              Aprendiz
-            </h4>
-
-            {fotoAprendiz ? (
-
-              <img
-                src={fotoAprendiz}
-                alt="Foto del aprendiz"
-                key={fotoAprendiz}
-
-                onLoad={() => {
-                  console.log(
-                    "✅ Foto del aprendiz cargada:",
-                    fotoAprendiz
-                  );
-                }}
-
-                onError={(e) => {
-                  console.error(
-                    "❌ Error cargando foto del aprendiz:",
-                    fotoAprendiz
-                  );
-
-                  e.currentTarget.style.display =
-                    "none";
-                }}
-              />
-
-            ) : (
-
-              <p>
-                No hay foto del aprendiz
-              </p>
-
-            )}
+            <p>
+              Consulta todos los carnets generados
+              para tus vehículos.
+            </p>
 
           </div>
 
-          {/* FOTO VEHÍCULO */}
-
-          <div className="foto-vehiculo">
-
-            <h4>
-              Vehículo
-            </h4>
-
-            {fotoVehiculo ? (
-
-              <img
-                src={fotoVehiculo}
-                alt="Foto del vehículo"
-                key={fotoVehiculo}
-
-                onLoad={() => {
-                  console.log(
-                    "✅ Foto del vehículo cargada:",
-                    fotoVehiculo
-                  );
-                }}
-
-                onError={(e) => {
-                  console.error(
-                    "❌ Error cargando foto del vehículo:",
-                    fotoVehiculo
-                  );
-
-                  e.currentTarget.style.display =
-                    "none";
-                }}
-              />
-
-            ) : (
-
-              <p>
-                No hay foto del vehículo
-              </p>
-
-            )}
-
+          <div className="visualizar-carnet-contador">
+            {carnets.length}
           </div>
 
         </div>
 
-        {/* =============================================
-            INFORMACIÓN DEL APRENDIZ
-        ============================================= */}
+        {/* =================================================
+            ERROR
+        ================================================= */}
 
-        <div className="datos">
+        {error && (
 
-          <h3>
-            Información del Aprendiz
-          </h3>
+          <div className="visualizar-carnet-error">
 
-          <p>
-            <b>Nombre:</b>{" "}
-            {nombreCompleto ||
-              "No registrado"}
-          </p>
+            {error}
 
-          <p>
-            <b>Tipo documento:</b>{" "}
-            {usuario.tipoDocumento ||
-              "No registrado"}
-          </p>
+          </div>
 
-          <p>
-            <b>Documento:</b>{" "}
-            {usuario.documento ||
-              "No registrado"}
-          </p>
+        )}
 
-          <p>
-            <b>Correo:</b>{" "}
-            {usuario.email ||
-              "No registrado"}
-          </p>
+        {/* =================================================
+            SIN CARNETS
+        ================================================= */}
 
-          <p>
-            <b>Celular:</b>{" "}
-            {usuario.celular ||
-              "No registrado"}
-          </p>
+        {!error &&
+          carnets.length === 0 && (
 
-          <p>
-            <b>Centro de formación:</b>{" "}
-            {centroFormacion}
-          </p>
+          <div className="visualizar-carnet-vacio">
 
-          <p>
-            <b>Ficha:</b>{" "}
-            {usuario.ficha ||
-              "No registrada"}
-          </p>
+            <div className="vacio-icono">
+              🎫
+            </div>
 
-          <p>
-            <b>Fecha vinculación:</b>{" "}
-            {usuario.fechaVinculacion ||
-              "No registrada"}
-          </p>
-
-          <p>
-            <b>Fecha finalización:</b>{" "}
-            {usuario.fechaFinalizacion ||
-              "No registrada"}
-          </p>
-
-          <p>
-            <b>Estado:</b>{" "}
-            {carnet.estado ||
-              "No registrado"}
-          </p>
-
-          <hr />
-
-          {/* ===========================================
-              INFORMACIÓN DEL VEHÍCULO
-          =========================================== */}
-
-          <h3>
-            Información del Vehículo
-          </h3>
-
-          <p>
-            <b>Tipo:</b>{" "}
-            {vehiculo.tipo ||
-              "No registrado"}
-          </p>
-
-          <p>
-            <b>Marca:</b>{" "}
-            {vehiculo.marca ||
-              "No registrada"}
-          </p>
-
-          <p>
-            <b>Color:</b>{" "}
-            {vehiculo.color ||
-              "No registrado"}
-          </p>
-
-          {vehiculo.tipo?.toLowerCase() ===
-          "bicicleta" ? (
+            <h3>
+              No tienes carnets generados
+            </h3>
 
             <p>
-              <b>Serial:</b>{" "}
-              {vehiculo.serial ||
-                "No registrado"}
+              Cuando se genere un carnet,
+              aparecerá aquí.
             </p>
 
-          ) : (
+          </div>
 
-            <>
-              <p>
-                <b>Placa:</b>{" "}
-                {vehiculo.placa ||
-                  "No registrada"}
-              </p>
+        )}
 
-              <p>
-                <b>Modelo:</b>{" "}
-                {vehiculo.modelo ||
-                  "No registrado"}
-              </p>
+        {/* =================================================
+            TODOS LOS CARNETS
+        ================================================= */}
 
-              <p>
-                <b>Cilindraje:</b>{" "}
-                {vehiculo.cilindraje ||
-                  "No registrado"}
-              </p>
-            </>
+        {carnets.length > 0 && (
 
-          )}
+          <div className="carnets-lista">
 
-        </div>
+            {carnets.map(
+              (carnet, index) => {
+
+                /*
+                 * DATOS DEL CARNET
+                 */
+
+                const usuario =
+                  carnet.user || {};
+
+                const solicitud =
+                  carnet.solicitud || {};
+
+                const vehiculo =
+                  carnet.vehiculo || {};
+
+                /*
+                 * FOTO DEL APRENDIZ
+                 *
+                 * Primero intenta la foto
+                 * de la solicitud.
+                 *
+                 * Si no existe usa la del usuario.
+                 */
+
+                const fotoAprendiz =
+                  obtenerImagen(
+                    solicitud.fotoAprendiz ||
+                    usuario.foto
+                  );
+
+                /*
+                 * FOTO DEL VEHÍCULO
+                 */
+
+                const fotoVehiculo =
+                  obtenerImagen(
+                    solicitud.fotoVehiculo ||
+                    vehiculo.foto_principal
+                  );
+
+                /*
+                 * TIPO VEHÍCULO
+                 */
+
+                const tipoVehiculo =
+                  String(
+                    solicitud.tipoVehiculo ||
+                    vehiculo.tipo ||
+                    ""
+                  ).toLowerCase();
+
+                const esMoto =
+                  tipoVehiculo === "moto";
+
+                return (
+
+                  <div
+                    className="carnet-item"
+                    key={
+                      carnet.id ||
+                      index
+                    }
+                  >
+
+                    {/* =================================
+                        ENCABEZADO CARNET
+                    ================================= */}
+
+                    <div className="carnet-item-header">
+
+                      <div>
+
+                        <span className="carnet-numero">
+                          CARNET #{index + 1}
+                        </span>
+
+                        <h2>
+                          SENA PARKING
+                        </h2>
+
+                      </div>
+
+                      <span
+                        className={`carnet-estado ${
+                          carnet.estado ===
+                          "activo"
+                            ? "activo"
+                            : "otro"
+                        }`}
+                      >
+                        {carnet.estado ||
+                          "activo"}
+                      </span>
+
+                    </div>
+
+                    {/* =================================
+                        INFORMACIÓN APRENDIZ + QR
+                    ================================= */}
+
+                    <div className="carnet-contenido">
+
+                      {/* FOTO APRENDIZ */}
+
+                      <div className="carnet-foto-aprendiz">
+
+                        {fotoAprendiz ? (
+
+                          <img
+                            src={fotoAprendiz}
+                            alt="Foto del aprendiz"
+                            onError={(e) => {
+
+                              e.currentTarget.style.display =
+                                "none";
+
+                              const sinFoto =
+                                e.currentTarget
+                                  .parentElement
+                                  ?.querySelector(
+                                    ".carnet-sin-foto"
+                                  );
+
+                              if (sinFoto) {
+                                sinFoto.classList.add(
+                                  "mostrar"
+                                );
+                              }
+
+                            }}
+                          />
+
+                        ) : null}
+
+                        <div
+                          className={`carnet-sin-foto ${
+                            fotoAprendiz
+                              ? ""
+                              : "mostrar"
+                          }`}
+                        >
+                          Sin foto
+                        </div>
+
+                      </div>
+
+                      {/* DATOS APRENDIZ */}
+
+                      <div className="carnet-datos">
+
+                        <div className="dato">
+
+                          <strong>
+                            Nombre
+                          </strong>
+
+                          <span>
+
+                            {usuario.nombres ||
+                              ""}
+
+                            {" "}
+
+                            {usuario.apellidos ||
+                              ""}
+
+                          </span>
+
+                        </div>
+
+                        <div className="dato">
+
+                          <strong>
+                            Documento
+                          </strong>
+
+                          <span>
+
+                            {usuario.tipoDocumento ||
+                              ""}
+
+                            {" "}
+
+                            {usuario.documento ||
+                              "No registrado"}
+
+                          </span>
+
+                        </div>
+
+                        <div className="dato">
+
+                          <strong>
+                            Ficha
+                          </strong>
+
+                          <span>
+                            {usuario.ficha ||
+                              "No registrada"}
+                          </span>
+
+                        </div>
+
+                        <div className="dato">
+
+                          <strong>
+                            Centro de formación
+                          </strong>
+
+                          <span>
+
+                            {usuario
+                              .centroFormacion
+                              ?.nombre ||
+                              "No registrado"}
+
+                          </span>
+
+                        </div>
+
+                      </div>
+
+                      {/* =================================
+                          QR DEL CARNET
+                      ================================= */}
+
+                      <div className="carnet-qr">
+
+                        <h3>
+                          Código QR
+                        </h3>
+
+                        {carnet.qrImage ? (
+
+                          <img
+                            src={
+                              carnet.qrImage
+                            }
+                            alt="Código QR del carnet"
+                          />
+
+                        ) : (
+
+                          <div className="qr-sin-imagen">
+
+                            QR no disponible
+
+                          </div>
+
+                        )}
+
+                        <small>
+                          {carnet.codigoQr ||
+                            "Código no disponible"}
+                        </small>
+
+                      </div>
+
+                    </div>
+
+                    {/* =================================
+                        VEHÍCULO DE ESTE CARNET
+                    ================================= */}
+
+                    <div className="carnet-vehiculo">
+
+                      <h3>
+                        Vehículo asociado a este carnet
+                      </h3>
+
+                      <div className="vehiculo-contenido">
+
+                        {/* FOTO VEHÍCULO */}
+
+                        <div className="carnet-foto-vehiculo">
+
+                          {fotoVehiculo ? (
+
+                            <img
+                              src={fotoVehiculo}
+                              alt="Foto del vehículo"
+                              onError={(e) => {
+
+                                e.currentTarget.style.display =
+                                  "none";
+
+                                const sinFoto =
+                                  e.currentTarget
+                                    .parentElement
+                                    ?.querySelector(
+                                      ".vehiculo-sin-foto"
+                                    );
+
+                                if (sinFoto) {
+                                  sinFoto.classList.add(
+                                    "mostrar"
+                                  );
+                                }
+
+                              }}
+                            />
+
+                          ) : null}
+
+                          <div
+                            className={`vehiculo-sin-foto ${
+                              fotoVehiculo
+                                ? ""
+                                : "mostrar"
+                            }`}
+                          >
+                            Sin foto del vehículo
+                          </div>
+
+                        </div>
+
+                        {/* DATOS VEHÍCULO */}
+
+                        <div className="vehiculo-datos-carnet">
+
+                          <div>
+
+                            <strong>
+                              Tipo
+                            </strong>
+
+                            <span>
+                              {esMoto
+                                ? "Motocicleta"
+                                : "Bicicleta"}
+                            </span>
+
+                          </div>
+
+                          <div>
+
+                            <strong>
+                              Marca
+                            </strong>
+
+                            <span>
+                              {solicitud.marca ||
+                                vehiculo.marca ||
+                                "No registrada"}
+                            </span>
+
+                          </div>
+
+                          <div>
+
+                            <strong>
+                              Color
+                            </strong>
+
+                            <span>
+                              {solicitud.color ||
+                                vehiculo.color ||
+                                "No registrado"}
+                            </span>
+
+                          </div>
+
+                          <div>
+
+                            <strong>
+                              {esMoto
+                                ? "Placa"
+                                : "Serial"}
+                            </strong>
+
+                            <span>
+
+                              {esMoto
+                                ? (
+                                    solicitud.serialPlaca ||
+                                    vehiculo.placa ||
+                                    "No registrada"
+                                  )
+                                : (
+                                    solicitud.serialPlaca ||
+                                    vehiculo.serial ||
+                                    "No registrado"
+                                  )}
+
+                            </span>
+
+                          </div>
+
+                          {/* DATOS MOTO */}
+
+                          {esMoto && (
+
+                            <>
+
+                              <div>
+
+                                <strong>
+                                  Modelo
+                                </strong>
+
+                                <span>
+                                  {solicitud.modelo ||
+                                    vehiculo.modelo ||
+                                    "No registrado"}
+                                </span>
+
+                              </div>
+
+                              <div>
+
+                                <strong>
+                                  Cilindraje
+                                </strong>
+
+                                <span>
+                                  {solicitud.cilindraje ||
+                                    vehiculo.cilindraje ||
+                                    "No registrado"}
+                                </span>
+
+                              </div>
+
+                            </>
+
+                          )}
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                    {/* =================================
+                        INFORMACIÓN CARNET
+                    ================================= */}
+
+                    <div className="carnet-footer">
+
+                      <div>
+
+                        <strong>
+                          ID del carnet
+                        </strong>
+
+                        <span>
+                          {carnet.id}
+                        </span>
+
+                      </div>
+
+                      <div>
+
+                        <strong>
+                          Generado
+                        </strong>
+
+                        <span>
+
+                          {carnet.fechaGeneracion
+                            ? new Date(
+                                carnet.fechaGeneracion
+                              ).toLocaleDateString()
+                            : carnet.createdAt
+                            ? new Date(
+                                carnet.createdAt
+                              ).toLocaleDateString()
+                            : "No disponible"}
+
+                        </span>
+
+                      </div>
+
+                      <div>
+
+                        <strong>
+                          Estado
+                        </strong>
+
+                        <span>
+                          {carnet.estado ||
+                            "activo"}
+                        </span>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                );
+
+              }
+            )}
+
+          </div>
+
+        )}
 
         {/* =============================================
-            QR
+            ACTUALIZAR
         ============================================= */}
 
-        <div className="qr">
-
-          {carnet.qrImage ? (
-
-            <img
-              src={carnet.qrImage}
-              alt="Código QR del carnet"
-            />
-
-          ) : (
-
-            <p>
-              No hay código QR
-            </p>
-
-          )}
-
-        </div>
-
-        {/* =============================================
-            PIE
-        ============================================= */}
-
-        <div className="carnet-footer">
-
-          Carnet válido para ingreso al
-          Centro de Formación
-
-        </div>
-
-      </div>
-
-      {/* ===============================================
-          BOTONES
-      =============================================== */}
-
-      <div className="botones-carnet">
-
         <button
-          className="btn-imprimir"
-          onClick={() =>
-            window.print()
-          }
+          type="button"
+          className="visualizar-carnet-recargar"
+          onClick={cargarCarnets}
         >
-          Imprimir Carnet
-        </button>
-
-        <button
-          className="btn-actualizar"
-          onClick={cargarCarnet}
-        >
-          Actualizar Carnet
+          Actualizar carnets
         </button>
 
       </div>
 
     </div>
+
   );
+
 }

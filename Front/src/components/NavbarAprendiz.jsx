@@ -69,6 +69,8 @@ export default function NavbarAprendiz() {
   return (
     <header className="aprendiz-header">
 
+      {/* LOGO */}
+
       <div className="logo">
         <img
           src={logo}
@@ -76,7 +78,11 @@ export default function NavbarAprendiz() {
         />
       </div>
 
+      {/* MENÚ PRINCIPAL */}
+
       <nav className="menu-principal">
+
+        {/* INICIO */}
 
         <NavLink
           to="/dashboard-aprendiz"
@@ -88,6 +94,8 @@ export default function NavbarAprendiz() {
           INICIO
         </NavLink>
 
+        {/* VISUALIZAR CARNET */}
+
         <NavLink
           to="/dashboard-aprendiz/visualizar-carnet"
           className={({ isActive }) =>
@@ -97,6 +105,19 @@ export default function NavbarAprendiz() {
           VISUALIZAR CARNET
         </NavLink>
 
+        {/* MIS VEHÍCULOS */}
+
+        <NavLink
+          to="/dashboard-aprendiz/mis-vehiculos"
+          className={({ isActive }) =>
+            isActive ? "activo" : ""
+          }
+        >
+          MIS VEHÍCULOS
+        </NavLink>
+
+        {/* ACTUALIZAR DATOS */}
+
         <NavLink
           to="/dashboard-aprendiz/actualizar-datos"
           className={({ isActive }) =>
@@ -105,6 +126,8 @@ export default function NavbarAprendiz() {
         >
           ACTUALIZAR DATOS
         </NavLink>
+
+        {/* PETICIÓN DEL CARNET */}
 
         <NavLink
           to="/dashboard-aprendiz/peticion-carnet"
@@ -116,6 +139,8 @@ export default function NavbarAprendiz() {
         </NavLink>
 
       </nav>
+
+      {/* CONTROLES DERECHOS */}
 
       <div
         style={{
@@ -143,6 +168,7 @@ export default function NavbarAprendiz() {
           </button>
 
           {mostrarNotificaciones && (
+
             <div className="panel-notificaciones">
 
               <h3>
@@ -181,6 +207,7 @@ export default function NavbarAprendiz() {
               )}
 
             </div>
+
           )}
 
         </div>
