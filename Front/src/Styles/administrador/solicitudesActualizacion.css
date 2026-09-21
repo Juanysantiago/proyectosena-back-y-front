@@ -1,260 +1,589 @@
-.crud-container{
-    max-width:1400px;
-    margin:auto;
-    padding:35px;
-    background:#f4f7fb;
-    min-height:100vh;
-    font-family:'Segoe UI',sans-serif;
+/* =========================================================
+   GENERAL
+========================================================= */
+
+* {
+    box-sizing: border-box;
 }
 
-.crud-container h2{
-    font-size:34px;
-    color:#0b7a3b;
-    margin-bottom:30px;
+.crud-container {
+    width: 100%;
+    min-height: 100vh;
+
+    padding: 40px 30px;
+
+    background: #087f23;
+
+    font-family: "Segoe UI", Arial, sans-serif;
+
+    color: #263238;
 }
 
-/* ================= CARD ================= */
 
-.solicitud-card{
-    background:#fff;
-    border-radius:22px;
-    padding:30px;
-    margin-bottom:35px;
-    box-shadow:0 12px 30px rgba(0,0,0,.08);
-    border-left:7px solid #39b54a;
-    transition:.35s;
+/* =========================================================
+   TITULO
+========================================================= */
+
+.titulo-card {
+    width: 100%;
+
+    background: #ffffff;
+
+    border-radius: 14px;
+
+    padding: 25px 30px;
+
+    margin-bottom: 30px;
+
+    border: 1px solid #dce5df;
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.10);
+
+    text-align: center;
 }
 
-.solicitud-card:hover{
-    transform:translateY(-5px);
-    box-shadow:0 18px 40px rgba(0,0,0,.12);
+.titulo-card h2 {
+    margin: 0;
+
+    color: #087f23;
+
+    font-size: 30px;
+
+    font-weight: 800;
 }
 
-/* ================= CABECERA ================= */
 
-.cabecera{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:20px;
-    margin-bottom:25px;
-    flex-wrap:wrap;
+/* =========================================================
+   SIN SOLICITUDES
+========================================================= */
+
+.sin-solicitudes {
+    width: 100%;
+
+    background: #ffffff;
+
+    border-radius: 12px;
+
+    padding: 30px;
+
+    text-align: center;
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.10);
 }
 
-.cabecera h3{
-    color:#222;
-    font-size:27px;
-    margin:0;
+.sin-solicitudes p {
+    margin: 0;
+
+    color: #607d8b;
+
+    font-size: 15px;
 }
 
-/* ================= ESTADOS ================= */
 
-.estado{
-    padding:10px 20px;
-    border-radius:50px;
-    color:#fff;
-    font-weight:700;
-    text-transform:capitalize;
-    letter-spacing:.5px;
+/* =========================================================
+   TARJETA SOLICITUD
+========================================================= */
+
+.solicitud-card {
+    width: 100%;
+
+    background: #ffffff;
+
+    border-radius: 14px;
+
+    padding: 30px;
+
+    margin-bottom: 30px;
+
+    border: 1px solid #dce5df;
+
+    border-left: 6px solid #087f23;
+
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.10);
+
+    transition: 0.2s;
 }
 
-.estado.pendiente{
-    background:linear-gradient(135deg,#ff9800,#fbc02d);
+.solicitud-card:hover {
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.14);
 }
 
-.estado.aprobada{
-    background:linear-gradient(135deg,#2e7d32,#4caf50);
+
+/* =========================================================
+   CABECERA
+========================================================= */
+
+.cabecera {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 20px;
+
+    margin-bottom: 25px;
+
+    padding-bottom: 20px;
+
+    border-bottom: 1px solid #dce5df;
+
+    flex-wrap: wrap;
 }
 
-.estado.rechazada{
-    background:linear-gradient(135deg,#c62828,#ef5350);
+.cabecera h3 {
+    margin: 0;
+
+    color: #087f23;
+
+    font-size: 24px;
+
+    font-weight: 800;
 }
 
-/* ================= INFO ================= */
 
-.info-general{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:18px;
-    margin-bottom:30px;
+/* =========================================================
+   ESTADOS
+========================================================= */
+
+.estado {
+    padding: 8px 18px;
+
+    border-radius: 20px;
+
+    color: #ffffff;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    text-transform: capitalize;
 }
 
-.info-general p{
-    background:#f8fafc;
-    padding:15px;
-    border-radius:12px;
-    margin:0;
+.estado.pendiente {
+    background: #ff9800;
 }
 
-.info-general strong{
-    color:#0b7a3b;
+.estado.aprobada {
+    background: #087f23;
 }
 
-/* ================= COMPARACIÓN ================= */
-
-.comparacion{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(350px,1fr));
-    gap:30px;
-    margin-top:25px;
+.estado.rechazada {
+    background: #d32f2f;
 }
 
-.comparacion h4{
-    margin-bottom:18px;
-    color:#0b7a3b;
-    font-size:20px;
+
+/* =========================================================
+   INFORMACIÓN GENERAL
+========================================================= */
+
+.info-general {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(220px, 1fr));
+
+    gap: 15px;
+
+    margin-bottom: 30px;
 }
 
-.dato{
-    background:#f9fafb;
-    border-left:5px solid #39b54a;
-    border-radius:12px;
-    padding:14px 16px;
-    margin-bottom:12px;
-    transition:.3s;
+.info-general p {
+    margin: 0;
+
+    padding: 15px;
+
+    background: #f8faf8;
+
+    border: 1px solid #dce5df;
+
+    border-radius: 10px;
+
+    font-size: 14px;
+
+    color: #455a64;
 }
 
-.dato:hover{
-    background:#edf9ef;
+.info-general strong {
+    color: #087f23;
+
+    font-weight: 700;
 }
 
-.dato strong{
-    display:block;
-    color:#0b7a3b;
-    margin-bottom:5px;
-    font-size:14px;
+
+/* =========================================================
+   COMPARACIÓN
+========================================================= */
+
+.comparacion {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 25px;
+
+    margin-top: 25px;
 }
 
-.dato span{
-    color:#555;
+.bloque-datos h4,
+.foto h4,
+.documentos h4 {
+    margin: 0 0 15px;
+
+    color: #087f23;
+
+    font-size: 18px;
+
+    font-weight: 800;
 }
 
-/* ================= FOTO ================= */
 
-.foto{
-    margin-top:30px;
+/* =========================================================
+   DATOS
+========================================================= */
+
+.dato {
+    background: #f8faf8;
+
+    border: 1px solid #dce5df;
+
+    border-left: 4px solid #087f23;
+
+    border-radius: 8px;
+
+    padding: 13px 15px;
+
+    margin-bottom: 10px;
+
+    transition: 0.2s;
 }
 
-.foto h4{
-    color:#0b7a3b;
-    margin-bottom:15px;
+.dato:hover {
+    background: #f0f8f2;
 }
 
-.foto img{
-    width:260px;
-    border-radius:15px;
-    border:5px solid #fff;
-    box-shadow:0 10px 25px rgba(0,0,0,.12);
-    transition:.3s;
+.dato strong {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #087f23;
+
+    font-size: 13px;
+
+    font-weight: 700;
 }
 
-.foto img:hover{
-    transform:scale(1.03);
+.dato span {
+    color: #455a64;
+
+    font-size: 14px;
 }
 
-/* ================= DOCUMENTOS ================= */
+.sin-datos {
+    color: #607d8b;
 
-.documento{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:16px 18px;
-    background:#f8fafc;
-    border-radius:12px;
-    margin-bottom:12px;
-    transition:.3s;
+    font-size: 14px;
 }
 
-.documento:hover{
-    background:#eef7ff;
+
+/* =========================================================
+   FOTO
+========================================================= */
+
+.foto {
+    margin-top: 30px;
+
+    padding-top: 25px;
+
+    border-top: 1px solid #dce5df;
 }
 
-.documento a{
-    background:#1f5eff;
-    color:white;
-    padding:8px 18px;
-    border-radius:8px;
-    text-decoration:none;
-    font-weight:600;
-    transition:.3s;
+.foto img {
+    display: block;
+
+    width: 260px;
+
+    max-width: 100%;
+
+    height: auto;
+
+    border-radius: 10px;
+
+    border: 1px solid #dce5df;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 6px 18px rgba(0, 0, 0, 0.10);
+
+    transition: 0.2s;
 }
 
-.documento a:hover{
-    background:#1748c7;
+.foto img:hover {
+    transform: scale(1.02);
 }
 
-/* ================= BOTONES ================= */
 
-.acciones{
-    display:flex;
-    gap:18px;
-    margin-top:30px;
-    flex-wrap:wrap;
+/* =========================================================
+   DOCUMENTOS
+========================================================= */
+
+.documentos {
+    margin-top: 30px;
+
+    padding-top: 25px;
+
+    border-top: 1px solid #dce5df;
+}
+
+.documento {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 14px 16px;
+
+    margin-bottom: 10px;
+
+    background: #f8faf8;
+
+    border: 1px solid #dce5df;
+
+    border-radius: 9px;
+}
+
+.documento span {
+    color: #455a64;
+
+    font-size: 14px;
+}
+
+.documento a {
+    padding: 8px 18px;
+
+    background: #087f23;
+
+    color: #ffffff;
+
+    border: 2px solid #087f23;
+
+    border-radius: 7px;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    transition: 0.2s;
+}
+
+.documento a:hover {
+    background: #ffffff;
+
+    color: #087f23;
+}
+
+
+/* =========================================================
+   BOTONES
+========================================================= */
+
+.acciones {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 15px;
+
+    margin-top: 30px;
+
+    padding-top: 25px;
+
+    border-top: 1px solid #dce5df;
 }
 
 .aprobar,
-.rechazar{
-    border:none;
-    padding:14px 30px;
-    border-radius:12px;
-    color:white;
-    font-size:15px;
-    font-weight:600;
-    cursor:pointer;
-    transition:.3s;
+.rechazar {
+    width: 100%;
+
+    min-height: 46px;
+
+    padding: 12px 20px;
+
+    border-radius: 8px;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: 0.2s;
 }
 
-.aprobar{
-    background:linear-gradient(135deg,#2e7d32,#39b54a);
+
+/* APROBAR */
+
+.aprobar {
+    background: #087f23;
+
+    color: #ffffff;
+
+    border: 2px solid #087f23;
 }
 
-.aprobar:hover{
-    transform:translateY(-3px);
-    box-shadow:0 10px 25px rgba(57,181,74,.35);
+.aprobar:hover:not(:disabled) {
+    background: #ffffff;
+
+    color: #087f23;
 }
 
-.rechazar{
-    background:linear-gradient(135deg,#d32f2f,#ef5350);
+
+/* RECHAZAR */
+
+.rechazar {
+    background: #ffffff;
+
+    color: #d32f2f;
+
+    border: 2px solid #d32f2f;
 }
 
-.rechazar:hover{
-    transform:translateY(-3px);
-    box-shadow:0 10px 25px rgba(239,83,80,.35);
+.rechazar:hover:not(:disabled) {
+    background: #d32f2f;
+
+    color: #ffffff;
 }
 
-/* ================= RESPONSIVE ================= */
 
-@media(max-width:768px){
+/* DESHABILITADOS */
 
-    .crud-container{
-        padding:20px;
+.aprobar:disabled,
+.rechazar:disabled {
+    background: #9e9e9e;
+
+    border-color: #9e9e9e;
+
+    color: #ffffff;
+
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .crud-container {
+        padding: 25px 15px;
     }
 
-    .crud-container h2{
-        font-size:28px;
+    .titulo-card {
+        padding: 20px 15px;
     }
 
-    .cabecera{
-        flex-direction:column;
-        align-items:flex-start;
+    .titulo-card h2 {
+        font-size: 24px;
     }
 
-    .comparacion{
-        grid-template-columns:1fr;
+    .solicitud-card {
+        padding: 22px 18px;
     }
 
-    .foto img{
-        width:100%;
-        max-width:320px;
+    .cabecera {
+        align-items: flex-start;
+
+        flex-direction: column;
     }
 
-    .acciones{
-        flex-direction:column;
+    .cabecera h3 {
+        font-size: 20px;
+    }
+
+    .comparacion {
+        grid-template-columns: 1fr;
+
+        gap: 20px;
+    }
+
+    .acciones {
+        grid-template-columns: 1fr;
+    }
+
+    .documento {
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+    .documento a {
+        width: 100%;
+
+        text-align: center;
+    }
+
+    .foto img {
+        width: 100%;
+
+        max-width: 320px;
+    }
+}
+
+
+/* =========================================================
+   MÓVIL
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .crud-container {
+        padding: 20px 10px;
+    }
+
+    .titulo-card h2 {
+        font-size: 21px;
+    }
+
+    .solicitud-card {
+        padding: 18px 14px;
+
+        border-radius: 10px;
+    }
+
+    .info-general {
+        grid-template-columns: 1fr;
+    }
+
+    .cabecera h3 {
+        font-size: 18px;
+    }
+
+    .estado {
+        font-size: 12px;
+    }
+
+    .dato {
+        padding: 12px;
     }
 
     .aprobar,
-    .rechazar{
-        width:100%;
+    .rechazar {
+        min-height: 45px;
     }
-
 }

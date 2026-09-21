@@ -1,126 +1,293 @@
-.content-box{
-    background:#fff;
-    border-radius:12px;
-    padding:25px;
-    box-shadow:0 2px 10px rgba(0,0,0,.1);
-    overflow-x:auto;
+/* =========================
+   PÁGINA COMPLETA
+========================= */
+
+.peticiones-page {
+    width: 100%;
+    min-height: 100vh;
+
+    background: #087f23;
+
+    padding: 35px;
 }
 
-.content-box h1{
-    margin-bottom:20px;
-    color:#39b54a;
-    font-size:28px;
+
+/* =========================
+   CONTENEDOR
+========================= */
+
+.content-box {
+    background: #ffffff;
+
+    width: 100%;
+
+    border-radius: 12px;
+
+    padding: 25px;
+
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+    overflow: hidden;
 }
 
-.tablaSolicitudes{
-    width:100%;
-    border-collapse:collapse;
-    min-width:1600px;
+
+/* =========================
+   TITULO
+========================= */
+
+.content-box h1 {
+    margin-bottom: 20px;
+
+    color: #087f23;
+
+    font-size: 28px;
+    font-weight: 700;
 }
 
-.tablaSolicitudes thead{
-    background:#39b54a;
+
+/* =========================
+   CONTENEDOR TABLA
+========================= */
+
+.tabla-contenedor {
+    width: 100%;
+
+    overflow-x: auto;
 }
 
-.tablaSolicitudes thead th{
-    color:#fff;
-    padding:14px;
-    font-size:14px;
-    text-align:center;
+
+/* =========================
+   TABLA
+========================= */
+
+.tablaSolicitudes {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    min-width: 1600px;
 }
 
-.tablaSolicitudes tbody td{
-    padding:12px;
-    border-bottom:1px solid #e5e5e5;
-    text-align:center;
-    font-size:14px;
+
+/* =========================
+   ENCABEZADO
+========================= */
+
+.tablaSolicitudes thead {
+    background: #087f23;
 }
 
-.tablaSolicitudes tbody tr:nth-child(even){
-    background:#fafafa;
+.tablaSolicitudes thead th {
+    color: #ffffff;
+
+    padding: 14px;
+
+    font-size: 14px;
+
+    text-align: center;
+
+    white-space: nowrap;
 }
 
-.tablaSolicitudes tbody tr:hover{
-    background:#f1fdf3;
+
+/* =========================
+   CUERPO
+========================= */
+
+.tablaSolicitudes tbody td {
+    padding: 12px;
+
+    border-bottom: 1px solid #e5e5e5;
+
+    text-align: center;
+
+    font-size: 14px;
+
+    white-space: nowrap;
 }
 
-.tablaSolicitudes a{
-    color:#39b54a;
-    text-decoration:none;
-    font-weight:600;
+.tablaSolicitudes tbody tr:nth-child(even) {
+    background: #fafafa;
 }
 
-.tablaSolicitudes a:hover{
-    text-decoration:underline;
+.tablaSolicitudes tbody tr:hover {
+    background: #e8f5e9;
 }
 
-.tablaSolicitudes button{
-    border:none;
-    border-radius:8px;
-    padding:8px 15px;
-    cursor:pointer;
-    font-weight:600;
-    transition:.3s;
+
+/* =========================
+   ENLACES
+========================= */
+
+.tablaSolicitudes a {
+    color: #087f23;
+
+    text-decoration: none;
+
+    font-weight: 600;
 }
 
-.tablaSolicitudes button:first-child{
-    background:#39b54a;
-    color:#fff;
+.tablaSolicitudes a:hover {
+    text-decoration: underline;
 }
 
-.tablaSolicitudes button:first-child:hover{
-    background:#2d913b;
+
+/* =========================
+   BOTONES
+========================= */
+
+.tablaSolicitudes button {
+    border: none;
+
+    border-radius: 8px;
+
+    padding: 8px 15px;
+
+    cursor: pointer;
+
+    font-weight: 600;
+
+    transition: 0.3s;
+
+    margin: 3px;
 }
 
-.tablaSolicitudes button:last-child{
-    background:#dc3545;
-    color:#fff;
+
+/* =========================
+   APROBAR
+========================= */
+
+.tablaSolicitudes .btn-aprobar {
+    background: #087f23;
+
+    color: #ffffff;
 }
 
-.tablaSolicitudes button:last-child:hover{
-    background:#b52a37;
+.tablaSolicitudes .btn-aprobar:hover {
+    background: #087f23;
 }
 
-.estado{
-    font-weight:bold;
+
+/* =========================
+   RECHAZAR
+========================= */
+
+.tablaSolicitudes .btn-rechazar {
+    background: #dc3545;
+
+    color: #ffffff;
 }
 
-.estado.pendiente{
-    color:#ff9800;
+.tablaSolicitudes .btn-rechazar:hover {
+    background: #b52a37;
 }
 
-.estado.aprobada{
-    color:#39b54a;
+
+/* =========================
+   ESTADOS
+========================= */
+
+.estado {
+    font-weight: bold;
 }
 
-.estado.rechazada{
-    color:#dc3545;
+.estado.pendiente {
+    color: #ff9800;
 }
 
-@media(max-width:768px){
+.estado.aprobada {
+    color: #087f23;
+}
 
-    .content-box{
-        padding:15px;
+.estado.rechazada {
+    color: #dc3545;
+}
+
+.estado.generado {
+    color: #087f23;
+}
+
+
+/* =========================
+   ACCIONES
+========================= */
+
+.acciones {
+    min-width: 180px;
+}
+
+
+/* =========================
+   SIN SOLICITUDES
+========================= */
+
+.sin-solicitudes {
+    padding: 40px !important;
+
+    color: #777;
+
+    font-size: 15px !important;
+
+    text-align: center;
+}
+
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 768px) {
+
+    .peticiones-page {
+        padding: 20px 10px;
     }
 
-    .content-box h1{
-        font-size:22px;
+    .content-box {
+        padding: 15px;
     }
 
-    .tablaSolicitudes{
-        min-width:1300px;
+    .content-box h1 {
+        font-size: 22px;
+    }
+
+    .tablaSolicitudes {
+        min-width: 1600px;
     }
 
     .tablaSolicitudes th,
-    .tablaSolicitudes td{
-        font-size:12px;
-        padding:8px;
+    .tablaSolicitudes td {
+        font-size: 12px;
+
+        padding: 8px;
     }
 
-    .tablaSolicitudes button{
-        width:100%;
-        margin:3px 0;
-        padding:7px;
+    .tablaSolicitudes button {
+        width: 100%;
+
+        margin: 3px 0;
+
+        padding: 7px;
+    }
+}
+
+
+/* =========================
+   MÓVIL
+========================= */
+
+@media (max-width: 480px) {
+
+    .peticiones-page {
+        padding: 10px;
     }
 
+    .content-box {
+        padding: 12px;
+
+        border-radius: 10px;
+    }
+
+    .content-box h1 {
+        font-size: 20px;
+    }
 }

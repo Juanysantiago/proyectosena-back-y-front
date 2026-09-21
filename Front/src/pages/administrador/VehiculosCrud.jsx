@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { vehiculosApi } from "../../api/vehiculosApi";
-import "../../styles/vehiculos.css";
+import "../../styles/administrador/vehiculos.css";
 
 const initialForm = {
   tipo: "bicicleta",
@@ -26,12 +26,15 @@ export default function VehiculosCrud() {
   const loadVehiculos = async () => {
     try {
       setLoading(true);
+      setError("");
 
       const res = await vehiculosApi.list();
-         console.log(res.data.data); 
+
+      console.log(res.data?.data);
 
       setItems(res.data?.data || []);
     } catch (err) {
+      console.error(err);
       setError("Error cargando vehículos");
     } finally {
       setLoading(false);
@@ -51,14 +54,36 @@ export default function VehiculosCrud() {
 
   const openCreateForm = () => {
     setEditingItem(null);
-    setFormData(initialForm);
+    setFormData({ ...initialForm });
+    setError("");
     setShowForm(true);
   };
 
   const openEditForm = (item) => {
     setEditingItem(item);
-    setFormData(item);
+
+    setFormData({
+      tipo: item.tipo || "bicicleta",
+      id_centro_de_formacion:
+        item.id_centro_de_formacion || "",
+      marca: item.marca || "",
+      color: item.color || "",
+      serial: item.serial || "",
+      placa: item.placa || "",
+      cilindraje: item.cilindraje || "",
+      modelo: item.modelo || "",
+      foto_principal: item.foto_principal || "",
+      foto_secundaria: item.foto_secundaria || "",
+    });
+
+    setError("");
     setShowForm(true);
+  };
+
+  const closeForm = () => {
+    setShowForm(false);
+    setEditingItem(null);
+    setFormData({ ...initialForm });
   };
 
   const handleSubmit = async (e) => {
@@ -67,11 +92,13 @@ export default function VehiculosCrud() {
     try {
       setError("");
 
-      if (!formData.id_centro_de_formacion)
+      if (!formData.id_centro_de_formacion) {
         return setError("Centro de formación obligatorio");
+      }
 
-      if (!formData.marca)
+      if (!formData.marca) {
         return setError("Marca obligatoria");
+      }
 
       if (
         formData.tipo === "bicicleta" &&
@@ -96,12 +123,12 @@ export default function VehiculosCrud() {
         await vehiculosApi.create(formData);
       }
 
-      setShowForm(false);
-      setEditingItem(null);
-      setFormData(initialForm);
+      closeForm();
 
       await loadVehiculos();
     } catch (err) {
+      console.error(err);
+
       setError(
         err?.response?.data?.message ||
           "Error guardando vehículo"
@@ -110,280 +137,408 @@ export default function VehiculosCrud() {
   };
 
   const handleDelete = async (item) => {
-    if (!window.confirm("¿Eliminar vehículo?")) return;
+    if (!window.confirm("¿Eliminar vehículo?")) {
+      return;
+    }
 
     try {
+      setError("");
+
       await vehiculosApi.remove(item.id);
 
       await loadVehiculos();
-    } catch {
+    } catch (err) {
+      console.error(err);
       setError("Error eliminando vehículo");
     }
   };
 
   return (
-    <div className="container">
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 20,
-        }}
-      >
-        <h1>Gestión de Vehículos</h1>
+    <div className="vehiculos-container">
+
+      {/* ================= HEADER ================= */}
+
+      <div className="vehiculos-header">
+        <div>
+          <h1>Gestión de Vehículos</h1>
+
+          <p>
+            Administra los vehículos registrados en
+            SENA Parking.
+          </p>
+        </div>
 
         <button
-          className="btn-primary"
+          className="vehiculos-btn-primary"
           onClick={openCreateForm}
         >
           + Nuevo Vehículo
         </button>
       </div>
 
+      {/* ================= ERROR ================= */}
+
       {error && (
-        <div
-          style={{
-            background: "#ffd9d9",
-            color: "#900",
-            padding: 12,
-            borderRadius: 8,
-            marginBottom: 20,
-          }}
-        >
+        <div className="vehiculos-error">
           {error}
         </div>
       )}
 
-     <div className="card">
-  {loading ? (
-    <p>Cargando vehículos...</p>
-  ) : (
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Propietario</th>
-          <th>Tipo</th>
-          <th>Marca</th>
-          <th>Color</th>
-          <th>Placa</th>
-          <th>Serial</th>
-          <th>Centro</th>
-          <th>Ficha</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
+      {/* ================= TABLA ================= */}
 
-      <tbody>
-        {items.length > 0 ? (
-          items.map((item) => (
-            <tr key={item.id}>
-              <td>{item.id}</td>
+      <div className="vehiculos-card">
 
-              <td>
-                {item.User
-                  ? `${item.User.nombres} ${item.User.apellidos}`
-                  : "-"}
-              </td>
+        <div className="vehiculos-card-header">
+          <h2>Vehículos registrados</h2>
 
-              <td>{item.tipo}</td>
+          <button
+            className="vehiculos-btn-refresh"
+            onClick={loadVehiculos}
+            disabled={loading}
+          >
+            {loading ? "Cargando..." : "Actualizar"}
+          </button>
+        </div>
 
-              <td>{item.marca}</td>
+        <div className="vehiculos-table-wrapper">
 
-              <td>{item.color || "-"}</td>
+          {loading ? (
+            <div className="vehiculos-loading">
+              ⏳ Cargando vehículos...
+            </div>
+          ) : (
+            <table className="vehiculos-table">
 
-              <td>{item.placa || "-"}</td>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Propietario</th>
+                  <th>Tipo</th>
+                  <th>Marca</th>
+                  <th>Color</th>
+                  <th>Placa</th>
+                  <th>Serial</th>
+                  <th>Centro</th>
+                  <th>Ficha</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
 
-              <td>{item.serial || "-"}</td>
+              <tbody>
 
-              <td>
-                {item.User?.centroFormacion?.nombre || "-"}
-              </td>
+                {items.length > 0 ? (
 
-              <td>
-                {item.User?.ficha || "-"}
-              </td>
+                  items.map((item) => (
 
-              <td>
-                <button
-                  className="btn-warning"
-                  onClick={() => openEditForm(item)}
-                >
-                  Editar
-                </button>{" "}
+                    <tr key={item.id}>
 
-                <button
-                  className="btn-danger"
-                  onClick={() => handleDelete(item)}
-                >
-                  Eliminar
-                </button>
-              </td>
-            </tr>
-          ))
-        ) : (
-          <tr>
-            <td colSpan="10">
-              No hay vehículos registrados
-            </td>
-          </tr>
-        )}
-      </tbody>
-    </table>
-  )}
-</div>
+                      <td>{item.id}</td>
+
+                      <td>
+                        {item.User
+                          ? `${item.User.nombres} ${item.User.apellidos}`
+                          : "-"}
+                      </td>
+
+                      <td>
+                        <span className="vehiculos-tipo">
+                          {item.tipo}
+                        </span>
+                      </td>
+
+                      <td>{item.marca}</td>
+
+                      <td>
+                        {item.color || "-"}
+                      </td>
+
+                      <td>
+                        {item.placa || "-"}
+                      </td>
+
+                      <td>
+                        {item.serial || "-"}
+                      </td>
+
+                      <td>
+                        {item.User?.centroFormacion?.nombre ||
+                          "-"}
+                      </td>
+
+                      <td>
+                        {item.User?.ficha || "-"}
+                      </td>
+
+                      <td>
+
+                        <div className="vehiculos-actions">
+
+                          <button
+                            className="vehiculos-btn-edit"
+                            onClick={() =>
+                              openEditForm(item)
+                            }
+                          >
+                            Editar
+                          </button>
+
+                          <button
+                            className="vehiculos-btn-delete"
+                            onClick={() =>
+                              handleDelete(item)
+                            }
+                          >
+                            Eliminar
+                          </button>
+
+                        </div>
+
+                      </td>
+
+                    </tr>
+
+                  ))
+
+                ) : (
+
+                  <tr>
+                    <td
+                      colSpan="10"
+                      className="vehiculos-empty"
+                    >
+                      No hay vehículos registrados
+                    </td>
+                  </tr>
+
+                )}
+
+              </tbody>
+
+            </table>
+          )}
+
+        </div>
+      </div>
+
+      {/* ================= MODAL ================= */}
 
       {showForm && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h2>
-              {editingItem
-                ? "Editar Vehículo"
-                : "Nuevo Vehículo"}
-            </h2>
 
-            <form onSubmit={handleSubmit}>
-              <label>Tipo de Vehículo</label>
+        <div className="vehiculos-modal-overlay">
 
-              <select
-                name="tipo"
-                value={formData.tipo}
-                onChange={handleChange}
-              >
-                <option value="bicicleta">
-                  Bicicleta
-                </option>
+          <div className="vehiculos-modal">
 
-                <option value="moto">
-                  Moto
-                </option>
-              </select>
+            <div className="vehiculos-modal-header">
 
-              <br />
-              <br />
-
-              <input
-                name="id_centro_de_formacion"
-                placeholder="Centro de Formación"
-                value={formData.id_centro_de_formacion}
-                onChange={handleChange}
-              />
-
-              <br />
-              <br />
-
-              <input
-                name="marca"
-                placeholder="Marca"
-                value={formData.marca}
-                onChange={handleChange}
-              />
-
-              <br />
-              <br />
-
-              <input
-                name="color"
-                placeholder="Color"
-                value={formData.color}
-                onChange={handleChange}
-              />
-
-              <br />
-              <br />
-
-              {formData.tipo === "bicicleta" && (
-                <>
-                  <input
-                    name="serial"
-                    placeholder="Serial"
-                    value={formData.serial}
-                    onChange={handleChange}
-                  />
-
-                  <br />
-                  <br />
-                </>
-              )}
-
-              {formData.tipo === "moto" && (
-                <>
-                  <input
-                    name="placa"
-                    placeholder="Placa"
-                    value={formData.placa}
-                    onChange={handleChange}
-                  />
-
-                  <br />
-                  <br />
-
-                  <input
-                    name="cilindraje"
-                    placeholder="Cilindraje"
-                    value={formData.cilindraje}
-                    onChange={handleChange}
-                  />
-
-                  <br />
-                  <br />
-
-                  <input
-                    name="modelo"
-                    placeholder="Modelo"
-                    value={formData.modelo}
-                    onChange={handleChange}
-                  />
-
-                  <br />
-                  <br />
-                </>
-              )}
-
-              <input
-                name="foto_principal"
-                placeholder="URL Foto Principal"
-                value={formData.foto_principal}
-                onChange={handleChange}
-              />
-
-              <br />
-              <br />
-
-              <input
-                name="foto_secundaria"
-                placeholder="URL Foto Secundaria"
-                value={formData.foto_secundaria}
-                onChange={handleChange}
-              />
-
-              <br />
-              <br />
-
-              <button
-                type="submit"
-                className="btn-primary"
-              >
+              <h2>
                 {editingItem
-                  ? "Actualizar"
-                  : "Guardar"}
-              </button>
+                  ? "Editar Vehículo"
+                  : "Nuevo Vehículo"}
+              </h2>
 
               <button
                 type="button"
-                className="btn-danger"
-                style={{ marginLeft: 10 }}
-                onClick={() =>
-                  setShowForm(false)
-                }
+                className="vehiculos-close"
+                onClick={closeForm}
               >
-                Cancelar
+                ×
               </button>
+
+            </div>
+
+            <form
+              className="vehiculos-form"
+              onSubmit={handleSubmit}
+            >
+
+              <div className="vehiculos-form-grid">
+
+                <div className="vehiculos-field">
+
+                  <label>
+                    Tipo de Vehículo
+                  </label>
+
+                  <select
+                    name="tipo"
+                    value={formData.tipo}
+                    onChange={handleChange}
+                  >
+                    <option value="bicicleta">
+                      Bicicleta
+                    </option>
+
+                    <option value="moto">
+                      Moto
+                    </option>
+                  </select>
+
+                </div>
+
+                <div className="vehiculos-field">
+
+                  <label>
+                    Centro de Formación
+                  </label>
+
+                  <input
+                    name="id_centro_de_formacion"
+                    placeholder="ID Centro de Formación"
+                    value={
+                      formData.id_centro_de_formacion
+                    }
+                    onChange={handleChange}
+                  />
+
+                </div>
+
+                <div className="vehiculos-field">
+
+                  <label>Marca</label>
+
+                  <input
+                    name="marca"
+                    placeholder="Marca"
+                    value={formData.marca}
+                    onChange={handleChange}
+                  />
+
+                </div>
+
+                <div className="vehiculos-field">
+
+                  <label>Color</label>
+
+                  <input
+                    name="color"
+                    placeholder="Color"
+                    value={formData.color}
+                    onChange={handleChange}
+                  />
+
+                </div>
+
+                {formData.tipo === "bicicleta" && (
+
+                  <div className="vehiculos-field">
+
+                    <label>Serial</label>
+
+                    <input
+                      name="serial"
+                      placeholder="Serial"
+                      value={formData.serial}
+                      onChange={handleChange}
+                    />
+
+                  </div>
+
+                )}
+
+                {formData.tipo === "moto" && (
+                  <>
+                    <div className="vehiculos-field">
+
+                      <label>Placa</label>
+
+                      <input
+                        name="placa"
+                        placeholder="Placa"
+                        value={formData.placa}
+                        onChange={handleChange}
+                      />
+
+                    </div>
+
+                    <div className="vehiculos-field">
+
+                      <label>Cilindraje</label>
+
+                      <input
+                        name="cilindraje"
+                        placeholder="Cilindraje"
+                        value={formData.cilindraje}
+                        onChange={handleChange}
+                      />
+
+                    </div>
+
+                    <div className="vehiculos-field">
+
+                      <label>Modelo</label>
+
+                      <input
+                        name="modelo"
+                        placeholder="Modelo"
+                        value={formData.modelo}
+                        onChange={handleChange}
+                      />
+
+                    </div>
+                  </>
+                )}
+
+                <div className="vehiculos-field">
+
+                  <label>
+                    Foto principal
+                  </label>
+
+                  <input
+                    name="foto_principal"
+                    placeholder="URL Foto Principal"
+                    value={formData.foto_principal}
+                    onChange={handleChange}
+                  />
+
+                </div>
+
+                <div className="vehiculos-field">
+
+                  <label>
+                    Foto secundaria
+                  </label>
+
+                  <input
+                    name="foto_secundaria"
+                    placeholder="URL Foto Secundaria"
+                    value={formData.foto_secundaria}
+                    onChange={handleChange}
+                  />
+
+                </div>
+
+              </div>
+
+              <div className="vehiculos-form-actions">
+
+                <button
+                  type="submit"
+                  className="vehiculos-btn-primary"
+                >
+                  {editingItem
+                    ? "Actualizar"
+                    : "Guardar"}
+                </button>
+
+                <button
+                  type="button"
+                  className="vehiculos-btn-cancel"
+                  onClick={closeForm}
+                >
+                  Cancelar
+                </button>
+
+              </div>
+
             </form>
+
           </div>
+
         </div>
+
       )}
+
     </div>
   );
 }

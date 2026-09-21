@@ -1,139 +1,370 @@
-.adminSoporte{
-    max-width:1200px;
-    margin:auto;
-    padding:40px 25px;
-    background:#f4f7fb;
-    min-height:100vh;
-    font-family:'Segoe UI',sans-serif;
+/* =========================================
+   CONTENEDOR PRINCIPAL
+========================================= */
+
+.adminSoporte {
+    width: 100%;
+    min-height: calc(100vh - 80px);
+
+    padding: 35px;
+
+    box-sizing: border-box;
+
+    background: #087f23;
+
+    font-family: "Segoe UI", sans-serif;
 }
 
-.adminSoporte h2{
-    font-size:34px;
-    color:#0b7a3b;
-    margin-bottom:30px;
+
+/* =========================================
+   TITULO
+========================================= */
+
+.soporte-titulo {
+    width: 100%;
+    max-width: 1200px;
+
+    margin: 0 auto 30px auto;
+
+    padding: 25px 30px;
+
+    box-sizing: border-box;
+
+    background: #fff;
+
+    border-radius: 18px;
+
+    border-left: 6px solid #087f23;
+
+    box-shadow: 0 8px 25px rgba(0, 0, 0, .15);
 }
 
-/* ================= TARJETA ================= */
+.soporte-titulo h2 {
+    margin: 0 0 7px 0;
+    text-align: center;
+    color: #087f23;
 
-.cardSoporte{
-    background:#fff;
-    border-radius:20px;
-    padding:30px;
-    margin-bottom:30px;
-    border-left:6px solid #39b54a;
-    box-shadow:0 12px 30px rgba(0,0,0,.08);
-    transition:.3s;
+    font-size: 30px;
+    font-weight: 700;
 }
 
-.cardSoporte:hover{
-    transform:translateY(-5px);
-    box-shadow:0 18px 40px rgba(0,0,0,.12);
+.soporte-titulo p {
+    margin: 0;
+    text-align: center;
+
+    color: #666;
+
+    font-size: 15px;
 }
 
-.cardSoporte h3{
-    color:#222;
-    margin-bottom:12px;
-    font-size:24px;
+
+/* =========================================
+   TARJETA DE SOPORTE
+========================================= */
+
+.cardSoporte {
+    width: 100%;
+    max-width: 1200px;
+
+    margin: 0 auto 25px auto;
+
+    padding: 30px;
+
+    box-sizing: border-box;
+
+    background: #fff;
+
+    border-radius: 18px;
+
+    border-left: 6px solid #087f23;
+
+    box-shadow: 0 8px 25px rgba(0, 0, 0, .12);
 }
 
-.cardSoporte p{
-    color:#555;
-    line-height:1.7;
-    margin-bottom:12px;
+
+/* =========================================
+   NOMBRE DEL USUARIO
+========================================= */
+
+.cardSoporte h3 {
+    margin: 0 0 20px 0;
+
+    padding-bottom: 15px;
+
+    border-bottom: 1px solid #e5e5e5;
+
+    color: #087f23;
+
+    font-size: 24px;
 }
 
-.cardSoporte strong{
-    color:#0b7a3b;
+
+/* =========================================
+   INFORMACION
+========================================= */
+
+.informacion-soporte {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(220px, 1fr));
+
+    gap: 15px;
+
+    margin-bottom: 25px;
 }
 
-/* ================= SELECT ================= */
+.informacion-soporte p {
+    margin: 0;
 
-.cardSoporte select{
-    width:240px;
-    padding:12px 15px;
-    margin:18px 0;
-    border:1px solid #d9dee7;
-    border-radius:12px;
-    background:#fafafa;
-    font-size:15px;
-    transition:.3s;
+    padding: 15px;
+
+    background: #f8fafc;
+
+    border-radius: 10px;
+
+    color: #555;
+
+    font-size: 14px;
 }
 
-.cardSoporte select:focus{
-    outline:none;
-    border-color:#39b54a;
-    box-shadow:0 0 0 4px rgba(57,181,74,.15);
-    background:#fff;
+.informacion-soporte strong {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #087f23;
 }
 
-/* ================= TEXTAREA ================= */
 
-.cardSoporte textarea{
-    width:100%;
-    min-height:160px;
-    padding:15px;
-    margin:15px 0 20px;
-    border:1px solid #d9dee7;
-    border-radius:12px;
-    font-size:15px;
-    resize:vertical;
-    transition:.3s;
-    background:#fafafa;
-    box-sizing:border-box;
+/* =========================================
+   DESCRIPCION
+========================================= */
+
+.descripcion-soporte {
+    margin-bottom: 25px;
+
+    padding: 18px;
+
+    background: #f8fafc;
+
+    border-radius: 12px;
+
+    border-left: 4px solid #087f23;
 }
 
-.cardSoporte textarea:focus{
-    outline:none;
-    border-color:#39b54a;
-    background:#fff;
-    box-shadow:0 0 0 4px rgba(57,181,74,.15);
+.descripcion-soporte h4 {
+    margin: 0 0 10px 0;
+
+    color: #087f23;
+
+    font-size: 17px;
 }
 
-/* ================= BOTÓN ================= */
+.descripcion-soporte p {
+    margin: 0;
 
-.cardSoporte button{
-    background:linear-gradient(135deg,#0b7a3b,#39b54a);
-    color:#fff;
-    border:none;
-    padding:14px 30px;
-    border-radius:12px;
-    font-size:15px;
-    font-weight:600;
-    cursor:pointer;
-    transition:.3s;
+    color: #555;
+
+    line-height: 1.6;
+
+    font-size: 14px;
 }
 
-.cardSoporte button:hover{
-    transform:translateY(-3px);
-    box-shadow:0 10px 25px rgba(57,181,74,.35);
+
+/* =========================================
+   CAMPOS
+========================================= */
+
+.campo-soporte {
+    margin-bottom: 20px;
 }
 
-.cardSoporte button:active{
-    transform:scale(.98);
+.campo-soporte label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #087f23;
+
+    font-size: 15px;
+
+    font-weight: 600;
 }
 
-/* ================= RESPONSIVE ================= */
 
-@media(max-width:768px){
+/* =========================================
+   SELECT
+========================================= */
 
-    .adminSoporte{
-        padding:20px;
+.campo-soporte select {
+    width: 100%;
+
+    padding: 12px 14px;
+
+    box-sizing: border-box;
+
+    background: #fff;
+
+    border: 1px solid #ccc;
+
+    border-radius: 9px;
+
+    font-size: 14px;
+
+    outline: none;
+}
+
+.campo-soporte select:focus {
+    border-color: #087f23;
+
+    box-shadow: 0 0 0 2px rgba(8, 127, 35, .12);
+}
+
+
+/* =========================================
+   TEXTAREA
+========================================= */
+
+.campo-soporte textarea {
+    width: 100%;
+
+    min-height: 120px;
+
+    padding: 13px;
+
+    box-sizing: border-box;
+
+    resize: vertical;
+
+    background: #fff;
+
+    border: 1px solid #ccc;
+
+    border-radius: 9px;
+
+    font-family: "Segoe UI", sans-serif;
+
+    font-size: 14px;
+
+    outline: none;
+}
+
+.campo-soporte textarea:focus {
+    border-color: #087f23;
+
+    box-shadow: 0 0 0 2px rgba(8, 127, 35, .12);
+}
+
+
+/* =========================================
+   BOTON
+========================================= */
+
+.acciones-soporte {
+    display: flex;
+
+    justify-content: flex-start;
+
+    margin-top: 10px;
+}
+
+.acciones-soporte button {
+    padding: 12px 24px;
+
+    background: #087f23;
+
+    color: #fff;
+
+    border: none;
+
+    border-radius: 9px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: .25s;
+}
+
+.acciones-soporte button:hover {
+    background: #06691d;
+
+    transform: translateY(-2px);
+
+    box-shadow: 0 6px 15px rgba(8, 127, 35, .25);
+}
+
+
+/* =========================================
+   SIN SOLICITUDES
+========================================= */
+
+.soporte-vacio {
+    width: 100%;
+    max-width: 1200px;
+
+    margin: 0 auto;
+
+    padding: 40px;
+
+    box-sizing: border-box;
+
+    background: #fff;
+
+    border-radius: 18px;
+
+    text-align: center;
+
+    box-shadow: 0 8px 25px rgba(0, 0, 0, .12);
+}
+
+.soporte-vacio p {
+    margin: 0;
+
+    color: #666;
+
+    font-size: 15px;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 768px) {
+
+    .adminSoporte {
+        padding: 20px;
     }
 
-    .adminSoporte h2{
-        font-size:28px;
+    .soporte-titulo {
+        padding: 20px;
     }
 
-    .cardSoporte{
-        padding:22px;
+    .soporte-titulo h2 {
+        font-size: 24px;
     }
 
-    .cardSoporte select{
-        width:100%;
+    .soporte-titulo p {
+        font-size: 13px;
     }
 
-    .cardSoporte button{
-        width:100%;
+    .cardSoporte {
+        padding: 20px;
     }
 
+    .cardSoporte h3 {
+        font-size: 21px;
+    }
+
+    .informacion-soporte {
+        grid-template-columns: 1fr;
+    }
+
+    .acciones-soporte button {
+        width: 100%;
+    }
 }

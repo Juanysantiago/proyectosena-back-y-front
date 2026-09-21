@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { tipoDocumentosApi } from "../../api/tipoDocumentosApi";
+import "../../styles/administrador/tipoDocumentos.css";
 
 const emptyForm = {
   sigla: "",
@@ -14,7 +15,10 @@ export default function TipoDocumentosCrud() {
   const [saving, setSaving] = useState(false);
 
   const [editingId, setEditingId] = useState(null);
-  const isEditing = useMemo(() => editingId !== null, [editingId]);
+  const isEditing = useMemo(
+    () => editingId !== null,
+    [editingId]
+  );
 
   const [searchId, setSearchId] = useState("");
   const [searchResult, setSearchResult] = useState(null);
@@ -150,43 +154,43 @@ export default function TipoDocumentosCrud() {
   };
 
   return (
-    <div className="container">
-      <h1 className="title">
-        Gestión de Tipos de Documento
-      </h1>
+    <div className="tipo-documentos-container">
+
+      {/* =========================
+          TÍTULO
+      ========================= */}
+
+      <div className="tipo-documentos-titulo">
+        <h1>Gestión de Tipos de Documento</h1>
+      </div>
+
+      {/* =========================
+          ERROR
+      ========================= */}
 
       {error && (
-        <div
-          style={{
-            background: "#ffdede",
-            color: "#b30000",
-            padding: "12px",
-            borderRadius: "8px",
-            marginBottom: "20px",
-          }}
-        >
+        <div className="tipo-documentos-error">
           {error}
         </div>
       )}
 
-      {/* FORMULARIO */}
+      {/* =========================
+          FORMULARIO
+      ========================= */}
 
-      <div className="card">
+      <div className="tipo-card">
+
         <h2>
           {isEditing
             ? "Editar Tipo Documento"
             : "Nuevo Tipo Documento"}
         </h2>
 
-        <br />
-
         <form
+          className="tipo-form"
           onSubmit={submit}
-          style={{
-            display: "grid",
-            gap: "12px",
-          }}
         >
+
           <input
             type="text"
             name="sigla"
@@ -203,12 +207,8 @@ export default function TipoDocumentosCrud() {
             onChange={onChange}
           />
 
-          <div
-            style={{
-              display: "flex",
-              gap: "10px",
-            }}
-          >
+          <div className="tipo-form-botones">
+
             <button
               className="btn-primary"
               type="submit"
@@ -230,23 +230,23 @@ export default function TipoDocumentosCrud() {
                 Cancelar
               </button>
             )}
+
           </div>
+
         </form>
+
       </div>
 
-      {/* BUSCAR */}
+      {/* =========================
+          BUSCAR
+      ========================= */}
 
-      <div className="card">
+      <div className="tipo-card">
+
         <h2>Buscar por ID</h2>
 
-        <br />
+        <div className="buscar-contenedor">
 
-        <div
-          style={{
-            display: "flex",
-            gap: "10px",
-          }}
-        >
           <input
             type="number"
             placeholder="Ingrese ID"
@@ -265,17 +265,12 @@ export default function TipoDocumentosCrud() {
               ? "Buscando..."
               : "Buscar"}
           </button>
+
         </div>
 
         {searchResult && (
-          <div
-            style={{
-              marginTop: "20px",
-              padding: "15px",
-              border: "1px solid #ddd",
-              borderRadius: "8px",
-            }}
-          >
+          <div className="resultado-busqueda">
+
             <p>
               <strong>ID:</strong>{" "}
               {searchResult.id}
@@ -291,8 +286,6 @@ export default function TipoDocumentosCrud() {
               {searchResult.nombre_documento}
             </p>
 
-            <br />
-
             <button
               className="btn-warning"
               onClick={() =>
@@ -301,20 +294,20 @@ export default function TipoDocumentosCrud() {
             >
               Editar
             </button>
+
           </div>
         )}
+
       </div>
 
-      {/* TABLA */}
+      {/* =========================
+          TABLA
+      ========================= */}
 
-      <div className="card">
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginBottom: "20px",
-          }}
-        >
+      <div className="tipo-card tabla-card">
+
+        <div className="tabla-header">
+
           <h2>Listado de Registros</h2>
 
           <button
@@ -325,69 +318,83 @@ export default function TipoDocumentosCrud() {
               ? "Cargando..."
               : "Actualizar"}
           </button>
+
         </div>
 
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Sigla</th>
-              <th>Nombre Documento</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
+        <div className="tabla-scroll">
 
-          <tbody>
-            {items.length > 0 ? (
-              items.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.id}</td>
+          <table className="tipo-tabla">
 
-                  <td>{item.sigla}</td>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Sigla</th>
+                <th>Nombre Documento</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
 
-                  <td>
-                    {item.nombre_documento}
-                  </td>
+            <tbody>
 
-                  <td>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        gap: "8px",
-                      }}
-                    >
-                      <button
-                        className="btn-warning"
-                        onClick={() =>
-                          startEdit(item)
-                        }
-                      >
-                        Editar
-                      </button>
+              {items.length > 0 ? (
+                items.map((item) => (
+                  <tr key={item.id}>
 
-                      <button
-                        className="btn-danger"
-                        onClick={() =>
-                          remove(item.id)
-                        }
-                      >
-                        Eliminar
-                      </button>
-                    </div>
+                    <td>{item.id}</td>
+
+                    <td>{item.sigla}</td>
+
+                    <td>
+                      {item.nombre_documento}
+                    </td>
+
+                    <td>
+
+                      <div className="acciones-tabla">
+
+                        <button
+                          className="btn-warning"
+                          onClick={() =>
+                            startEdit(item)
+                          }
+                        >
+                          Editar
+                        </button>
+
+                        <button
+                          className="btn-danger"
+                          onClick={() =>
+                            remove(item.id)
+                          }
+                        >
+                          Eliminar
+                        </button>
+
+                      </div>
+
+                    </td>
+
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan="4"
+                    className="sin-registros"
+                  >
+                    No hay registros
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="4">
-                  No hay registros
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              )}
+
+            </tbody>
+
+          </table>
+
+        </div>
+
       </div>
+
     </div>
   );
 }

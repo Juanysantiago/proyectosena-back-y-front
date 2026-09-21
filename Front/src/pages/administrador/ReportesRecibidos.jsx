@@ -1,97 +1,125 @@
 import { useEffect, useState } from "react";
 import { obtenerReportesRecibidos } from "../../api/soporteApi";
 
-export default function ReportesRecibidos() {
+import "../../styles/administrador/reportesRecibidos.css";
 
+export default function ReportesRecibidos() {
   const [reportes, setReportes] = useState([]);
 
   const cargar = async () => {
-
     try {
-
       const data = await obtenerReportesRecibidos();
 
-      setReportes(data);
-
+      setReportes(Array.isArray(data) ? data : []);
     } catch (error) {
-
       console.error(error);
-
+      setReportes([]);
     }
-
   };
 
   useEffect(() => {
-
     cargar();
-
   }, []);
 
   return (
+    <div className="rr-container">
 
-    <div className="content-box">
+      {/* TÍTULO */}
 
-      <h2>Reportes Recibidos</h2>
+      <div className="rr-header">
+        <h1>📋 Reportes Recibidos</h1>
 
-      {
+        <p>
+          Consulta los reportes enviados por los aprendices.
+        </p>
+      </div>
 
-        reportes.length === 0 ?
+      {/* CONTENIDO */}
 
-          (
+      <div className="rr-content">
 
-            <p>No existen reportes recibidos.</p>
+        {reportes.length === 0 ? (
+          <div className="rr-empty">
+            <span>📭</span>
 
-          )
+            <h2>No existen reportes recibidos</h2>
 
-          :
+            <p>
+              Actualmente no hay reportes disponibles.
+            </p>
+          </div>
+        ) : (
+          <div className="rr-list">
 
-          reportes.map((item) => (
+            {reportes.map((item) => (
+              <div
+                key={item.id}
+                className="rr-card"
+              >
 
-            <div
-              key={item.id}
-              className="ticket"
-            >
+                {/* CABECERA */}
 
-              <h4>{item.asunto}</h4>
+                <div className="rr-card-header">
+                  <h2>
+                    {item.asunto || "Sin asunto"}
+                  </h2>
 
-              <p>
+                  <span className="rr-id">
+                    Reporte #{item.id}
+                  </span>
+                </div>
 
-                <strong>Aprendiz:</strong>{" "}
+                {/* INFORMACIÓN DEL APRENDIZ */}
 
-                {item.user.nombres} {item.user.apellidos}
+                <div className="rr-info">
 
-              </p>
+                  <div className="rr-info-item">
+                    <strong>👤 Aprendiz</strong>
 
-              <p>
+                    <span>
+                      {item.user?.nombres || "-"}{" "}
+                      {item.user?.apellidos || ""}
+                    </span>
+                  </div>
 
-                <strong>Correo:</strong>{" "}
+                  <div className="rr-info-item">
+                    <strong>📧 Correo</strong>
 
-                {item.user.email}
+                    <span>
+                      {item.user?.email || "-"}
+                    </span>
+                  </div>
 
-              </p>
+                </div>
 
-              <p>
+                {/* SOLICITUD */}
 
-                <strong>Solicitud:</strong>
+                <div className="rr-section">
+                  <h3>📝 Solicitud</h3>
 
-              </p>
+                  <div className="rr-description">
+                    {item.descripcion || "Sin descripción"}
+                  </div>
+                </div>
 
-              <p>{item.descripcion}</p>
+                {/* RESPUESTA */}
 
-              <hr />
+                <div className="rr-section rr-response">
+                  <h3>💬 Respuesta enviada</h3>
 
-              <strong>Respuesta enviada</strong>
+                  <div className="rr-description">
+                    {item.respuesta || "Sin respuesta registrada."}
+                  </div>
+                </div>
 
-              <p>{item.respuesta}</p>
+              </div>
+            ))}
 
-            </div>
+          </div>
+        )}
 
-          ))
-
-      }
+      </div>
 
     </div>
-
   );
-
 }

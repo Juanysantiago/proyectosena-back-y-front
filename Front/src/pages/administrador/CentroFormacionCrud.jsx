@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { centroFormacionApi } from "../../api/centroFormacionApi";
+import "../../styles/administrador/centroFormacion.css";
 
 export default function ConfigGrCrud() {
   const [items, setItems] = useState([]);
@@ -14,7 +15,7 @@ export default function ConfigGrCrud() {
     nombre: "",
     ciudad: "",
     direccion: "",
-    estado: "activo"
+    estado: "activo",
   });
 
   const loadItems = async () => {
@@ -24,12 +25,12 @@ export default function ConfigGrCrud() {
     try {
       const res = await centroFormacionApi.list();
 
-      console.log("Centros cargados:", res.data);
+      console.log("Centros de Formación cargados:", res.data);
 
       setItems(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error(err);
-      setError("Error cargando centros");
+      setError("Error cargando centros de formación");
       setItems([]);
     } finally {
       setLoading(false);
@@ -43,7 +44,7 @@ export default function ConfigGrCrud() {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -54,7 +55,7 @@ export default function ConfigGrCrud() {
       nombre: "",
       ciudad: "",
       direccion: "",
-      estado: "activo"
+      estado: "activo",
     });
 
     setShowForm(true);
@@ -67,7 +68,7 @@ export default function ConfigGrCrud() {
       nombre: item.nombre || "",
       ciudad: item.ciudad || "",
       direccion: item.direccion || "",
-      estado: item.estado || "activo"
+      estado: item.estado || "activo",
     });
 
     setShowForm(true);
@@ -86,11 +87,11 @@ export default function ConfigGrCrud() {
           formData
         );
 
-        alert("Centro actualizado correctamente");
+        alert("Centro de Formación actualizado correctamente");
       } else {
         await centroFormacionApi.create(formData);
 
-        alert("Centro creado correctamente");
+        alert("Centro de Formación creado correctamente");
       }
 
       setShowForm(false);
@@ -102,7 +103,7 @@ export default function ConfigGrCrud() {
 
       setError(
         err?.response?.data?.message ||
-          "Error guardando centro"
+          "Error guardando centro de formación"
       );
     } finally {
       setLoading(false);
@@ -110,7 +111,9 @@ export default function ConfigGrCrud() {
   };
 
   const handleDelete = async (item) => {
-    if (!window.confirm("¿Eliminar centro?")) return;
+    if (!window.confirm("¿Eliminar este Centro de Formación?")) {
+      return;
+    }
 
     try {
       await centroFormacionApi.remove(item.id);
@@ -118,216 +121,277 @@ export default function ConfigGrCrud() {
       await loadItems();
     } catch (err) {
       console.error(err);
-      setError("Error eliminando centro");
+      setError("Error eliminando centro de formación");
     }
   };
 
   return (
-    <div className="container">
-      <div className="card">
-        <h1 className="title">
-          🏫 Centros de Formación
-        </h1>
+    <div className="cf-container">
 
-        {error && (
-          <div
-            style={{
-              background: "#ffe5e5",
-              color: "#c62828",
-              padding: "10px",
-              borderRadius: "8px",
-              marginBottom: "15px"
-            }}
-          >
-            {error}
-          </div>
-        )}
+      {/* TÍTULO */}
 
+      <div className="cf-header">
+        <h1>🏫 Centros de Formación</h1>
+        <p>
+          Gestiona los Centros de Formación registrados en SENA Parking.
+        </p>
+      </div>
+
+      {/* ERROR */}
+
+      {error && (
+        <div className="cf-error">
+          {error}
+        </div>
+      )}
+
+      {/* BOTÓN NUEVO */}
+
+      <div className="cf-actions">
         <button
-          className="btn-primary"
+          className="cf-btn-primary"
           onClick={openCreateForm}
-          style={{ marginBottom: "20px" }}
         >
-          ➕ Nuevo Centro
+          ➕ Nuevo Centro de Formación
         </button>
+      </div>
 
-        {loading && <p>Cargando...</p>}
+      {/* TABLA */}
 
-        <div className="card">
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Ciudad</th>
-                <th>Dirección</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
+      <div className="cf-card">
 
-            <tbody>
-              {items.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.id}</td>
-                  <td>{item.nombre}</td>
-                  <td>{item.ciudad}</td>
-                  <td>{item.direccion}</td>
-                  <td>{item.estado}</td>
+        <div className="cf-card-header">
+          <h2>Listado de Centros de Formación</h2>
 
-                  <td>
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: "8px",
-                        justifyContent: "center"
-                      }}
-                    >
-                      <button
-                        className="btn-warning"
-                        onClick={() =>
-                          openEditForm(item)
-                        }
-                      >
-                        ✏️ Editar
-                      </button>
+          <button
+            className="cf-btn-refresh"
+            onClick={loadItems}
+            disabled={loading}
+          >
+            {loading ? "Cargando..." : "🔄 Actualizar"}
+          </button>
+        </div>
 
-                      <button
-                        className="btn-danger"
-                        onClick={() =>
-                          handleDelete(item)
-                        }
-                      >
-                        🗑️ Eliminar
-                      </button>
-                    </div>
-                  </td>
+        {loading ? (
+          <p className="cf-loading">
+            ⏳ Cargando Centros de Formación...
+          </p>
+        ) : (
+          <div className="cf-table-container">
+            <table className="cf-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Ciudad</th>
+                  <th>Dirección</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
                 </tr>
-              ))}
+              </thead>
 
-              {items.length === 0 &&
-                !loading && (
+              <tbody>
+                {items.length > 0 ? (
+                  items.map((item) => (
+                    <tr key={item.id}>
+
+                      <td>{item.id}</td>
+
+                      <td className="cf-nombre">
+                        {item.nombre}
+                      </td>
+
+                      <td>
+                        {item.ciudad}
+                      </td>
+
+                      <td>
+                        {item.direccion}
+                      </td>
+
+                      <td>
+                        <span
+                          className={
+                            item.estado === "activo"
+                              ? "cf-estado activo"
+                              : "cf-estado inactivo"
+                          }
+                        >
+                          {item.estado === "activo"
+                            ? "🟢 Activo"
+                            : "🔴 Inactivo"}
+                        </span>
+                      </td>
+
+                      <td>
+                        <div className="cf-buttons">
+
+                          <button
+                            className="cf-btn-edit"
+                            onClick={() =>
+                              openEditForm(item)
+                            }
+                          >
+                            ✏️ Editar
+                          </button>
+
+                          <button
+                            className="cf-btn-delete"
+                            onClick={() =>
+                              handleDelete(item)
+                            }
+                          >
+                            🗑️ Eliminar
+                          </button>
+
+                        </div>
+                      </td>
+
+                    </tr>
+                  ))
+                ) : (
                   <tr>
                     <td
                       colSpan="6"
-                      style={{
-                        textAlign: "center"
-                      }}
+                      className="cf-empty"
                     >
-                      No hay centros registrados
+                      No hay Centros de Formación registrados.
                     </td>
                   </tr>
                 )}
-            </tbody>
-          </table>
-        </div>
-
-        {showForm && (
-          <div className="modal-overlay">
-            <div className="modal-content">
-              <h2
-                style={{
-                  marginBottom: "20px",
-                  color: "#16bb00",
-                  textAlign: "center"
-                }}
-              >
-                {editingItem
-                  ? "✏️ Editar Centro"
-                  : "➕ Crear Centro"}
-              </h2>
-
-              <form
-                onSubmit={handleSubmit}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "15px"
-                }}
-              >
-                <div>
-                  <label>Nombre</label>
-
-                  <input
-                    name="nombre"
-                    value={formData.nombre}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label>Ciudad</label>
-
-                  <input
-                    name="ciudad"
-                    value={formData.ciudad}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label>Dirección</label>
-
-                  <input
-                    name="direccion"
-                    value={formData.direccion}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label>Estado</label>
-
-                  <select
-                    name="estado"
-                    value={formData.estado}
-                    onChange={handleChange}
-                  >
-                    <option value="activo">
-                      Activo
-                    </option>
-
-                    <option value="inactivo">
-                      Inactivo
-                    </option>
-                  </select>
-                </div>
-
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    gap: "10px",
-                    marginTop: "15px"
-                  }}
-                >
-                  <button
-                    className="btn-primary"
-                    type="submit"
-                  >
-                    {editingItem
-                      ? "💾 Actualizar"
-                      : "✅ Crear"}
-                  </button>
-
-                  <button
-                    className="btn-secondary"
-                    type="button"
-                    onClick={() =>
-                      setShowForm(false)
-                    }
-                  >
-                    ❌ Cancelar
-                  </button>
-                </div>
-              </form>
-            </div>
+              </tbody>
+            </table>
           </div>
         )}
+
       </div>
+
+      {/* MODAL */}
+
+      {showForm && (
+        <div className="cf-modal-overlay">
+
+          <div className="cf-modal">
+
+            <div className="cf-modal-header">
+              <h2>
+                {editingItem
+                  ? "✏️ Editar Centro de Formación"
+                  : "➕ Crear Centro de Formación"}
+              </h2>
+
+              <button
+                className="cf-close"
+                type="button"
+                onClick={() => setShowForm(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <form
+              onSubmit={handleSubmit}
+              className="cf-form"
+            >
+
+              <div className="cf-form-group">
+                <label>
+                  Nombre del Centro de Formación
+                </label>
+
+                <input
+                  type="text"
+                  name="nombre"
+                  value={formData.nombre}
+                  onChange={handleChange}
+                  placeholder="Nombre del Centro de Formación"
+                  required
+                />
+              </div>
+
+              <div className="cf-form-group">
+                <label>
+                  Ciudad
+                </label>
+
+                <input
+                  type="text"
+                  name="ciudad"
+                  value={formData.ciudad}
+                  onChange={handleChange}
+                  placeholder="Ciudad"
+                  required
+                />
+              </div>
+
+              <div className="cf-form-group">
+                <label>
+                  Dirección
+                </label>
+
+                <input
+                  type="text"
+                  name="direccion"
+                  value={formData.direccion}
+                  onChange={handleChange}
+                  placeholder="Dirección"
+                  required
+                />
+              </div>
+
+              <div className="cf-form-group">
+                <label>
+                  Estado
+                </label>
+
+                <select
+                  name="estado"
+                  value={formData.estado}
+                  onChange={handleChange}
+                >
+                  <option value="activo">
+                    Activo
+                  </option>
+
+                  <option value="inactivo">
+                    Inactivo
+                  </option>
+                </select>
+              </div>
+
+              <div className="cf-modal-actions">
+
+                <button
+                  className="cf-btn-primary"
+                  type="submit"
+                  disabled={loading}
+                >
+                  {loading
+                    ? "Guardando..."
+                    : editingItem
+                    ? "💾 Actualizar"
+                    : "✅ Crear"}
+                </button>
+
+                <button
+                  className="cf-btn-cancel"
+                  type="button"
+                  onClick={() =>
+                    setShowForm(false)
+                  }
+                >
+                  ❌ Cancelar
+                </button>
+
+              </div>
+
+            </form>
+
+          </div>
+
+        </div>
+      )}
+
     </div>
   );
 }

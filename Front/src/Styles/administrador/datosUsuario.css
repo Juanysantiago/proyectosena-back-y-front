@@ -1,0 +1,146 @@
+/* =========================================================
+   DATOS DE USUARIOS
+========================================================= */
+
+.du-container {
+    width: 100%;
+    min-height: 100vh;
+    box-sizing: border-box;
+
+    padding: 35px;
+
+    background: #087f23;
+
+    font-family: "Segoe UI", sans-serif;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.du-header {
+    width: 100%;
+    box-sizing: border-box;
+
+    background: #fff;
+
+    padding: 30px;
+
+    margin-bottom: 25px;
+
+    border-radius: 18px;
+
+    text-align: center;
+
+    box-shadow: 0 10px 25px rgba(0, 0, 0, .15);
+}
+
+.du-header h1 {
+    margin: 0 0 10px;
+
+    color: #087f23;
+
+    font-size: 32px;
+    font-weight: 700;
+}
+
+.du-header p {
+    margin: 0;
+
+    color: #666;
+
+    font-size: 15px;
+}
+
+
+/* =========================================================
+   TARJETA
+========================================================= */
+
+.du-card {
+    width: 100%;
+    box-sizing: border-box;
+
+    background: #fff;
+
+    padding: 30px;
+
+    border-radius: 18px;
+
+    box-shadow: 0 10px 25px rgba(0, 0, 0, .15);
+}
+
+.du-card h2 {
+    margin: 0 0 25px;
+
+    color: #087f23;
+
+    font-size: 24px;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   SIN DATOS
+========================================================= */
+
+.du-empty {
+    padding: 45px 20px;
+
+    text-align: center;
+
+    background: #f8fafc;
+
+    border-radius: 14px;
+
+    color: #777;
+}
+
+.du-empty span {
+    display: block;
+
+    font-size: 50px;
+
+    margin-bottom: 15px;
+}
+
+.du-empty p {
+    margin: 0;
+
+    font-size: 16px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .du-container {
+        padding: 20px 15px;
+    }
+
+    .du-header {
+        padding: 25px 15px;
+    }
+
+    .du-header h1 {
+        font-size: 26px;
+    }
+
+    .du-header p {
+        font-size: 14px;
+    }
+
+    .du-card {
+        padding: 20px 15px;
+    }
+
+    .du-card h2 {
+        font-size: 21px;
+    }
+
+}

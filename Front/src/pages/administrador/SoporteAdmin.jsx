@@ -42,100 +42,177 @@ export default function SoporteAdmin() {
     }
   };
 
+  const cambiarEstado = (id, estado) => {
+    const copia = [...soportes];
+
+    const index = copia.findIndex(
+      (x) => x.id === id
+    );
+
+    if (index !== -1) {
+      copia[index].estado = estado;
+      setSoportes(copia);
+    }
+  };
+
+  const cambiarRespuesta = (id, respuesta) => {
+    const copia = [...soportes];
+
+    const index = copia.findIndex(
+      (x) => x.id === id
+    );
+
+    if (index !== -1) {
+      copia[index].respuesta = respuesta;
+      setSoportes(copia);
+    }
+  };
+
   return (
     <div className="adminSoporte">
-      <h2>Solicitudes de Soporte</h2>
+
+      {/* ==============================
+          TITULO
+      ============================== */}
+
+      <div className="soporte-titulo">
+        <h2>Solicitudes de Soporte</h2>
+
+        <p>
+          Gestiona y responde las solicitudes de los aprendices
+        </p>
+      </div>
+
+      {/* ==============================
+          SOLICITUDES
+      ============================== */}
 
       {soportes.length === 0 ? (
-        <p>No hay solicitudes de soporte.</p>
+        <div className="soporte-vacio">
+          <p>
+            No hay solicitudes de soporte.
+          </p>
+        </div>
       ) : (
         soportes.map((ticket) => (
           <div
             className="cardSoporte"
             key={ticket.id}
           >
+
+            {/* ==============================
+                USUARIO
+            ============================== */}
+
             <h3>
-              {ticket.user?.nombres} {ticket.user?.apellidos}
+              {ticket.user?.nombres}{" "}
+              {ticket.user?.apellidos}
             </h3>
 
-            <p>
-              <strong>Email:</strong>{" "}
-              {ticket.user?.email}
-            </p>
+            <div className="informacion-soporte">
 
-            <p>
-              <strong>Ficha:</strong>{" "}
-              {ticket.user?.ficha}
-            </p>
+              <p>
+                <strong>Email:</strong>{" "}
+                {ticket.user?.email || "-"}
+              </p>
 
-            <p>
-              <strong>Asunto:</strong>{" "}
-              {ticket.asunto}
-            </p>
+              <p>
+                <strong>Ficha:</strong>{" "}
+                {ticket.user?.ficha || "-"}
+              </p>
 
-            <p>
-              <strong>Descripción:</strong>
-            </p>
+              <p>
+                <strong>Asunto:</strong>{" "}
+                {ticket.asunto || "-"}
+              </p>
 
-            <p>{ticket.descripcion}</p>
+            </div>
 
-            <label>Estado</label>
+            {/* ==============================
+                DESCRIPCION
+            ============================== */}
 
-            <select
-              value={ticket.estado}
-              onChange={(e) => {
-                const copia = [...soportes];
+            <div className="descripcion-soporte">
 
-                const index = copia.findIndex(
-                  (x) => x.id === ticket.id
-                );
+              <h4>Descripción</h4>
 
-                copia[index].estado =
-                  e.target.value;
+              <p>
+                {ticket.descripcion || "Sin descripción"}
+              </p>
 
-                setSoportes(copia);
-              }}
-            >
-              <option value="Pendiente">
-                Pendiente
-              </option>
+            </div>
 
-              <option value="En proceso">
-                En proceso
-              </option>
+            {/* ==============================
+                ESTADO
+            ============================== */}
 
-              <option value="Resuelto">
-                Resuelto
-              </option>
-            </select>
+            <div className="campo-soporte">
 
-            <label>Respuesta</label>
+              <label>Estado</label>
 
-            <textarea
-              placeholder="Escriba una respuesta..."
-              value={ticket.respuesta || ""}
-              onChange={(e) => {
-                const copia = [...soportes];
+              <select
+                value={ticket.estado}
+                onChange={(e) =>
+                  cambiarEstado(
+                    ticket.id,
+                    e.target.value
+                  )
+                }
+              >
+                <option value="Pendiente">
+                  Pendiente
+                </option>
 
-                const index = copia.findIndex(
-                  (x) => x.id === ticket.id
-                );
+                <option value="En proceso">
+                  En proceso
+                </option>
 
-                copia[index].respuesta =
-                  e.target.value;
+                <option value="Resuelto">
+                  Resuelto
+                </option>
+              </select>
 
-                setSoportes(copia);
-              }}
-            />
+            </div>
 
-            <button
-              onClick={() => guardar(ticket)}
-            >
-              Guardar respuesta
-            </button>
+            {/* ==============================
+                RESPUESTA
+            ============================== */}
+
+            <div className="campo-soporte">
+
+              <label>Respuesta</label>
+
+              <textarea
+                placeholder="Escriba una respuesta..."
+                value={ticket.respuesta || ""}
+                onChange={(e) =>
+                  cambiarRespuesta(
+                    ticket.id,
+                    e.target.value
+                  )
+                }
+              />
+
+            </div>
+
+            {/* ==============================
+                BOTON
+            ============================== */}
+
+            <div className="acciones-soporte">
+
+              <button
+                onClick={() => guardar(ticket)}
+              >
+                Guardar respuesta
+              </button>
+
+            </div>
+
           </div>
         ))
       )}
+
     </div>
   );
 }
