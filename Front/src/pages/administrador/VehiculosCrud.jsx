@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { vehiculosApi } from "../../api/vehiculosApi";
 import "../../styles/administrador/vehiculos.css";
 
@@ -15,13 +15,32 @@ const initialForm = {
   foto_secundaria: "",
 };
 
+const VEHICULOS_POR_PAGINA = 10;
+
 export default function VehiculosCrud() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
   const [showForm, setShowForm] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [formData, setFormData] = useState(initialForm);
+
+  // =========================================================
+  // FILTRO
+  // =========================================================
+
+  const [filtro, setFiltro] = useState("");
+
+  // =========================================================
+  // PAGINACIÓN
+  // =========================================================
+
+  const [paginaActual, setPaginaActual] = useState(1);
+
+  // =========================================================
+  // CARGAR VEHÍCULOS
+  // =========================================================
 
   const loadVehiculos = async () => {
     try {
@@ -30,12 +49,22 @@ export default function VehiculosCrud() {
 
       const res = await vehiculosApi.list();
 
-      console.log(res.data?.data);
+      console.log("🚗 VEHÍCULOS:", res.data?.data);
 
-      setItems(res.data?.data || []);
+      setItems(
+        Array.isArray(res.data?.data)
+          ? res.data.data
+          : []
+      );
+
+      setPaginaActual(1);
     } catch (err) {
       console.error(err);
-      setError("Error cargando vehículos");
+
+      setError(
+        err?.response?.data?.message ||
+          "Error cargando vehículos"
+      );
     } finally {
       setLoading(false);
     }
@@ -44,6 +73,94 @@ export default function VehiculosCrud() {
   useEffect(() => {
     loadVehiculos();
   }, []);
+
+  // =========================================================
+  // CAMBIAR FILTRO
+  // =========================================================
+
+  const handleFiltro = (e) => {
+    setFiltro(e.target.value);
+    setPaginaActual(1);
+  };
+
+  // =========================================================
+  // FILTRAR VEHÍCULOS
+  // DOCUMENTO / PLACA / SERIAL
+  // =========================================================
+
+  const vehiculosFiltrados = useMemo(() => {
+    const texto = filtro.trim().toLowerCase();
+
+    if (!texto) {
+      return items;
+    }
+
+    return items.filter((item) => {
+      const documento = String(
+        item.User?.documento || ""
+      ).toLowerCase();
+
+      const placa = String(
+        item.placa || ""
+      ).toLowerCase();
+
+      const serial = String(
+        item.serial || ""
+      ).toLowerCase();
+
+      return (
+        documento.includes(texto) ||
+        placa.includes(texto) ||
+        serial.includes(texto)
+      );
+    });
+  }, [items, filtro]);
+
+  // =========================================================
+  // PAGINACIÓN
+  // =========================================================
+
+  const totalPaginas = Math.ceil(
+    vehiculosFiltrados.length /
+      VEHICULOS_POR_PAGINA
+  );
+
+  const indiceInicial =
+    (paginaActual - 1) *
+    VEHICULOS_POR_PAGINA;
+
+  const vehiculosPagina =
+    vehiculosFiltrados.slice(
+      indiceInicial,
+      indiceInicial + VEHICULOS_POR_PAGINA
+    );
+
+  // Si después de eliminar o filtrar la página queda vacía
+  useEffect(() => {
+    if (
+      totalPaginas > 0 &&
+      paginaActual > totalPaginas
+    ) {
+      setPaginaActual(totalPaginas);
+    }
+  }, [totalPaginas, paginaActual]);
+
+  // =========================================================
+  // CAMBIAR PÁGINA
+  // =========================================================
+
+  const cambiarPagina = (pagina) => {
+    if (
+      pagina >= 1 &&
+      pagina <= totalPaginas
+    ) {
+      setPaginaActual(pagina);
+    }
+  };
+
+  // =========================================================
+  // FORMULARIO
+  // =========================================================
 
   const handleChange = (e) => {
     setFormData({
@@ -64,16 +181,21 @@ export default function VehiculosCrud() {
 
     setFormData({
       tipo: item.tipo || "bicicleta",
+
       id_centro_de_formacion:
         item.id_centro_de_formacion || "",
+
       marca: item.marca || "",
       color: item.color || "",
       serial: item.serial || "",
       placa: item.placa || "",
       cilindraje: item.cilindraje || "",
       modelo: item.modelo || "",
-      foto_principal: item.foto_principal || "",
-      foto_secundaria: item.foto_secundaria || "",
+      foto_principal:
+        item.foto_principal || "",
+
+      foto_secundaria:
+        item.foto_secundaria || "",
     });
 
     setError("");
@@ -86,6 +208,10 @@ export default function VehiculosCrud() {
     setFormData({ ...initialForm });
   };
 
+  // =========================================================
+  // GUARDAR
+  // =========================================================
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -93,25 +219,33 @@ export default function VehiculosCrud() {
       setError("");
 
       if (!formData.id_centro_de_formacion) {
-        return setError("Centro de formación obligatorio");
+        return setError(
+          "Centro de formación obligatorio"
+        );
       }
 
       if (!formData.marca) {
-        return setError("Marca obligatoria");
+        return setError(
+          "Marca obligatoria"
+        );
       }
 
       if (
         formData.tipo === "bicicleta" &&
         !formData.serial
       ) {
-        return setError("Serial obligatorio");
+        return setError(
+          "Serial obligatorio"
+        );
       }
 
       if (
         formData.tipo === "moto" &&
         !formData.placa
       ) {
-        return setError("Placa obligatoria");
+        return setError(
+          "Placa obligatoria"
+        );
       }
 
       if (editingItem) {
@@ -136,22 +270,40 @@ export default function VehiculosCrud() {
     }
   };
 
+  // =========================================================
+  // ELIMINAR
+  // =========================================================
+
   const handleDelete = async (item) => {
-    if (!window.confirm("¿Eliminar vehículo?")) {
+    if (
+      !window.confirm(
+        "¿Eliminar vehículo?"
+      )
+    ) {
       return;
     }
 
     try {
       setError("");
 
-      await vehiculosApi.remove(item.id);
+      await vehiculosApi.remove(
+        item.id
+      );
 
       await loadVehiculos();
     } catch (err) {
       console.error(err);
-      setError("Error eliminando vehículo");
+
+      setError(
+        err?.response?.data?.message ||
+          "Error eliminando vehículo"
+      );
     }
   };
+
+  // =========================================================
+  // RENDER
+  // =========================================================
 
   return (
     <div className="vehiculos-container">
@@ -159,12 +311,15 @@ export default function VehiculosCrud() {
       {/* ================= HEADER ================= */}
 
       <div className="vehiculos-header">
+
         <div>
-          <h1>Gestión de Vehículos</h1>
+          <h1>
+            Gestión de Vehículos
+          </h1>
 
           <p>
-            Administra los vehículos registrados en
-            SENA Parking.
+            Administra los vehículos registrados
+            en SENA Parking.
           </p>
         </div>
 
@@ -174,6 +329,7 @@ export default function VehiculosCrud() {
         >
           + Nuevo Vehículo
         </button>
+
       </div>
 
       {/* ================= ERROR ================= */}
@@ -189,30 +345,89 @@ export default function VehiculosCrud() {
       <div className="vehiculos-card">
 
         <div className="vehiculos-card-header">
-          <h2>Vehículos registrados</h2>
+
+          <div>
+            <h2>
+              Vehículos registrados
+            </h2>
+
+            <p className="vehiculos-resultados">
+              Mostrando{" "}
+              {vehiculosFiltrados.length}{" "}
+              vehículo
+              {vehiculosFiltrados.length !== 1
+                ? "s"
+                : ""}
+            </p>
+          </div>
 
           <button
             className="vehiculos-btn-refresh"
             onClick={loadVehiculos}
             disabled={loading}
           >
-            {loading ? "Cargando..." : "Actualizar"}
+            {loading
+              ? "Cargando..."
+              : "Actualizar"}
           </button>
+
         </div>
+
+        {/* ================= FILTRO ================= */}
+
+        <div className="vehiculos-filtros">
+
+          <div className="vehiculos-filtro">
+
+            <label htmlFor="buscarVehiculo">
+              Buscar vehículo
+            </label>
+
+            <input
+              id="buscarVehiculo"
+              type="text"
+              value={filtro}
+              onChange={handleFiltro}
+              placeholder="Buscar por documento, placa o serial..."
+            />
+
+          </div>
+
+          {filtro && (
+            <button
+              type="button"
+              className="vehiculos-btn-limpiar"
+              onClick={() => {
+                setFiltro("");
+                setPaginaActual(1);
+              }}
+            >
+              Limpiar
+            </button>
+          )}
+
+        </div>
+
+        {/* ================= TABLA ================= */}
 
         <div className="vehiculos-table-wrapper">
 
           {loading ? (
+
             <div className="vehiculos-loading">
               ⏳ Cargando vehículos...
             </div>
+
           ) : (
+
             <table className="vehiculos-table">
 
               <thead>
+
                 <tr>
                   <th>ID</th>
                   <th>Propietario</th>
+                  <th>Documento</th>
                   <th>Tipo</th>
                   <th>Marca</th>
                   <th>Color</th>
@@ -222,92 +437,120 @@ export default function VehiculosCrud() {
                   <th>Ficha</th>
                   <th>Acciones</th>
                 </tr>
+
               </thead>
 
               <tbody>
 
-                {items.length > 0 ? (
+                {vehiculosPagina.length > 0 ? (
 
-                  items.map((item) => (
+                  vehiculosPagina.map(
+                    (item) => (
 
-                    <tr key={item.id}>
+                      <tr key={item.id}>
 
-                      <td>{item.id}</td>
+                        <td>
+                          {item.id}
+                        </td>
 
-                      <td>
-                        {item.User
-                          ? `${item.User.nombres} ${item.User.apellidos}`
-                          : "-"}
-                      </td>
+                        <td>
+                          {item.User
+                            ? `${item.User.nombres || ""} ${
+                                item.User.apellidos || ""
+                              }`
+                            : "-"}
+                        </td>
 
-                      <td>
-                        <span className="vehiculos-tipo">
-                          {item.tipo}
-                        </span>
-                      </td>
+                        {/* DOCUMENTO */}
 
-                      <td>{item.marca}</td>
+                        <td>
+                          <span className="vehiculos-documento">
+                            {item.User?.documento ||
+                              "-"}
+                          </span>
+                        </td>
 
-                      <td>
-                        {item.color || "-"}
-                      </td>
+                        <td>
+                          <span className="vehiculos-tipo">
+                            {item.tipo}
+                          </span>
+                        </td>
 
-                      <td>
-                        {item.placa || "-"}
-                      </td>
+                        <td>
+                          {item.marca || "-"}
+                        </td>
 
-                      <td>
-                        {item.serial || "-"}
-                      </td>
+                        <td>
+                          {item.color || "-"}
+                        </td>
 
-                      <td>
-                        {item.User?.centroFormacion?.nombre ||
-                          "-"}
-                      </td>
+                        <td>
+                          {item.placa || "-"}
+                        </td>
 
-                      <td>
-                        {item.User?.ficha || "-"}
-                      </td>
+                        <td>
+                          {item.serial || "-"}
+                        </td>
 
-                      <td>
+                        <td>
+                          {item.User
+                            ?.centroFormacion
+                            ?.nombre || "-"}
+                        </td>
 
-                        <div className="vehiculos-actions">
+                        <td>
+                          {item.User?.ficha ||
+                            "-"}
+                        </td>
 
-                          <button
-                            className="vehiculos-btn-edit"
-                            onClick={() =>
-                              openEditForm(item)
-                            }
-                          >
-                            Editar
-                          </button>
+                        <td>
 
-                          <button
-                            className="vehiculos-btn-delete"
-                            onClick={() =>
-                              handleDelete(item)
-                            }
-                          >
-                            Eliminar
-                          </button>
+                          <div className="vehiculos-actions">
 
-                        </div>
+                            <button
+                              className="vehiculos-btn-edit"
+                              onClick={() =>
+                                openEditForm(
+                                  item
+                                )
+                              }
+                            >
+                              Editar
+                            </button>
 
-                      </td>
+                            <button
+                              className="vehiculos-btn-delete"
+                              onClick={() =>
+                                handleDelete(
+                                  item
+                                )
+                              }
+                            >
+                              Eliminar
+                            </button>
 
-                    </tr>
+                          </div>
 
-                  ))
+                        </td>
+
+                      </tr>
+
+                    )
+                  )
 
                 ) : (
 
                   <tr>
+
                     <td
-                      colSpan="10"
+                      colSpan="11"
                       className="vehiculos-empty"
                     >
-                      No hay vehículos registrados
+                      {filtro
+                        ? "No se encontraron vehículos con ese documento, placa o serial."
+                        : "No hay vehículos registrados"}
                     </td>
+
                   </tr>
 
                 )}
@@ -315,9 +558,85 @@ export default function VehiculosCrud() {
               </tbody>
 
             </table>
+
           )}
 
         </div>
+
+        {/* ================= PAGINACIÓN ================= */}
+
+        {!loading &&
+          totalPaginas > 1 && (
+
+            <div className="vehiculos-paginacion">
+
+              <button
+                type="button"
+                disabled={
+                  paginaActual === 1
+                }
+                onClick={() =>
+                  cambiarPagina(
+                    paginaActual - 1
+                  )
+                }
+              >
+                ← Anterior
+              </button>
+
+              <div className="vehiculos-paginas">
+
+                {Array.from(
+                  {
+                    length: totalPaginas,
+                  },
+                  (_, index) => {
+                    const pagina =
+                      index + 1;
+
+                    return (
+                      <button
+                        type="button"
+                        key={pagina}
+                        className={
+                          paginaActual ===
+                          pagina
+                            ? "pagina-activa"
+                            : ""
+                        }
+                        onClick={() =>
+                          cambiarPagina(
+                            pagina
+                          )
+                        }
+                      >
+                        {pagina}
+                      </button>
+                    );
+                  }
+                )}
+
+              </div>
+
+              <button
+                type="button"
+                disabled={
+                  paginaActual ===
+                  totalPaginas
+                }
+                onClick={() =>
+                  cambiarPagina(
+                    paginaActual + 1
+                  )
+                }
+              >
+                Siguiente →
+              </button>
+
+            </div>
+
+          )}
+
       </div>
 
       {/* ================= MODAL ================= */}
@@ -394,7 +713,9 @@ export default function VehiculosCrud() {
 
                 <div className="vehiculos-field">
 
-                  <label>Marca</label>
+                  <label>
+                    Marca
+                  </label>
 
                   <input
                     name="marca"
@@ -407,7 +728,9 @@ export default function VehiculosCrud() {
 
                 <div className="vehiculos-field">
 
-                  <label>Color</label>
+                  <label>
+                    Color
+                  </label>
 
                   <input
                     name="color"
@@ -418,11 +741,14 @@ export default function VehiculosCrud() {
 
                 </div>
 
-                {formData.tipo === "bicicleta" && (
+                {formData.tipo ===
+                  "bicicleta" && (
 
                   <div className="vehiculos-field">
 
-                    <label>Serial</label>
+                    <label>
+                      Serial
+                    </label>
 
                     <input
                       name="serial"
@@ -435,11 +761,16 @@ export default function VehiculosCrud() {
 
                 )}
 
-                {formData.tipo === "moto" && (
+                {formData.tipo ===
+                  "moto" && (
+
                   <>
+
                     <div className="vehiculos-field">
 
-                      <label>Placa</label>
+                      <label>
+                        Placa
+                      </label>
 
                       <input
                         name="placa"
@@ -452,12 +783,16 @@ export default function VehiculosCrud() {
 
                     <div className="vehiculos-field">
 
-                      <label>Cilindraje</label>
+                      <label>
+                        Cilindraje
+                      </label>
 
                       <input
                         name="cilindraje"
                         placeholder="Cilindraje"
-                        value={formData.cilindraje}
+                        value={
+                          formData.cilindraje
+                        }
                         onChange={handleChange}
                       />
 
@@ -465,17 +800,23 @@ export default function VehiculosCrud() {
 
                     <div className="vehiculos-field">
 
-                      <label>Modelo</label>
+                      <label>
+                        Modelo
+                      </label>
 
                       <input
                         name="modelo"
                         placeholder="Modelo"
-                        value={formData.modelo}
+                        value={
+                          formData.modelo
+                        }
                         onChange={handleChange}
                       />
 
                     </div>
+
                   </>
+
                 )}
 
                 <div className="vehiculos-field">
@@ -487,7 +828,9 @@ export default function VehiculosCrud() {
                   <input
                     name="foto_principal"
                     placeholder="URL Foto Principal"
-                    value={formData.foto_principal}
+                    value={
+                      formData.foto_principal
+                    }
                     onChange={handleChange}
                   />
 
@@ -502,7 +845,9 @@ export default function VehiculosCrud() {
                   <input
                     name="foto_secundaria"
                     placeholder="URL Foto Secundaria"
-                    value={formData.foto_secundaria}
+                    value={
+                      formData.foto_secundaria
+                    }
                     onChange={handleChange}
                   />
 

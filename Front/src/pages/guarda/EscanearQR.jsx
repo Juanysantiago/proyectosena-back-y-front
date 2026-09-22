@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Html5Qrcode } from "html5-qrcode";
-import { axiosClient } from "../../api/axiosClient";
+import  axiosClient  from "../../api/axiosClient";
 import "../../styles/guarda/EscanearQR.css";
 
 const API_URL = "http://localhost:3000";

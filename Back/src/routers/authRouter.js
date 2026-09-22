@@ -5,13 +5,22 @@ const router = express.Router();
 const {
   register,
   login,
+  getUsers,
+  getUserById,
+  updateUser,
+  deleteUser,
+  getCarnet,
   recuperarPassword,
   verificarPin,
-  cambiarPassword,
   reenviarPin,
+  cambiarPassword,
   obtenerMiPerfil,
   logout,
 } = require("../controllers/authController");
+
+// ==========================================
+// MIDDLEWARE
+// ==========================================
 
 const verifyToken = require("../middlewares/verifyToken");
 
@@ -42,18 +51,15 @@ router.post(
   recuperarPassword
 );
 
-// ==========================================
-// VERIFICAR PIN
-// ==========================================
-
 router.post(
   "/verificar-pin",
   verificarPin
 );
 
-// ==========================================
-// CAMBIAR CONTRASEÑA
-// ==========================================
+router.post(
+  "/reenviar-pin",
+  reenviarPin
+);
 
 router.post(
   "/cambiar-password",
@@ -61,17 +67,34 @@ router.post(
 );
 
 // ==========================================
-// REENVIAR PIN
+// USUARIOS
 // ==========================================
 
-router.post(
-  "/reenviar-pin",
-  reenviarPin
+router.get(
+  "/users",
+  getUsers
+);
+
+router.get(
+  "/users/:id",
+  getUserById
+);
+
+router.put(
+  "/users/:id",
+  updateUser
+);
+
+router.delete(
+  "/users/:id",
+  deleteUser
 );
 
 // ==========================================
-// VERIFICAR SESIÓN
+// MI PERFIL
 // ==========================================
+// IMPORTANTE:
+// Esta ruta necesita el token que crea el login.
 
 router.get(
   "/me",
@@ -80,7 +103,16 @@ router.get(
 );
 
 // ==========================================
-// CERRAR SESIÓN
+// CARNET
+// ==========================================
+
+router.get(
+  "/users/:id/carnet",
+  getCarnet
+);
+
+// ==========================================
+// LOGOUT
 // ==========================================
 
 router.post(

@@ -1,28 +1,17 @@
 const User = require("./User");
-
 const Vehiculo = require("./Vehiculo");
-
 const SolicitudCarnet = require("./aprendiz/SolicitudCarnet");
-
 const TipoDocumento = require("./TipoDocumento");
-
 const Jornada = require("./Jornada");
-
 const ConfigGr = require("./ConfigGr");
-
 const EntradaSalidaAprendiz = require("./EntradaSalidaAprendiz");
-
 const Carnet = require("./Carnet");
-
 const CentroFormacion = require("./CentroFormacion");
-
 const SolicitudActualizacion = require("./aprendiz/SolicitudActualizacion");
-
 const Notificacion = require("./Notificacion");
-
 const Reporte = require("./aprendiz/Reporte");
-
 const Soporte = require("./Soporte");
+const ReporteBloqueo = require("./ReporteBloqueo");
 
 
 /* =========================================================
@@ -31,12 +20,12 @@ const Soporte = require("./Soporte");
 
 User.hasMany(SolicitudCarnet, {
   foreignKey: "userId",
-  as: "solicitudes",
+  as: "solicitudes"
 });
 
 SolicitudCarnet.belongsTo(User, {
   foreignKey: "userId",
-  as: "user",
+  as: "user"
 });
 
 
@@ -46,12 +35,12 @@ SolicitudCarnet.belongsTo(User, {
 
 User.hasMany(Carnet, {
   foreignKey: "userId",
-  as: "carnets",
+  as: "carnets"
 });
 
 Carnet.belongsTo(User, {
   foreignKey: "userId",
-  as: "user",
+  as: "user"
 });
 
 
@@ -61,12 +50,12 @@ Carnet.belongsTo(User, {
 
 SolicitudCarnet.hasOne(Carnet, {
   foreignKey: "solicitudId",
-  as: "carnet",
+  as: "carnet"
 });
 
 Carnet.belongsTo(SolicitudCarnet, {
   foreignKey: "solicitudId",
-  as: "solicitud",
+  as: "solicitud"
 });
 
 
@@ -76,12 +65,12 @@ Carnet.belongsTo(SolicitudCarnet, {
 
 CentroFormacion.hasMany(User, {
   foreignKey: "centroFormacionId",
-  as: "usuarios",
+  as: "usuarios"
 });
 
 User.belongsTo(CentroFormacion, {
   foreignKey: "centroFormacionId",
-  as: "centroFormacion",
+  as: "centroFormacion"
 });
 
 
@@ -91,12 +80,12 @@ User.belongsTo(CentroFormacion, {
 
 EntradaSalidaAprendiz.belongsTo(User, {
   foreignKey: "id_aprendiz",
-  as: "aprendiz",
+  as: "aprendiz"
 });
 
 User.hasMany(EntradaSalidaAprendiz, {
   foreignKey: "id_aprendiz",
-  as: "entradasSalidas",
+  as: "entradasSalidas"
 });
 
 
@@ -106,12 +95,12 @@ User.hasMany(EntradaSalidaAprendiz, {
 
 User.hasMany(Vehiculo, {
   foreignKey: "userId",
-  as: "vehiculos",
+  as: "vehiculos"
 });
 
 Vehiculo.belongsTo(User, {
   foreignKey: "userId",
-  as: "User",
+  as: "User"
 });
 
 
@@ -121,11 +110,12 @@ Vehiculo.belongsTo(User, {
 
 User.hasMany(SolicitudActualizacion, {
   foreignKey: "userId",
+  as: "solicitudesActualizacion"
 });
 
 SolicitudActualizacion.belongsTo(User, {
   foreignKey: "userId",
-  as: "user",
+  as: "user"
 });
 
 
@@ -135,27 +125,52 @@ SolicitudActualizacion.belongsTo(User, {
 
 User.hasMany(Reporte, {
   foreignKey: "userId",
-  as: "reportes",
+  as: "reportes"
 });
 
 Reporte.belongsTo(User, {
   foreignKey: "userId",
-  as: "user",
+  as: "user"
 });
 
 
 /* =========================================================
-   SOPORTE TÉCNICO
+   SOPORTE
 ========================================================= */
 
 User.hasMany(Soporte, {
   foreignKey: "userId",
-  as: "soportes",
+  as: "soportes"
 });
 
 Soporte.belongsTo(User, {
   foreignKey: "userId",
-  as: "user",
+  as: "user"
+});
+
+
+/* =========================================================
+   REPORTES / BLOQUEOS
+========================================================= */
+
+User.hasMany(ReporteBloqueo, {
+  foreignKey: "userId",
+  as: "reportesBloqueos"
+});
+
+ReporteBloqueo.belongsTo(User, {
+  foreignKey: "userId",
+  as: "usuario"
+});
+
+User.hasMany(ReporteBloqueo, {
+  foreignKey: "creadoPor",
+  as: "accionesRealizadas"
+});
+
+ReporteBloqueo.belongsTo(User, {
+  foreignKey: "creadoPor",
+  as: "creador"
 });
 
 
@@ -177,4 +192,5 @@ module.exports = {
   Notificacion,
   Reporte,
   Soporte,
+  ReporteBloqueo
 };

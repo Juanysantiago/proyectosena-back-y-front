@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { axiosClient } from "../../api/axiosClient";
+import  axiosClient  from "../../api/axiosClient";
 import "../../styles/administrador/solicitudesActualizacion.css";
 
 export default function SolicitudesActualizacionAdmin() {

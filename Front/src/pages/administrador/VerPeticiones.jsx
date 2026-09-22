@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { axiosClient } from "../../api/axiosClient";
+import  axiosClient  from "../../api/axiosClient";
 import "../../styles/administrador/verPeticiones.css";
 import GenerarCarnet from "./GenerarCarnet";
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { axiosClient } from "../api/axiosClient";
+import  axiosClient  from "../api/axiosClient";
 import "../styles/verificarCodigo.css";
 
 export default function VerificarCodigo() {

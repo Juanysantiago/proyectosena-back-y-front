@@ -22,14 +22,11 @@ const User = sequelize.define(
         },
         len: {
           args: [2, 100],
-          msg:
-            "Los nombres deben tener entre 2 y 100 caracteres"
+          msg: "Los nombres deben tener entre 2 y 100 caracteres"
         },
         is: {
-          args:
-            /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
-          msg:
-            "Los nombres solo pueden contener letras y espacios"
+          args: /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+          msg: "Los nombres solo pueden contener letras y espacios"
         }
       }
     },
@@ -39,23 +36,18 @@ const User = sequelize.define(
       allowNull: false,
       validate: {
         notNull: {
-          msg:
-            "Los apellidos son obligatorios"
+          msg: "Los apellidos son obligatorios"
         },
         notEmpty: {
-          msg:
-            "Los apellidos no pueden estar vacíos"
+          msg: "Los apellidos no pueden estar vacíos"
         },
         len: {
           args: [2, 100],
-          msg:
-            "Los apellidos deben tener entre 2 y 100 caracteres"
+          msg: "Los apellidos deben tener entre 2 y 100 caracteres"
         },
         is: {
-          args:
-            /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
-          msg:
-            "Los apellidos solo pueden contener letras y espacios"
+          args: /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+          msg: "Los apellidos solo pueden contener letras y espacios"
         }
       }
     },
@@ -66,21 +58,17 @@ const User = sequelize.define(
       unique: true,
       validate: {
         notNull: {
-          msg:
-            "El documento es obligatorio"
+          msg: "El documento es obligatorio"
         },
         notEmpty: {
-          msg:
-            "El documento no puede estar vacío"
+          msg: "El documento no puede estar vacío"
         },
         isNumeric: {
-          msg:
-            "El documento solo puede contener números"
+          msg: "El documento solo puede contener números"
         },
         len: {
           args: [6, 15],
-          msg:
-            "El documento debe tener entre 6 y 15 dígitos"
+          msg: "El documento debe tener entre 6 y 15 dígitos"
         }
       }
     },
@@ -90,17 +78,14 @@ const User = sequelize.define(
       allowNull: false,
       validate: {
         notNull: {
-          msg:
-            "El tipo de documento es obligatorio"
+          msg: "El tipo de documento es obligatorio"
         },
         notEmpty: {
-          msg:
-            "El tipo de documento no puede estar vacío"
+          msg: "El tipo de documento no puede estar vacío"
         },
         len: {
           args: [1, 20],
-          msg:
-            "El tipo de documento no es válido"
+          msg: "El tipo de documento no es válido"
         }
       }
     },
@@ -111,21 +96,17 @@ const User = sequelize.define(
       unique: true,
       validate: {
         notNull: {
-          msg:
-            "El correo electrónico es obligatorio"
+          msg: "El correo electrónico es obligatorio"
         },
         notEmpty: {
-          msg:
-            "El correo electrónico no puede estar vacío"
+          msg: "El correo electrónico no puede estar vacío"
         },
         isEmail: {
-          msg:
-            "El correo electrónico no tiene un formato válido"
+          msg: "El correo electrónico no tiene un formato válido"
         },
         len: {
           args: [5, 150],
-          msg:
-            "El correo electrónico debe tener entre 5 y 150 caracteres"
+          msg: "El correo electrónico debe tener entre 5 y 150 caracteres"
         }
       }
     },
@@ -135,17 +116,14 @@ const User = sequelize.define(
       allowNull: false,
       validate: {
         notNull: {
-          msg:
-            "La contraseña es obligatoria"
+          msg: "La contraseña es obligatoria"
         },
         notEmpty: {
-          msg:
-            "La contraseña no puede estar vacía"
+          msg: "La contraseña no puede estar vacía"
         },
         len: {
           args: [8, 255],
-          msg:
-            "La contraseña debe tener al menos 8 caracteres"
+          msg: "La contraseña debe tener al menos 8 caracteres"
         }
       }
     },
@@ -155,13 +133,11 @@ const User = sequelize.define(
       allowNull: true,
       validate: {
         isInt: {
-          msg:
-            "El centro de formación debe ser un número entero"
+          msg: "El centro de formación debe ser un número entero"
         },
         min: {
           args: [1],
-          msg:
-            "El centro de formación debe ser un ID válido"
+          msg: "El centro de formación debe ser un ID válido"
         }
       }
     },
@@ -172,8 +148,7 @@ const User = sequelize.define(
       validate: {
         len: {
           args: [1, 30],
-          msg:
-            "La ficha no puede superar los 30 caracteres"
+          msg: "La ficha no puede superar los 30 caracteres"
         }
       }
     },
@@ -185,6 +160,7 @@ const User = sequelize.define(
         "aprendiz"
       ),
       defaultValue: "aprendiz",
+      allowNull: false,
       validate: {
         isIn: {
           args: [
@@ -194,8 +170,7 @@ const User = sequelize.define(
               "aprendiz"
             ]
           ],
-          msg:
-            "El rol seleccionado no es válido"
+          msg: "El rol seleccionado no es válido"
         }
       }
     },
@@ -205,13 +180,11 @@ const User = sequelize.define(
       allowNull: true,
       validate: {
         isNumeric: {
-          msg:
-            "El celular solo puede contener números"
+          msg: "El celular solo puede contener números"
         },
         len: {
           args: [10, 10],
-          msg:
-            "El celular debe tener exactamente 10 dígitos"
+          msg: "El celular debe tener exactamente 10 dígitos"
         }
       }
     },
@@ -222,8 +195,7 @@ const User = sequelize.define(
       validate: {
         len: {
           args: [1, 500],
-          msg:
-            "La ruta de la foto no puede superar los 500 caracteres"
+          msg: "La ruta de la foto no puede superar los 500 caracteres"
         }
       }
     },
@@ -233,8 +205,7 @@ const User = sequelize.define(
       allowNull: true,
       validate: {
         isDate: {
-          msg:
-            "La fecha de vinculación no es válida"
+          msg: "La fecha de vinculación no es válida"
         }
       }
     },
@@ -244,8 +215,7 @@ const User = sequelize.define(
       allowNull: true,
       validate: {
         isDate: {
-          msg:
-            "La fecha de finalización no es válida"
+          msg: "La fecha de finalización no es válida"
         }
       }
     },
@@ -255,13 +225,11 @@ const User = sequelize.define(
       allowNull: true,
       validate: {
         isNumeric: {
-          msg:
-            "El PIN de recuperación solo puede contener números"
+          msg: "El PIN de recuperación solo puede contener números"
         },
         len: {
           args: [6, 6],
-          msg:
-            "El PIN de recuperación debe tener exactamente 6 dígitos"
+          msg: "El PIN de recuperación debe tener exactamente 6 dígitos"
         }
       }
     },
@@ -271,19 +239,18 @@ const User = sequelize.define(
       allowNull: true,
       validate: {
         isDate: {
-          msg:
-            "La fecha del PIN no es válida"
+          msg: "La fecha del PIN no es válida"
         }
       }
     },
 
     estado: {
       type: DataTypes.STRING,
+      allowNull: false,
       defaultValue: "activo",
       validate: {
         notEmpty: {
-          msg:
-            "El estado no puede estar vacío"
+          msg: "El estado no puede estar vacío"
         },
         isIn: {
           args: [
@@ -293,82 +260,49 @@ const User = sequelize.define(
               "bloqueado"
             ]
           ],
-          msg:
-            "El estado seleccionado no es válido"
+          msg: "El estado seleccionado no es válido"
         }
       }
     }
   },
 
   {
+    tableName: "Users",
+
     hooks: {
       beforeValidate: (user) => {
-        if (
-          typeof user.nombres ===
-          "string"
-        ) {
-          user.nombres =
-            user.nombres.trim();
+        if (typeof user.nombres === "string") {
+          user.nombres = user.nombres.trim();
         }
 
-        if (
-          typeof user.apellidos ===
-          "string"
-        ) {
-          user.apellidos =
-            user.apellidos.trim();
+        if (typeof user.apellidos === "string") {
+          user.apellidos = user.apellidos.trim();
         }
 
-        if (
-          typeof user.documento ===
-          "string"
-        ) {
-          user.documento =
-            user.documento.trim();
+        if (typeof user.documento === "string") {
+          user.documento = user.documento.trim();
         }
 
-        if (
-          typeof user.email ===
-          "string"
-        ) {
-          user.email =
-            user.email
-              .trim()
-              .toLowerCase();
+        if (typeof user.email === "string") {
+          user.email = user.email.trim().toLowerCase();
         }
 
-        if (
-          typeof user.celular ===
-          "string"
-        ) {
-          user.celular =
-            user.celular.trim();
+        if (typeof user.celular === "string") {
+          user.celular = user.celular.trim();
         }
 
-        if (
-          typeof user.ficha ===
-          "string"
-        ) {
-          user.ficha =
-            user.ficha.trim();
+        if (typeof user.ficha === "string") {
+          user.ficha = user.ficha.trim();
         }
 
-        if (
-          typeof user.pinRecuperacion ===
-          "string"
-        ) {
+        if (typeof user.pinRecuperacion === "string") {
           user.pinRecuperacion =
             user.pinRecuperacion.trim();
         }
 
-        if (
-          typeof user.estado ===
-          "string"
-        ) {
+        if (typeof user.estado === "string") {
           user.estado =
-            user.estado
-              .trim()
-              .toLowerCase();
+            user.estado.trim().toLowerCase();
         }
       }
     }

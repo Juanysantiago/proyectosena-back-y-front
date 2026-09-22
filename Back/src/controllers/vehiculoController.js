@@ -74,6 +74,7 @@ const getVehiculos = async (req, res) => {
             "id",
             "nombres",
             "apellidos",
+            "documento",
             "ficha",
             "centroFormacionId",
           ],

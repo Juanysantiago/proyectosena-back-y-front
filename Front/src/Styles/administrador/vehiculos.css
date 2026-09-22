@@ -596,3 +596,210 @@
     }
 
 }
+/* =========================================================
+   TOTAL VEHÍCULOS
+========================================================= */
+
+.vehiculos-total {
+    display: inline-block;
+    margin-top: 5px;
+    color: #666;
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   FILTROS
+========================================================= */
+
+.vehiculos-filtros {
+    display: flex;
+    align-items: flex-end;
+    gap: 15px;
+
+    margin-bottom: 25px;
+    padding: 18px;
+
+    background: #f7faf8;
+    border: 1px solid #dfe8e1;
+    border-radius: 12px;
+}
+
+.vehiculos-filtro {
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.vehiculos-filtro label {
+    color: #087f23;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.vehiculos-filtro input {
+    width: 100%;
+    min-height: 44px;
+
+    padding: 11px 14px;
+
+    border: 1px solid #cfd8d3;
+    border-radius: 8px;
+
+    background: white;
+
+    font-size: 14px;
+    outline: none;
+
+    transition: .2s;
+}
+
+.vehiculos-filtro input:focus {
+    border-color: #087f23;
+
+    box-shadow:
+        0 0 0 3px rgba(8,127,35,.10);
+}
+
+
+/* =========================================================
+   LIMPIAR FILTRO
+========================================================= */
+
+.vehiculos-btn-limpiar {
+    min-height: 44px;
+
+    padding: 0 18px;
+
+    border: 1px solid #087f23;
+    border-radius: 8px;
+
+    background: white;
+    color: #087f23;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+.vehiculos-btn-limpiar:hover {
+    background: #087f23;
+    color: white;
+}
+
+
+/* =========================================================
+   PAGINACIÓN
+========================================================= */
+
+.vehiculos-paginacion {
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    gap: 8px;
+
+    margin-top: 25px;
+    padding-top: 20px;
+
+    border-top: 1px solid #e0e0e0;
+}
+
+.vehiculos-paginas {
+    display: flex;
+    gap: 6px;
+}
+
+.vehiculos-pagina-btn,
+.vehiculos-numero-pagina {
+    min-width: 40px;
+    height: 40px;
+
+    padding: 0 12px;
+
+    border: 1px solid #d0d8d3;
+    border-radius: 8px;
+
+    background: white;
+    color: #087f23;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+.vehiculos-pagina-btn:hover:not(:disabled),
+.vehiculos-numero-pagina:hover {
+    background: #e8f5e9;
+    border-color: #087f23;
+}
+
+.vehiculos-numero-pagina.activa {
+    background: #087f23;
+    border-color: #087f23;
+    color: white;
+}
+
+.vehiculos-pagina-btn:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   INFORMACIÓN DE PAGINACIÓN
+========================================================= */
+
+.vehiculos-pagina-info {
+    margin-top: 15px;
+
+    text-align: center;
+
+    color: #666;
+
+    font-size: 13px;
+}
+
+.vehiculos-pagina-info strong {
+    color: #087f23;
+}
+
+
+/* =========================================================
+   RESPONSIVE FILTRO
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .vehiculos-filtros {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .vehiculos-btn-limpiar {
+        width: 100%;
+    }
+
+    .vehiculos-paginacion {
+        flex-wrap: wrap;
+    }
+
+    .vehiculos-paginas {
+        order: -1;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .vehiculos-pagina-btn {
+        flex: 1;
+    }
+
+}
