@@ -11,6 +11,10 @@ export default function MisVehiculos() {
     cargarVehiculos();
   }, []);
 
+  // =====================================================
+  // CARGAR VEHÍCULOS
+  // =====================================================
+
   const cargarVehiculos = async () => {
     try {
       setLoading(true);
@@ -24,13 +28,50 @@ export default function MisVehiculos() {
 
       console.log("🚗 MIS VEHÍCULOS:", datos);
 
+      let lista = [];
+
       if (Array.isArray(datos)) {
-        setVehiculos(datos);
+        lista = datos;
       } else if (Array.isArray(datos?.vehiculos)) {
-        setVehiculos(datos.vehiculos);
-      } else {
-        setVehiculos([]);
+        lista = datos.vehiculos;
       }
+
+      // =====================================================
+      // EVITAR VEHÍCULOS DUPLICADOS DEL MISMO CARNET
+      // =====================================================
+
+      const carnetsMostrados = new Set();
+
+      const vehiculosUnicos = lista.filter((vehiculo) => {
+        /*
+         * Se intenta identificar el carnet mediante:
+         * 1. id del carnet
+         * 2. código QR
+         * 3. id del vehículo como último recurso
+         */
+
+        const carnetId =
+          vehiculo.carnet?.id ||
+          vehiculo.carnetId ||
+          vehiculo.carnet?.codigoQr ||
+          vehiculo.codigoQr ||
+          `vehiculo-${vehiculo.id}`;
+
+        if (carnetsMostrados.has(carnetId)) {
+          return false;
+        }
+
+        carnetsMostrados.add(carnetId);
+
+        return true;
+      });
+
+      console.log(
+        "🚗 VEHÍCULOS ÚNICOS:",
+        vehiculosUnicos
+      );
+
+      setVehiculos(vehiculosUnicos);
     } catch (error) {
       console.error(
         "❌ Error al cargar mis vehículos:",
@@ -55,7 +96,7 @@ export default function MisVehiculos() {
       return null;
     }
 
-    // Si el backend ya devuelve una URL completa
+    // Si ya es una URL completa
     if (
       archivo.startsWith("http://") ||
       archivo.startsWith("https://")
@@ -63,12 +104,15 @@ export default function MisVehiculos() {
       return archivo;
     }
 
-    // Evitar /uploads/uploads/
-    const nombreArchivo = archivo
+    // Limpiar posibles rutas
+    const nombreArchivo = String(archivo)
+      .replace(/\\/g, "/")
       .replace(/^\/+/, "")
-      .replace(/^uploads\//, "");
+      .replace(/^uploads\/+/i, "");
 
-    return `http://localhost:3000/uploads/${nombreArchivo}`;
+    return `http://localhost:3000/uploads/${encodeURIComponent(
+      nombreArchivo
+    )}`;
   };
 
   // =====================================================
@@ -80,10 +124,18 @@ export default function MisVehiculos() {
       <div className="mis-vehiculos-container">
         <div className="mis-vehiculos-card">
           <div className="mis-vehiculos-header">
-            <h1>Mis vehículos</h1>
-            <p>
-              Cargando los vehículos asociados a tus carnets...
-            </p>
+            <div>
+              <span className="mis-vehiculos-label">
+                SENA PARKING
+              </span>
+
+              <h1>Mis vehículos</h1>
+
+              <p>
+                Cargando los vehículos asociados a tus
+                carnets...
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -98,9 +150,9 @@ export default function MisVehiculos() {
     <div className="mis-vehiculos-container">
       <div className="mis-vehiculos-card">
 
-        {/* ================================
+        {/* =================================================
             ENCABEZADO
-        ================================= */}
+        ================================================= */}
 
         <div className="mis-vehiculos-header">
           <div>
@@ -108,9 +160,7 @@ export default function MisVehiculos() {
               SENA PARKING
             </span>
 
-            <h1>
-              Mis vehículos
-            </h1>
+            <h1>Mis vehículos</h1>
 
             <p>
               Aquí puedes consultar los vehículos que
@@ -123,9 +173,9 @@ export default function MisVehiculos() {
           </div>
         </div>
 
-        {/* ================================
+        {/* =================================================
             ERROR
-        ================================= */}
+        ================================================= */}
 
         {error && (
           <div className="mis-vehiculos-error">
@@ -133,13 +183,12 @@ export default function MisVehiculos() {
           </div>
         )}
 
-        {/* ================================
+        {/* =================================================
             SIN VEHÍCULOS
-        ================================= */}
+        ================================================= */}
 
         {!error && vehiculos.length === 0 && (
           <div className="mis-vehiculos-vacio">
-
             <div className="vacio-icono">
               🚗
             </div>
@@ -153,62 +202,51 @@ export default function MisVehiculos() {
               genere tu carnet, el vehículo aparecerá
               automáticamente aquí.
             </p>
-
           </div>
         )}
 
-        {/* ================================
+        {/* =================================================
             VEHÍCULOS
-        ================================= */}
+        ================================================= */}
 
         {vehiculos.length > 0 && (
           <div className="mis-vehiculos-grid">
 
             {vehiculos.map((vehiculo) => {
-
-              /*
-                IMPORTANTE:
-
-                La foto que se guardó al generar
-                el carnet está en:
-
-                vehiculo.foto_principal
-
-                No en fotoVehiculo.
-              */
-
               const imagen = obtenerImagen(
                 vehiculo.foto_principal
               );
 
-              const tipo =
-                String(
-                  vehiculo.tipo || ""
-                ).toLowerCase();
+              const tipo = String(
+                vehiculo.tipo || ""
+              ).toLowerCase();
 
-              const esMoto =
-                tipo === "moto";
+              const esMoto = tipo === "moto";
 
               return (
                 <div
                   className="vehiculo-card"
-                  key={vehiculo.id}
+                  key={
+                    vehiculo.carnet?.id ||
+                    vehiculo.carnetId ||
+                    vehiculo.id
+                  }
                 >
 
-                  {/* ================================
-                      FOTO DEL VEHÍCULO
-                  ================================= */}
+                  {/* =====================================
+                      FOTO
+                  ===================================== */}
 
                   <div className="vehiculo-imagen">
 
                     {imagen ? (
                       <img
                         src={imagen}
-                        alt={`Foto de ${
+                        alt={
                           esMoto
-                            ? "la moto"
-                            : "la bicicleta"
-                        }`}
+                            ? "Foto de la motocicleta"
+                            : "Foto de la bicicleta"
+                        }
                         onError={(e) => {
                           e.currentTarget.style.display =
                             "none";
@@ -231,12 +269,11 @@ export default function MisVehiculos() {
                     >
                       Sin foto del vehículo
                     </div>
-
                   </div>
 
-                  {/* ================================
+                  {/* =====================================
                       INFORMACIÓN
-                  ================================= */}
+                  ===================================== */}
 
                   <div className="vehiculo-info">
 
@@ -261,16 +298,14 @@ export default function MisVehiculos() {
 
                     </div>
 
-                    {/* =========================
+                    {/* =================================
                         DATOS
-                    ========================== */}
+                    ================================= */}
 
                     <div className="vehiculo-datos">
 
                       <div>
-                        <strong>
-                          Tipo
-                        </strong>
+                        <strong>Tipo</strong>
 
                         <span>
                           {esMoto
@@ -280,9 +315,7 @@ export default function MisVehiculos() {
                       </div>
 
                       <div>
-                        <strong>
-                          Marca
-                        </strong>
+                        <strong>Marca</strong>
 
                         <span>
                           {vehiculo.marca ||
@@ -291,9 +324,7 @@ export default function MisVehiculos() {
                       </div>
 
                       <div>
-                        <strong>
-                          Color
-                        </strong>
+                        <strong>Color</strong>
 
                         <span>
                           {vehiculo.color ||
@@ -320,9 +351,7 @@ export default function MisVehiculos() {
                       {esMoto && (
                         <>
                           <div>
-                            <strong>
-                              Modelo
-                            </strong>
+                            <strong>Modelo</strong>
 
                             <span>
                               {vehiculo.modelo ||
@@ -345,8 +374,8 @@ export default function MisVehiculos() {
 
                     </div>
 
-                    {/* ================================
-                        INFORMACIÓN CARNET
+                    {/* =================================
+                        CARNET
                     ================================= */}
 
                     {vehiculo.carnet && (
@@ -376,13 +405,15 @@ export default function MisVehiculos() {
                           </p>
                         )}
 
-                        {vehiculo.carnet.fechaGeneracion && (
+                        {vehiculo.carnet
+                          .fechaGeneracion && (
                           <p>
                             <strong>
                               Generado:
                             </strong>{" "}
                             {new Date(
-                              vehiculo.carnet.fechaGeneracion
+                              vehiculo.carnet
+                                .fechaGeneracion
                             ).toLocaleDateString()}
                           </p>
                         )}
@@ -391,7 +422,6 @@ export default function MisVehiculos() {
                     )}
 
                   </div>
-
                 </div>
               );
             })}
@@ -399,9 +429,9 @@ export default function MisVehiculos() {
           </div>
         )}
 
-        {/* ================================
+        {/* =================================================
             ACTUALIZAR
-        ================================= */}
+        ================================================= */}
 
         <button
           type="button"
