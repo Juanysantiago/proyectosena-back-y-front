@@ -1,6 +1,6 @@
-/* =========================
+/* =========================================================
    PÁGINA COMPLETA
-========================= */
+========================================================= */
 
 .peticiones-page {
     width: 100%;
@@ -9,12 +9,14 @@
     background: #087f23;
 
     padding: 35px;
+
+    box-sizing: border-box;
 }
 
 
-/* =========================
-   CONTENEDOR
-========================= */
+/* =========================================================
+   CUADRO BLANCO DE SOLICITUDES
+========================================================= */
 
 .content-box {
     background: #ffffff;
@@ -25,29 +27,32 @@
 
     padding: 25px;
 
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.10);
 
     overflow: hidden;
 }
 
 
-/* =========================
+/* =========================================================
    TITULO
-========================= */
+========================================================= */
 
 .content-box h1 {
-    margin-bottom: 20px;
+    margin: 0 0 20px 0;
 
     color: #087f23;
 
     font-size: 28px;
+
     font-weight: 700;
 }
 
 
-/* =========================
+/* =========================================================
    CONTENEDOR TABLA
-========================= */
+========================================================= */
 
 .tabla-contenedor {
     width: 100%;
@@ -56,22 +61,22 @@
 }
 
 
-/* =========================
+/* =========================================================
    TABLA
-========================= */
+========================================================= */
 
 .tablaSolicitudes {
     width: 100%;
 
-    border-collapse: collapse;
+    min-width: 1900px;
 
-    min-width: 1600px;
+    border-collapse: collapse;
 }
 
 
-/* =========================
+/* =========================================================
    ENCABEZADO
-========================= */
+========================================================= */
 
 .tablaSolicitudes thead {
     background: #087f23;
@@ -80,9 +85,11 @@
 .tablaSolicitudes thead th {
     color: #ffffff;
 
-    padding: 14px;
+    padding: 14px 12px;
 
     font-size: 14px;
+
+    font-weight: 700;
 
     text-align: center;
 
@@ -90,9 +97,9 @@
 }
 
 
-/* =========================
+/* =========================================================
    CUERPO
-========================= */
+========================================================= */
 
 .tablaSolicitudes tbody td {
     padding: 12px;
@@ -104,122 +111,317 @@
     font-size: 14px;
 
     white-space: nowrap;
+
+    vertical-align: middle;
 }
+
+
+/* =========================================================
+   FILAS
+========================================================= */
 
 .tablaSolicitudes tbody tr:nth-child(even) {
     background: #fafafa;
 }
 
 .tablaSolicitudes tbody tr:hover {
-    background: #e8f5e9;
+    background: #f0f8f2;
 }
 
 
-/* =========================
-   ENLACES
-========================= */
+/* =========================================================
+   ARCHIVOS
+========================================================= */
 
-.tablaSolicitudes a {
-    color: #087f23;
+.link-archivo {
+    display: inline-block;
 
-    text-decoration: none;
+    background: #eaf7ed;
+
+    color: #087f23 !important;
+
+    border: 1px solid #b9dfc1;
+
+    border-radius: 7px;
+
+    padding: 7px 11px;
+
+    font-size: 12px;
 
     font-weight: 600;
+
+    text-decoration: none !important;
+
+    transition: 0.2s ease;
 }
 
-.tablaSolicitudes a:hover {
-    text-decoration: underline;
+.link-archivo:hover {
+    background: #087f23;
+
+    color: #ffffff !important;
+
+    border-color: #087f23;
 }
 
 
-/* =========================
-   BOTONES
-========================= */
+/* =========================================================
+   SIN ARCHIVO
+========================================================= */
 
-.tablaSolicitudes button {
+.sin-archivo {
+    display: inline-block;
+
+    background: #f3f3f3;
+
+    color: #777777;
+
+    border: 1px solid #dddddd;
+
+    border-radius: 7px;
+
+    padding: 7px 10px;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   ESTADO
+========================================================= */
+
+.estado {
+    display: inline-block;
+
+    min-width: 115px;
+
+    padding: 7px 12px;
+
+    border-radius: 20px;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    text-align: center;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   PENDIENTE
+========================================================= */
+
+.estado.pendiente {
+    color: #9a6500;
+
+    background: #fff3cd;
+
+    border: 1px solid #ffe08a;
+}
+
+
+/* =========================================================
+   APROBADA
+========================================================= */
+
+.estado.aprobada {
+    color: #087f23;
+
+    background: #e8f5e9;
+
+    border: 1px solid #a8d8b0;
+}
+
+
+/* =========================================================
+   RECHAZADA
+========================================================= */
+
+.estado.rechazada {
+    color: #b42332;
+
+    background: #fde8ea;
+
+    border: 1px solid #f2afb6;
+}
+
+
+/* =========================================================
+   CARNET GENERADO
+========================================================= */
+
+.estado.generado {
+    color: #087f23;
+
+    background: #dff3e4;
+
+    border: 1px solid #99d2a5;
+}
+
+
+/* =========================================================
+   ACCIONES
+========================================================= */
+
+.acciones {
+    min-width: 210px;
+
+    width: 210px;
+
+    padding: 12px !important;
+
+    white-space: normal !important;
+}
+
+
+/* =========================================================
+   BOTONES DE ACCIONES
+========================================================= */
+
+.acciones button {
     border: none;
 
-    border-radius: 8px;
+    border-radius: 7px;
 
-    padding: 8px 15px;
+    padding: 9px 14px;
+
+    margin: 3px;
+
+    font-size: 12px;
+
+    font-weight: 700;
 
     cursor: pointer;
 
-    font-weight: 600;
-
-    transition: 0.3s;
-
-    margin: 3px;
+    transition: 0.2s ease;
 }
 
 
-/* =========================
+/* =========================================================
    APROBAR
-========================= */
+========================================================= */
 
-.tablaSolicitudes .btn-aprobar {
+.acciones .btn-aprobar {
     background: #087f23;
 
     color: #ffffff;
 }
 
-.tablaSolicitudes .btn-aprobar:hover {
-    background: #087f23;
+.acciones .btn-aprobar:hover {
+    background: #066b1e;
+
+    transform: translateY(-1px);
+
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.15);
 }
 
 
-/* =========================
+/* =========================================================
    RECHAZAR
-========================= */
+========================================================= */
 
-.tablaSolicitudes .btn-rechazar {
+.acciones .btn-rechazar {
     background: #dc3545;
 
     color: #ffffff;
 }
 
-.tablaSolicitudes .btn-rechazar:hover {
-    background: #b52a37;
+.acciones .btn-rechazar:hover {
+    background: #bb2d3b;
+
+    transform: translateY(-1px);
+
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.15);
 }
 
 
-/* =========================
-   ESTADOS
-========================= */
+/* =========================================================
+   GENERAR CARNET
+========================================================= */
 
-.estado {
-    font-weight: bold;
+.generar-carnet {
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    width: 100%;
 }
 
-.estado.pendiente {
-    color: #ff9800;
+
+/* =========================================================
+   BOTÓN GENERAR CARNET
+========================================================= */
+
+.generar-carnet button {
+    width: 160px;
+
+    padding: 10px 14px;
+
+    border: none;
+
+    border-radius: 7px;
+
+    background: #087f23;
+
+    color: #ffffff;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
 }
 
-.estado.aprobada {
+.generar-carnet button:hover {
+    background: #066b1e;
+
+    transform: translateY(-1px);
+
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.generar-carnet button:disabled {
+    background: #999999;
+
+    cursor: not-allowed;
+
+    transform: none;
+
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   CARNET GENERADO
+========================================================= */
+
+.carnet-generado {
+    display: inline-block;
+
+    background: #e8f5e9;
+
     color: #087f23;
-}
 
-.estado.rechazada {
-    color: #dc3545;
-}
+    border: 1px solid #a8d8b0;
 
-.estado.generado {
-    color: #087f23;
-}
+    border-radius: 7px;
 
+    padding: 8px 12px;
 
-/* =========================
-   ACCIONES
-========================= */
+    font-size: 12px;
 
-.acciones {
-    min-width: 180px;
+    font-weight: 700;
 }
 
 
-/* =========================
+/* =========================================================
    SIN SOLICITUDES
-========================= */
+========================================================= */
 
 .sin-solicitudes {
     padding: 40px !important;
@@ -232,9 +434,32 @@
 }
 
 
-/* =========================
+/* =========================================================
+   SCROLL DE LA TABLA
+========================================================= */
+
+.tabla-contenedor::-webkit-scrollbar {
+    height: 8px;
+}
+
+.tabla-contenedor::-webkit-scrollbar-track {
+    background: #eeeeee;
+}
+
+.tabla-contenedor::-webkit-scrollbar-thumb {
+    background: #087f23;
+
+    border-radius: 10px;
+}
+
+.tabla-contenedor::-webkit-scrollbar-thumb:hover {
+    background: #066b1e;
+}
+
+
+/* =========================================================
    TABLET
-========================= */
+========================================================= */
 
 @media (max-width: 768px) {
 
@@ -251,7 +476,7 @@
     }
 
     .tablaSolicitudes {
-        min-width: 1600px;
+        min-width: 1900px;
     }
 
     .tablaSolicitudes th,
@@ -261,19 +486,23 @@
         padding: 8px;
     }
 
-    .tablaSolicitudes button {
-        width: 100%;
+    .estado {
+        min-width: 105px;
 
-        margin: 3px 0;
+        font-size: 11px;
 
-        padding: 7px;
+        padding: 6px 9px;
+    }
+
+    .acciones {
+        min-width: 200px;
     }
 }
 
 
-/* =========================
+/* =========================================================
    MÓVIL
-========================= */
+========================================================= */
 
 @media (max-width: 480px) {
 

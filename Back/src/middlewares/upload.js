@@ -1,46 +1,115 @@
 const multer = require("multer");
 const path = require("path");
+const fs = require("fs");
 
-const storage = multer.diskStorage({
+// ======================================================
+// RUTA CORRECTA
+//
+// upload.js está en:
+// Back/src/middlewares/upload.js
+//
+// uploads está en:
+// Back/uploads
+//
+// ../../uploads = Back/uploads
+// ======================================================
 
-  destination: (req, file, cb) => {
+const uploadPath = path.resolve(
+  __dirname,
+  "../../uploads"
+);
 
-    const uploadPath = path.resolve(
-      __dirname,
-      "../../uploads"
-    );
+console.log("=================================");
+console.log("📁 CARPETA UPLOADS:");
+console.log(uploadPath);
+console.log("=================================");
 
-    console.log("📁 GUARDANDO ARCHIVO EN:");
-    console.log(uploadPath);
+// ======================================================
+// CREAR CARPETA SI NO EXISTE
+// ======================================================
 
-    cb(null, uploadPath);
-  },
+if (!fs.existsSync(uploadPath)) {
 
-  filename: (req, file, cb) => {
+  fs.mkdirSync(
+    uploadPath,
+    {
+      recursive: true,
+    }
+  );
 
-    const extension =
-      path.extname(file.originalname);
+  console.log(
+    "✅ Carpeta uploads creada"
+  );
+}
 
-    const nombre =
-      path.basename(
-        file.originalname,
-        extension
-      )
-      .replace(/[^a-zA-Z0-9-_]/g, "_");
+// ======================================================
+// STORAGE
+// ======================================================
 
-    const nombreFinal =
-      `${Date.now()}-${nombre}${extension}`;
+const storage =
+  multer.diskStorage({
 
-    console.log(
-      "📄 ARCHIVO:",
-      nombreFinal
-    );
+    destination: (
+      req,
+      file,
+      cb
+    ) => {
 
-    cb(null, nombreFinal);
-  }
+      console.log(
+        "📁 GUARDANDO ARCHIVO EN:"
+      );
 
-});
+      console.log(
+        uploadPath
+      );
 
-module.exports = multer({
-  storage
-});
+      cb(
+        null,
+        uploadPath
+      );
+    },
+
+    filename: (
+      req,
+      file,
+      cb
+    ) => {
+
+      const extension =
+        path.extname(
+          file.originalname
+        );
+
+      const nombre =
+        path.basename(
+          file.originalname,
+          extension
+        ).replace(
+          /[^a-zA-Z0-9-_]/g,
+          "_"
+        );
+
+      const nombreFinal =
+        `${Date.now()}-${nombre}${extension}`;
+
+      console.log(
+        "📄 ARCHIVO:",
+        nombreFinal
+      );
+
+      cb(
+        null,
+        nombreFinal
+      );
+    },
+
+  });
+
+// ======================================================
+// MULTER
+// ======================================================
+
+module.exports =
+  multer({
+    storage,
+  });
